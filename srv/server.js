@@ -6,13 +6,48 @@ const proxy = require('express-http-proxy')
 const xmlFormat = require('xml-formatter')
 const beautify = require("json-beautify")
 
-const FTP_DIR = process.env.FTP_DIR || process.cwd() + '/test'
+const FTP_DIR = process.env.FTP_DIR
 
 const FtpSrv = require('ftp-srv')
 const ftp_host = '0.0.0.0' // so that camel can connect to us, 'localhost' does not work
 const ftp_port = 2021
 
 cds.on('bootstrap', app => {
+
+    const cpiCreds = cds.env.requires.webshell?.credentials
+    if (!cpiCreds || ! cpiCreds.url) return // no sense to set up all the magic
+
+    const auth = new Buffer.from(cpiCreds.clientid + ':' + cpiCreds.clientsecret)
+    const cpiRuntimeHost = cpiCreds.url.split('/')[2]
+
+    app.use('/cpi', proxy(cpiCreds.url, {
+        proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+            proxyReqOpts.headers['Authorization'] = `Basic ${auth.toString('base64')}`
+            proxyReqOpts.method = 'GET'
+            srcReq.baseUrl = '/http' // modify baseUr
+            if (srcReq.url.startsWith('/webshell')) {
+                proxyReqOpts.method = 'POST'
+                srcReq.url = '/webshell'
+            }
+            return proxyReqOpts
+        },
+        proxyReqBodyDecorator: function (bodyContent, srcReq) {
+            const cmd = srcReq.originalUrl.split('/')[3]
+            return decodeURIComponent(cmd)
+        },
+        proxyReqPathResolver: function (req) {
+            return req.baseUrl + req.url // as this guy only proxies to host and mounted url (/cpi)
+        },
+        userResHeaderDecorator(headers, userReq, userRes, proxyReq, proxyRes) {
+            if (userReq.url == '/webshell') headers['Content-Type'] = 'text/plain'
+            return headers
+        },
+        userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
+            return proxyResData.toString('utf8').replaceAll(cpiRuntimeHost + '/http', 'cpi') // replace links back
+        }
+    }))
+
+    if (!FTP_DIR) return // no sense to continue without ftp
 
     const ftp = new FtpSrv({ url: `ftp://${ftp_host}:${ftp_port}`, pasv_url: ftp_host, anonymous: false })
     ftp.on('login', ({ connection, username, password }, resolve, reject) => resolve({ root: FTP_DIR }))
@@ -41,37 +76,6 @@ cds.on('bootstrap', app => {
         }
     }
     app.use('/ftp', formatData, express.static(FTP_DIR, { setHeaders }), serveIndex(FTP_DIR, { 'icons': true }))
-
-    const cpiCreds = cds.env.requires.webshell?.credentials
-    if (!cpiCreds || ! cpiCreds.url) return
-    const auth = new Buffer.from(cpiCreds.clientid + ':' + cpiCreds.clientsecret)
-    const cpiRuntimeHost = cpiCreds.url.split('/')[2]
-    app.use('/cpi', proxy(cpiCreds.url, {
-        proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
-            proxyReqOpts.headers['Authorization'] = `Basic ${auth.toString('base64')}`
-            proxyReqOpts.method = 'GET'
-            srcReq.baseUrl = '/http' // modify baseUr
-            if (srcReq.url.startsWith('/webshell')) {
-                proxyReqOpts.method = 'POST'
-                srcReq.url = '/webshell'
-            }
-            return proxyReqOpts
-        },
-        proxyReqBodyDecorator: function (bodyContent, srcReq) {
-            const cmd = srcReq.originalUrl.split('/')[3]
-            return decodeURIComponent(cmd)
-        },
-        proxyReqPathResolver: function (req) {
-            return req.baseUrl + req.url // as this guy only proxies to host and mounted url (/cpi)
-        },
-        userResHeaderDecorator(headers, userReq, userRes, proxyReq, proxyRes) {
-            if (userReq.url == '/webshell') headers['Content-Type'] = 'text/plain'
-            return headers
-        },
-        userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
-            return proxyResData.toString('utf8').replaceAll(cpiRuntimeHost + '/http', 'cpi') // replace links back
-        }
-    }))
 
     app.use('/local/webshell/:cmd', (req, res, next) => {
         // for now we assume we are single-user mode with one cmd being processed
