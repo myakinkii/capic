@@ -28,7 +28,7 @@ class MyRemoteService extends cds.Service {
 
         const destination = this.options.credentials
 
-        if (!destination.url) throw new Error('CREDENTIALS_NOT_SET')
+        if (!destination?.url) throw new Error('CREDENTIALS_NOT_SET')
 
         if (!this.authToken) this.authToken = await _getAccessToken(destination)
 

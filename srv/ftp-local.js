@@ -26,9 +26,13 @@ module.exports = cds.service.impl(async function() {
     })
 
     this.on('READ', 'FtpOut', async (req, next) => {
-        return fs.readdirSync(`${FTP_DIR}/out`).map( f => {
-            return {fileName: f, url:`/ftp/out/${f}` }
-        })
+        try {
+            return fs.readdirSync(`${FTP_DIR}/out`).map( f => {
+                return {fileName: f, url:`/ftp/out/${f}` }
+            })
+        } catch (e){
+            throw new Error('NOT_FOUND')
+        }
     })
 
     this.on('DELETE', 'FtpOut', async (req, next) => {
