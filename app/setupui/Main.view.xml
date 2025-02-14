@@ -1,0 +1,40 @@
+<mvc:View
+    height="100%"
+    controllerName="setup.Main"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" >
+    <Page>
+    <content>
+        <Panel expandable="true" expanded="true" class="sapUiMediumMarginTop">
+            <headerToolbar>
+                <Toolbar>
+                    <Title text="{i18n>envPars}" />
+                    <ToolbarSpacer />
+                    <Button custom:pars="envPars" icon="sap-icon://save" press="persistPars"/>
+                </Toolbar>
+            </headerToolbar>
+            <f:SimpleForm editable="true" binding="{/EnvPars}">
+				<Label text="{i18n>CPI_TENANT_URL}" /> <Input value="{CPI_TENANT_URL}" />
+                <Label text="{i18n>CPI_EXPORT_PATH}" /> <Input value="{CPI_EXPORT_PATH}" />
+                <Label text="{i18n>FTP_DIR}" /> <Input value="{FTP_DIR}" />
+                <Label text="{i18n>KARAF_PATH}" /> <Input value="{KARAF_PATH}" />
+            </f:SimpleForm>
+        </Panel>
+        <Panel expandable="true" expanded="true" class="sapUiMediumMarginTop">
+            <headerToolbar>
+                <Toolbar>
+                    <Title text="{i18n>cdsRcPars}" />
+                    <ToolbarSpacer />
+                    <Button custom:pars="cdsRcPars"  icon="sap-icon://save" press="persistPars"/>
+                </Toolbar >
+            </headerToolbar>
+            <f:SimpleForm editable="true" binding="{/CdsRcPars}">
+				<Label text="{i18n>cpi}" /> <TextArea rows="9" value="{cpi}" />
+                <Label text="{i18n>webshell}" /> <TextArea rows="9" value="{webshell}" />
+            </f:SimpleForm>
+        </Panel>
+    </content>
+    </Page>
+</mvc:View>

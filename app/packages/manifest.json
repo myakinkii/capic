@@ -1,0 +1,239 @@
+{
+    "_version": "1.8.0",
+    "sap.app": {
+        "id": "packages",
+        "type": "application",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "dataSources": {
+            "mainService": {
+                "uri": "/odata/v4/cpi-local/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.96.0",
+            "libs": {
+                "sap.ui.core": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "packages.i18n.i18n",
+                    "_bundleUrl": "i18n/i18n.properties"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true,
+                    "groupProperties": {
+                        "default": {
+                            "submit": "Auto"
+                        }
+                    }
+                }
+            }
+        },
+        "routing": {
+            "routes": [
+                {
+                    "name": "IntegrationPackagesListRoute",
+                    "target": "IntegrationPackagesListTarget",
+                    "pattern": ":?query:"
+                },
+                {
+                    "name": "IntegrationPackagesDetailsRoute",
+                    "target": "IntegrationPackagesDetailsTarget",
+                    "pattern": "IntegrationPackages({key}):?query:"
+                },
+                {
+                    "name": "IntegrationDesigntimeArtifactsRoute",
+                    "target": "IntegrationDesigntimeArtifactsTarget",
+                    "pattern": "IntegrationPackages({key})/IntegrationDesigntimeArtifacts({key2}):?query:"
+                },
+                {
+                    "name": "ValueMappingDesigntimeArtifactsRoute",
+                    "target": "ValueMappingDesigntimeArtifactsTarget",
+                    "pattern": "IntegrationPackages({key})/ValueMappingDesigntimeArtifacts({key2}):?query:"
+                },
+                {
+                    "name": "MessageMappingDesigntimeArtifactsRoute",
+                    "target": "MessageMappingDesigntimeArtifactsTarget",
+                    "pattern": "IntegrationPackages({key})/MessageMappingDesigntimeArtifacts({key2}):?query:"
+                },
+                {
+                    "name": "ScriptCollectionDesigntimeArtifactsRoute",
+                    "target": "ScriptCollectionDesigntimeArtifactsTarget",
+                    "pattern": "IntegrationPackages({key})/ScriptCollectionDesigntimeArtifacts({key2}):?query:"
+                },
+                {
+                    "name": "CustomTagsRoute",
+                    "target": "CustomTagsTarget",
+                    "pattern": "IntegrationPackages({key})/CustomTags({key2}):?query:"
+                }
+            ],
+            "targets": {
+                "IntegrationPackagesListTarget": {
+                    "type": "Component",
+                    "id": "IntegrationPackagesListTarget",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages",
+                            "initialLoad": true,
+                            "navigation": {
+                                "IntegrationPackages": {
+                                    "detail": {
+                                        "route": "IntegrationPackagesDetailsRoute"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "IntegrationPackagesDetailsTarget": {
+                    "type": "Component",
+                    "id": "PackageDetails",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "packages.Detail",
+                            "entitySet": "IntegrationPackages",
+                            "navigation": {
+                                "IntegrationDesigntimeArtifacts": {
+                                    "detail": {
+                                        "route": "IntegrationDesigntimeArtifactsRoute"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "_IntegrationPackagesDetailsTarget": {
+                    "type": "Component",
+                    "id": "IntegrationPackagesDetailsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages",
+                            "navigation": {
+                                "IntegrationDesigntimeArtifacts": {
+                                    "detail": {
+                                        "route": "IntegrationDesigntimeArtifactsRoute"
+                                    }
+                                },
+                                "ValueMappingDesigntimeArtifacts": {
+                                    "detail": {
+                                        "route": "ValueMappingDesigntimeArtifactsRoute"
+                                    }
+                                },
+                                "MessageMappingDesigntimeArtifacts": {
+                                    "detail": {
+                                        "route": "MessageMappingDesigntimeArtifactsRoute"
+                                    }
+                                },
+                                "ScriptCollectionDesigntimeArtifacts": {
+                                    "detail": {
+                                        "route": "ScriptCollectionDesigntimeArtifactsRoute"
+                                    }
+                                },
+                                "CustomTags": {
+                                    "detail": {
+                                        "route": "CustomTagsRoute"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "IntegrationDesigntimeArtifactsTarget": {
+                    "type": "Component",
+                    "id": "IntegrationDesigntimeArtifactsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages/IntegrationDesigntimeArtifacts"
+                        }
+                    }
+                },
+                "ValueMappingDesigntimeArtifactsTarget": {
+                    "type": "Component",
+                    "id": "ValueMappingDesigntimeArtifactsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages/ValueMappingDesigntimeArtifacts"
+                        }
+                    }
+                },
+                "MessageMappingDesigntimeArtifactsTarget": {
+                    "type": "Component",
+                    "id": "MessageMappingDesigntimeArtifactsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages/MessageMappingDesigntimeArtifacts"
+                        }
+                    }
+                },
+                "ScriptCollectionDesigntimeArtifactsTarget": {
+                    "type": "Component",
+                    "id": "ScriptCollectionDesigntimeArtifactsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages/ScriptCollectionDesigntimeArtifacts"
+                        }
+                    }
+                },
+                "CustomTagsTarget": {
+                    "type": "Component",
+                    "id": "CustomTagsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "IntegrationPackages/CustomTags"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "contentDensities": {
+        "compact": true,
+        "cozy": true
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth": true,
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    }
+}

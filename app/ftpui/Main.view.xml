@@ -1,0 +1,40 @@
+<mvc:View
+    height="100%"
+    controllerName="ftp_local.Main"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns:suite="sap.suite.ui.microchart"
+    xmlns:macros="sap.fe.macros">
+    <Page>
+    <content>
+        <Panel expandable="true" expanded="true" class="sapUiMediumMarginTop">
+            <headerToolbar>
+                <Toolbar>
+                    <Title text="OUT" />
+                    <ToolbarSpacer />
+                    <!-- <ToggleButton text="{i18n>toggleEditMode}" selected="{ui>/isEditable}" press="onSelectEdit" /> -->
+                    <Link text="refresh" press="forceRefresh" />
+                    <ToolbarSpacer/>
+                    <Link href="/ftp/out/" text="{i18n>navToOut}" icon="sap-icon://folder" press="openFtp"/>
+                </Toolbar >
+            </headerToolbar>
+            <macros:Table id="macroTable" metaPath="/FtpOut/@com.sap.vocabularies.UI.v1.LineItem" personalization="false" enableExport="false" enablePaste="false" />
+        </Panel>
+        <Panel binding="{/FtpIn}" expandable="true" expanded="true" class="sapUiMediumMarginTop">
+            <headerToolbar>
+                <Toolbar>
+                    <Title text="IN" />
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://delete" type="Reject" press="unlinkInFile" />
+                    <Title enabled="false" text="fileName: {fileName}" fieldGroupIds="input" />
+                    <Link href="/ftp/in/{fileName}" text="{i18n>checkFile}" icon="sap-icon://download" press="openFtp"/>
+                    <ToolbarSpacer/>
+                    <Link href="/ftp/in_cache/" text="{i18n>navToCache}" icon="sap-icon://folder" press="openFtp"/>
+                </Toolbar>
+            </headerToolbar>
+            <TextArea width="100%" growing="true" placeholder="{i18n>contentPlaceholer}" value="{content}" fieldGroupIds="input" />
+        </Panel>
+    </content>
+    </Page>
+</mvc:View>

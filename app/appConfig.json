@@ -1,0 +1,277 @@
+{
+    "bootstrapPlugins": {},
+    "services": {
+        "LaunchPage": {
+            "adapter": {
+                "config": {
+                    "catalogs": [],
+                    "groups": [
+                        {
+                            "id": "Home",
+                            "title": "Setup",
+                            "tiles": [
+                                {
+                                    "id": "setup_project",
+                                    "title": "Setup",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Setup",
+                                        "subtitle": "Auth and Paths",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#project-setup"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": "Cpi",
+                            "title": "CPI",
+                            "isPreset": true,
+                            "isVisible": true,
+                            "isGroupLocked": false,
+                            "tiles": [
+                                {
+                                    "id": "browse_package",
+                                    "title": "Packages",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Packages",
+                                        "subtitle": "Integration Packages",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#package-browse"
+                                    }
+                                },
+                                {
+                                    "id": "browse_runtime",
+                                    "title": "Runtime Artifacts",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Artifacts",
+                                        "subtitle": "Deployed Artifacts",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#runtime-browse"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": "FTP",
+                            "title": "Ftp",
+                            "isPreset": true,
+                            "isVisible": true,
+                            "isGroupLocked": false,
+                            "tiles": [
+                                {
+                                    "id": "browse_ftp",
+                                    "title": "Local FTP content",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Local FTP",
+                                        "subtitle": "Browse files",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#ftp-browse"
+                                    }
+                                },
+                                {
+                                    "id": "write_ftp",
+                                    "title": "Input data",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Local Ftp",
+                                        "subtitle": "Input data",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#ftp-write"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": "Magic",
+                            "title": "Magic",
+                            "isPreset": true,
+                            "isVisible": true,
+                            "isGroupLocked": false,
+                            "tiles": [
+                                {
+                                    "id": "browse_files",
+                                    "title": "Remote FS",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "File browser",
+                                        "subtitle": "REMOTE",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#files-browse"
+                                    }
+                                },
+                                {
+                                    "id": "run_commands",
+                                    "title": "Karaf webshell",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Karaf webshell",
+                                        "subtitle": "REMOTE",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#webshell-run"
+                                    }
+                                },
+                                {
+                                    "id": "local_commands",
+                                    "title": "Karaf webshell",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Karaf webshell",
+                                        "subtitle": "LOCAL",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#webshell-local"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "_NavTargetResolution": {
+            "config": {
+                "enableClientSideTargetResolution": true
+            }
+        },
+        "ClientSideTargetResolution": {
+            "adapter": {
+                "config": {
+                    "inbounds": {
+                        "setup_project": {
+                            "semanticObject": "project",
+                            "action": "setup",
+                            "title": "Setup Project",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "SAPUI5",
+                                "additionalInformation": "SAPUI5.Component=setup",
+                                "url": "./setupui"
+                            }
+                        },
+                        "browse_package": {
+                            "semanticObject": "package",
+                            "action": "browse",
+                            "title": "Integration Packages",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "SAPUI5",
+                                "additionalInformation": "SAPUI5.Component=packages",
+                                "url": "./packages",
+                                "_url": "$fiori-preview/CpiLocalService/IntegrationPackages/app"
+                            }
+                        },
+                        "browse_runtime": {
+                            "semanticObject": "runtime",
+                            "action": "browse",
+                            "title": "Rutime Objects",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "SAPUI5",
+                                "additionalInformation": "SAPUI5.Component=browse_runtime",
+                                "url": "$fiori-preview/CpiLocalService/IntegrationRuntimeArtifacts/app"
+                            }
+                        },
+                        "browse_files": {
+                            "semanticObject": "files",
+                            "action": "browse",
+                            "title": "Remote FS",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "URL",
+                                "url": "/cpi/file_browse/home/vcap/app",
+                                "navigationMode": "embedded"
+                            }
+                        },
+                        "run_commands": {
+                            "semanticObject": "webshell",
+                            "action": "run",
+                            "title": "Karaf commands",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "URL",
+                                "url": "/cpi/webshell/info",
+                                "navigationMode": "embedded"
+                            }
+                        },
+                        "local_commands": {
+                            "semanticObject": "webshell",
+                            "action": "local",
+                            "title": "Karaf commands",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "URL",
+                                "url": "/local/webshell/info",
+                                "navigationMode": "embedded"
+                            }
+                        },
+                        "browse_ftp": {
+                            "semanticObject": "ftp",
+                            "action": "browse",
+                            "title": "Ftp content",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "URL",
+                                "url": "/ftp",
+                                "navigationMode": "embedded"
+                            }
+                        },
+                        "write_ftp": {
+                            "semanticObject": "ftp",
+                            "action": "write",
+                            "title": "Write file to ftp IN",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "SAPUI5",
+                                "additionalInformation": "SAPUI5.Component=ftp_local",
+                                "url": "./ftpui"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

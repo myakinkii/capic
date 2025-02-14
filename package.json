@@ -1,0 +1,46 @@
+{
+  "name": "capic",
+  "version": "1.0.0",
+  "description": "A simple CAP project to do something with CPI artifacts",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^8",
+    "axios": "^1.7.9",
+    "express": "^4",
+    "express-http-proxy": "^2.1.1",
+    "ftp-srv": "^4.6.3",
+    "json-beautify": "^1.1.1",
+    "moment": "^2.30.1",
+    "serve-index": "^1.9.1",
+    "xml-formatter": "^3.6.4",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "cds-launchpad-plugin": "^2.2.0"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "cpi": {
+        "kind": "odata-v2",
+        "model": "srv/external/cpi",
+        "impl": "srv/lib/MyRemoteServiceApi.js"
+      },
+      "webshell": {
+        "impl": "srv/lib/MyRemoteServiceWebshell.js"
+      }
+    },
+    "launchpad": {
+      "theme": "sap_horizon",
+      "version": "1.120.1",
+      "basePath": "/$launchpad",
+      "appConfigPath": "./app/appConfig.json",
+      "_appConfigPath": "/Users/alex/DEV/camel/capic/app/appConfig.json"
+    }
+  }
+}

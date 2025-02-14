@@ -1,0 +1,94 @@
+{
+    "_version": "1.8.0",
+    "sap.app": {
+        "id": "ftp_local",
+        "type": "application",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "dataSources": {
+            "mainService": {
+                "uri": "/odata/v4/ftp-local/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth": true,
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "contentDensities": {
+        "compact": true,
+        "cozy": true
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.96.0",
+            "libs": {
+                "sap.ui.core": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "ftp_local.i18n.i18n",
+                    "_bundleUrl": "i18n/i18n.properties"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true,
+                    "groupProperties": {
+                        "default": {
+                            "submit": "Auto"
+                        }
+                    }
+                }
+            }
+        },
+        "routing": {
+            "routes": [
+                {
+                    "name": "MainRoute",
+                    "target": "customPage",
+                    "pattern": ":?query:"
+                }
+            ],
+            "targets": {
+                "customPage": {
+                    "type": "Component",
+                    "id": "Main",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "ftp_local.Main",
+                            "_contextPath": "/FtpIn",
+                            "entitySet": "FtpIn"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
