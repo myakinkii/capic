@@ -64,7 +64,7 @@
                 {
                     "name": "IntegrationPackagesDetailsRoute",
                     "target": "IntegrationPackagesDetailsTarget",
-                    "pattern": "IntegrationPackages({key}):?query:"
+                    "pattern": "IntegrationPackages({key})"
                 },
                 {
                     "name": "IntegrationDesigntimeArtifactsRoute",

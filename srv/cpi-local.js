@@ -26,8 +26,16 @@ module.exports = cds.service.impl(async function() {
         return deployBundleToKaraf(pckgId, bundleId)
     })
   
-    this.on('READ', 'IntegrationPackages', async (req, next) => cpi.run(req.query) )
+    this.on('READ', 'IntegrationPackages', async (req, next) => {
+        const result = await cpi.run(req.query)
+        Object.values( req.query.SELECT.one ? [result]: result ).forEach( r => { // can have single package or list here
+            r.PackageURL = `${CPI_TENANT_URL}/shell/design/contentpackage/${r.Id}?section=ARTIFACTS`
+        })
+        return result
+    })
+
     this.on('READ', 'IntegrationDesigntimeArtifacts', async (req, next) => cpi.run(req.query) )
+
     this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
         if (req.params.length){ // via nav property
             const [ {Id:pckgId}, {Id, Version} ] = req.params
@@ -35,6 +43,7 @@ module.exports = cds.service.impl(async function() {
             req.query = q
         }
         const result = await cpi.run(req.query)
+        if (result.length > 1 ) return result // only allow one by one
         for (let r of result ){
             const headers = await webshell.run(`headers ${r.Id}`)
             const [_,artifactId] = headers.split("\n").find( l => l.startsWith('SAP-ArtifactId')).split(" = ")

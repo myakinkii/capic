@@ -4,7 +4,10 @@ service CpiLocalService {
 
     @readonly
     entity IntegrationPackages            as
-        projection on external.IntegrationPackages
+        projection on external.IntegrationPackages {
+            *,
+            '' as PackageURL : String
+        }
         excluding {
             PackageContent,
             blob
