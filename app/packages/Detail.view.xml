@@ -7,17 +7,20 @@
     xmlns:suite="sap.suite.ui.microchart"
     xmlns:macros="sap.fe.macros">
 <Page >
-    <Table width="100%" binding="{pkg>/}" growing="true" items="{pkg>IntegrationDesigntimeArtifacts}">
+    <Table width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
+        items="{pkg>IntegrationDesigntimeArtifacts}">
         <headerToolbar>
             <Toolbar width="100%">
-                <Label text="[OUR] IntegrationDesigntimeArtifacts ({pkg>IntegrationDesigntimeArtifactsCount})"/>
+                <Label text="[PKG] IntegrationDesigntimeArtifacts ({pkg>IntegrationDesigntimeArtifactsCount})"/>
                 <ToolbarSpacer/>
-                <SearchField width="20rem" liveChange="onSearch"/>
+                <CheckBox text="{i18n>filterDeployed}" selected="{ui>/filter/IsDeployed}" select="filterDTArtifacts" />
+                <CheckBox text="{i18n>filterDrafts}" selected="{ui>/filter/HasDraft}" select="filterDTArtifacts" />
+                <SearchField width="20rem" liveChange="searchArtifacts"/>
                 <Button icon="sap-icon://chain-link" press="gotoPackage"/>
             </Toolbar>
         </headerToolbar>
         <columns>
-            <Column>
+            <Column width="25rem">
                 <Label text="{i18n>ID}"/>
             </Column>
             <Column>
@@ -37,20 +40,35 @@
             </Column>
         </columns>
         <items>
-            <ColumnListItem vAlign="Middle">
+            <ColumnListItem type="Navigation" press="navtoDTArtifacts" vAlign="Middle">
                 <cells>
                     <ObjectIdentifier text="{pkg>Id}" title="{pkg>Name}"/>
                     <Text text="{pkg>Description}"/>
                     <Text text="{pkg>Runtime/Type}"/>
                     <ObjectStatus text="{pkg>Runtime/Status}"/>
-                    <Link text="{pkg>Version}"/>
+                    <!-- <Link text="{pkg>Runtime/Version} / {pkg>Version}"/> -->
+                    <ObjectNumber  active="true" inverted="true"
+                        number="{
+                            parts:[
+                                {path: 'pkg>Runtime/Version'},
+                                {path: 'pkg>Version'}
+                            ],
+                            formatter: '.formatVersion'
+                        }"
+                        state="{
+                            parts:[
+                                {path: 'pkg>Runtime/Version'},
+                                {path: 'pkg>Version'}
+                            ],
+                            formatter: '.formatVersionStatus'
+                        }" />
                     <Button icon="sap-icon://action" />
                 </cells>
             </ColumnListItem>
         </items>
     </Table>
 
-    <Table width="100%" binding="{pkg>/}" 
+    <Table width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
 		items="{
 			path : 'pkg>IntegrationRuntimeArtifacts',
 			filters:[{path:'Type', operator: 'NE', value1: 'INTEGRATION_FLOW'}],
@@ -60,12 +78,12 @@
             <Toolbar width="100%">
                 <Label text="[ALL] IntegrationRuntimeArtifacts"/>
                 <ToolbarSpacer/>
-                <SearchField width="20rem" liveChange="onSearch"/>
-                <!-- <Button icon="sap-icon://sort" id="workspaceSortColumns"/> -->
+                <SearchField width="20rem" liveChange="searchArtifacts"/>
+                <Button icon="sap-icon://chain-link" press="gotoMonitoring"/>
             </Toolbar>
         </headerToolbar>
         <columns>
-            <Column>
+            <Column width="25rem">
                 <Label text="{i18n>ID}"/>
             </Column>
             <Column>
@@ -88,10 +106,15 @@
             <ColumnListItem vAlign="Middle">
                 <cells>
                     <ObjectIdentifier text="{pkg>Id}" title="{pkg>Name}"/>
-                    <Text text="{pkg>DeployedOn} {pkg>DeployedBy}"/>
+                    <Text text="{
+                            path: 'pkg>DeployedOn',
+							type: 'sap.ui.model.odata.type.DateTimeOffset', 
+							formatOptions: { style:'short' }
+                        } {pkg>DeployedBy}"/>
                     <Text text="{pkg>Type}"/>
                     <ObjectStatus text="{pkg>Status}"/>
-                    <Link text="{pkg>Version}"/>
+                    <!-- <Link text="{pkg>Version}"/> -->
+                    <ObjectNumber  active="true" inverted="true" number="{pkg>Version}" />
                     <Button icon="sap-icon://action" />
                 </cells>
             </ColumnListItem>
