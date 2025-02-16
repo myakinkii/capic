@@ -3,8 +3,8 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
     "sap/ui/model/Filter",
-    "sap/ui/core/BusyIndicator", "sap/m/MessageBox",
-], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageBox) {
+    "sap/ui/core/BusyIndicator", "sap/m/MessageToast",
+], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageToast) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -125,21 +125,73 @@ sap.ui.define([
         },
 
         gotoOperations: function (e) {
-            var odataCtx = this.getView().getBindingContext()
+            var pkgOdataCtx = this.getView().getBindingContext()
             var ctx = e.getSource().getBindingContext("pkg")
             var rt = ctx.getProperty("Runtime") || ctx.getObject()
-            if (!rt.Id) return MessageBox.show('NOT_DEPLOYED')
-            var url = `${odataCtx.getModel().getServiceUrl()}${odataCtx.getPath()}`
-            url += `/IntegrationDesigntimeArtifacts(Id='${rt.Id}',Version='${rt.Version}')`
-            url += `/IntegrationRuntimeArtifacts`
+            if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
+                
+            var url = `${pkgOdataCtx.getModel().getServiceUrl()}IntegrationRuntimeArtifacts('${rt.Id}')`
             BusyIndicator.show(50)
             promisedFetch(url).then(function (res) {
                 BusyIndicator.hide()
-                if (res.value.length == 0) return MessageBox.show('NOT_FOUND')
-                sap.m.URLHelper.redirect(res.value[0].DeployURL, true)
+                sap.m.URLHelper.redirect(res.DeployURL, true)
             }).catch(function (err) {
                 BusyIndicator.hide()
-                MessageBox.show('ERROR')
+                MessageToast.show('ERROR')
+            })
+        },
+
+        syncGit: function (e) {
+            var pkgOdataCtx = this.getView().getBindingContext()
+            var ctx = e.getSource().getBindingContext("pkg")
+            var rt = ctx.getProperty("Runtime") || ctx.getObject()
+            if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
+
+            var rtOdataCtx = pkgOdataCtx.getModel().bindContext(`/IntegrationRuntimeArtifacts('${rt.Id}')`)
+            navigator.clipboard.readText().then(function(res){
+                // BusyIndicator.show(50)
+                return this.editFlow.invokeAction('CpiLocalService.syncGitToPackage', {
+                    contexts: rtOdataCtx,
+                    parameterValues: [
+                        { name: "pckgId", value: pkgOdataCtx.getProperty("Id") },
+                        { name: "xmlString", value: res },
+                        { name: "version", value: rt.Version }
+                    ],
+                    skipParameterDialog: false
+                })
+            }.bind(this)).then(function (res) {
+                // BusyIndicator.hide()
+                MessageToast.show(res.getObject().value)
+            }).catch(function (err) {
+                // BusyIndicator.hide()
+                console.log(err)
+                // MessageToast.show('ERROR')
+            })
+        },
+
+        deployKaraf: function (e) {
+            var pkgOdataCtx = this.getView().getBindingContext()
+            var ctx = e.getSource().getBindingContext("pkg")
+            var rt = ctx.getProperty("Runtime") || ctx.getObject()
+            if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
+
+            var rtOdataCtx = pkgOdataCtx.getModel().bindContext(`/IntegrationRuntimeArtifacts('${rt.Id}')`)
+            navigator.clipboard.readText().then(function(res){
+                // BusyIndicator.show(50)
+                return this.editFlow.invokeAction('CpiLocalService.deployKarafFromPackage', {
+                    contexts: rtOdataCtx,
+                    parameterValues: [
+                        { name: "pckgId", value: pkgOdataCtx.getProperty("Id") }
+                    ],
+                    skipParameterDialog: true
+                })
+            }.bind(this)).then(function (res) {
+                // BusyIndicator.hide()
+                MessageToast.show(res.getObject().value)
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                console.log(err)
+                // MessageToast.show('ERROR')
             })
         },
 

@@ -6,13 +6,32 @@ const CPI_EXPORT_PATH = process.env.CPI_EXPORT_PATH
 const KARAF_PATH = process.env.KARAF_PATH
 
 const deployBundleToKaraf = async (pckgId, bundleId) => {
-    if (!KARAF_PATH) throw new Error('KARAF_PATH_NOT_SET')
-    try {
-        execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/OSGI-INF/blueprint/beans.xml ${KARAF_PATH}/deploy/${bundleId}.xml`)
-    } catch (err) {
-        console.error(err.message)
-        throw new Error('DEPLOY_FAILED')
+
+    const fromBeans = () => {
+        try {
+            const beanPath = 'OSGI-INF/blueprint/beans.xml'
+            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${beanPath} ${KARAF_PATH}/deploy/${bundleId}.xml`)
+            return beanPath
+        } catch (err) {
+            return false
+        }
     }
+
+    const fromJar = () => {
+        try {
+            const bundlePath = 'bundle.jar'
+            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${bundlePath} ${KARAF_PATH}/deploy/${bundleId}.jar`)
+            return bundlePath
+        } catch (err) {
+            return false
+        }
+    }
+
+    if (!KARAF_PATH) throw new Error('KARAF_PATH_NOT_SET')
+    let from
+    if (from = fromBeans()) return from
+    else if (from = fromJar()) return from
+    else throw new Error('DEPLOY_FAILED')
 }
 
 const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMsg, xmlString) => {
@@ -50,7 +69,9 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
         fs.writeFileSync(fileName, buffer)
         execSync('unzip -o bundle.jar', { cwd: exportDir })
 
-        execSync(`git add . && git commit -m '${bundleId} - ${bundleVersion} - ${commitMsg}'`, { cwd: exportDir })
+        const msg = `${bundleId} - ${bundleVersion} - ${commitMsg}`
+        execSync(`git add . && git commit -m '${msg}'`, { cwd: exportDir })
+        return msg
     } catch (err) {
         const errMsg = err.stderr?.toString() || err.stdout?.toString() || err.message
         console.error(errMsg)

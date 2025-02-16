@@ -1,5 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
     <ActionSheet>
         <Button text="{i18n>gotoOperations}" icon="sap-icon://chain-link" press="gotoOperations" />
+        <Button text="{i18n>syncGit}" icon="sap-icon://tree" press="syncGit" />
+        <Button text="{i18n>deployKaraf}" icon="sap-icon://developer-settings" press="deployKaraf" />
     </ActionSheet>
 </core:FragmentDefinition>

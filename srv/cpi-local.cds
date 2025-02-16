@@ -28,22 +28,18 @@ service CpiLocalService {
         excluding {
             ArtifactContent,
             blob
-        }
-        actions {
-            action syncGit(xmlString : LargeString, commitMsg : String) returns String;
-            action deployKaraf()                                        returns String;
         };
 
     @readonly
     entity IntegrationRuntimeArtifacts         as
         projection on external.IntegrationRuntimeArtifacts {
             key Id,
-            key Version,
                 *,
                 '' as DeployURL : String
         }
         actions {
-            action syncGitPackage(pckgId : String, xmlString : LargeString, commitMsg : String) returns String;
+            action syncGitToPackage(pckgId : String not null, xmlString : LargeString not null, version : String, commitMsg : String) returns String;
+            action deployKarafFromPackage(pckgId : String not null)                                                                   returns String;
         };
 
     @readonly
@@ -72,13 +68,14 @@ annotate CpiLocalService.IntegrationPackages with @UI: {
         Title         : {Value: Id},
         Description   : {Value: Name}
     },
-    Facets    : [{
-        $Type : 'UI.ReferenceFacet',
-        Target: 'IntegrationDesigntimeArtifacts/@UI.LineItem',
-        Label : '{i18n>IntegrationDesigntimeArtifacts}'
-    }]
+// Facets    : [{
+//     $Type : 'UI.ReferenceFacet',
+//     Target: 'IntegrationDesigntimeArtifacts/@UI.LineItem',
+//     Label : '{i18n>IntegrationDesigntimeArtifacts}'
+// }]
 };
 
+/*
 annotate CpiLocalService.IntegrationDesigntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
 
 annotate CpiLocalService.IntegrationDesigntimeArtifacts with @UI: {
@@ -113,7 +110,7 @@ annotate CpiLocalService.IntegrationDesigntimeArtifacts with @UI: {
         Label : '{i18n>IntegrationRuntimeArtifacts}'
     }]
 };
-
+*/
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
 
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
@@ -133,12 +130,20 @@ annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
         Url  : DeployURL,
         $Type: 'UI.DataFieldWithUrl'
     }]},
-    Identification      : [{
-        $Type : 'UI.DataFieldForAction',
-        Action: 'CpiLocalService.syncGitPackage',
-        Inline: true,
-        Label : '{i18n>syncGit}'
-    }, ],
+    Identification      : [
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CpiLocalService.syncGitToPackage',
+            Inline: true,
+            Label : '{i18n>syncGit}'
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'CpiLocalService.deployKarafFromPackage',
+            Inline: true,
+            Label : '{i18n>deployKaraf}'
+        }
+    ],
     LineItem            : [
         {Value: Id},
         {Value: Type},
