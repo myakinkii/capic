@@ -3,7 +3,7 @@ using {cpi as external} from '../srv/external/cpi';
 service CpiLocalService {
 
     @readonly
-    entity IntegrationPackages            as
+    entity IntegrationPackages                 as
         projection on external.IntegrationPackages {
             *,
             '' as PackageURL : String
@@ -14,7 +14,7 @@ service CpiLocalService {
         };
 
     @readonly
-    entity IntegrationDesigntimeArtifacts as
+    entity IntegrationDesigntimeArtifacts      as
         select from external.IntegrationDesigntimeArtifacts
         mixin {
             IntegrationRuntimeArtifacts : Association to many IntegrationRuntimeArtifacts
@@ -35,7 +35,7 @@ service CpiLocalService {
         };
 
     @readonly
-    entity IntegrationRuntimeArtifacts    as
+    entity IntegrationRuntimeArtifacts         as
         projection on external.IntegrationRuntimeArtifacts {
             key Id,
             key Version,
@@ -45,6 +45,15 @@ service CpiLocalService {
         actions {
             action syncGitPackage(pckgId : String, xmlString : LargeString, commitMsg : String) returns String;
         };
+
+    @readonly
+    entity ScriptCollectionDesigntimeArtifacts as projection on external.ScriptCollectionDesigntimeArtifacts;
+
+    @readonly
+    entity ValueMappingDesigntimeArtifacts     as projection on external.ValueMappingDesigntimeArtifacts;
+
+    @readonly
+    entity MessageMappingDesigntimeArtifacts   as projection on external.MessageMappingDesigntimeArtifacts;
 }
 
 
@@ -108,30 +117,34 @@ annotate CpiLocalService.IntegrationDesigntimeArtifacts with @UI: {
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
 
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
-    HeaderInfo   : {
+    HeaderInfo          : {
         TypeName      : '{i18n>IntegrationRuntimeArtifact}',
         TypeNamePlural: '{i18n>IntegrationRuntimeArtifacts}',
         Title         : {Value: Id},
         Description   : {Value: Name}
     },
-    LineItem     : [
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CpiLocalService.syncGitPackage',
-            Inline: true,
-            Label : '{i18n>syncGit}'
-        },
+    HeaderFacets        : [{
+        $Type : 'UI.ReferenceFacet',
+        Target: '@UI.FieldGroup#Deployed',
+    }],
+    FieldGroup #Deployed: {Data: [{
+        Label: '{i18n>DeployedOn}',
+        Value: DeployedOn,
+        Url  : DeployURL,
+        $Type: 'UI.DataFieldWithUrl'
+    }]},
+    Identification      : [{
+        $Type : 'UI.DataFieldForAction',
+        Action: 'CpiLocalService.syncGitPackage',
+        Inline: true,
+        Label : '{i18n>syncGit}'
+    }, ],
+    LineItem            : [
         {Value: Id},
         {Value: Type},
-        {Value: Version},
-        {
-            Label: '{i18n>DeployedOn}',
-            Value: DeployedOn,
-            Url  : DeployURL,
-            $Type: 'UI.DataFieldWithUrl'
-        }
+        {Value: Version}
     ],
-    LineItem #EXT: [
+    LineItem #EXT       : [
         {Value: Type},
         {Value: Version},
         {

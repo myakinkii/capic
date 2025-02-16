@@ -34,11 +34,19 @@ module.exports = cds.service.impl(async function() {
         return result
     })
 
+    // READABLE ONLY VIA PACKAGE NAV PROPERTY
     this.on('READ', 'IntegrationDesigntimeArtifacts', async (req, next) => cpi.run(req.query) )
+    this.on('READ', 'ScriptCollectionDesigntimeArtifacts', async (req, next) => cpi.run(req.query) )
+    this.on('READ', 'ValueMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query) )
+    this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query) )
 
     this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
-        if (req.params.length){ // via nav property
+        if (req.params.length == 2){ // via nav property pkg -> runtime
             const [ {Id:pckgId}, {Id, Version} ] = req.params
+            const q = SELECT.from('IntegrationRuntimeArtifacts').where({Id, Version})
+            req.query = q
+        } else if (req.params.length == 1){ // details
+            const [ {Id, Version} ] = req.params
             const q = SELECT.from('IntegrationRuntimeArtifacts').where({Id, Version})
             req.query = q
         }

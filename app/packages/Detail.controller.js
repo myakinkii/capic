@@ -6,6 +6,10 @@ sap.ui.define([
 ], function (PageController, JSONModel, Filter, BusyIndicator) {
     "use strict";
 
+    var promisedFetch = (url) => new Promise((resolve, reject) => {
+        return fetch(url).then(res => res.ok ? res.json() : Promise.reject(res.status)).then(resolve).catch(reject)
+    })
+
     return PageController.extend("packages.Detail", {
 
         onInit: function () {
@@ -28,7 +32,7 @@ sap.ui.define([
             var packageUrl = cfg.pattern.replace('{key}', pars.key)
             BusyIndicator.show()
             this.fetchModelDataFor(serviceUrl, packageUrl).then(function (res) {
-                this.getView().getModel("pkg").setData(this.enrichData(res))
+                this.getView().getModel("pkg").setData(res)
                 BusyIndicator.hide()
             }.bind(this)).catch(function (err) {
                 BusyIndicator.hide()
@@ -37,32 +41,45 @@ sap.ui.define([
         },
 
         fetchModelDataFor: function (serviceUrl, pkgUrl) {
-            var promisedFetch = (url) => new Promise((resolve, reject) => {
-                return fetch(url).then(res => res.ok ? res.json() : Promise.reject(res.status)).then(resolve).catch(reject)
-            })
             return Promise.all([
                 promisedFetch(serviceUrl + pkgUrl),
                 promisedFetch(serviceUrl + pkgUrl + '/IntegrationDesigntimeArtifacts'),
+                promisedFetch(serviceUrl + pkgUrl + '/ScriptCollectionDesigntimeArtifacts'),
+                promisedFetch(serviceUrl + pkgUrl + '/ValueMappingDesigntimeArtifacts'),
+                promisedFetch(serviceUrl + pkgUrl + '/MessageMappingDesigntimeArtifacts'),
                 promisedFetch(serviceUrl + 'IntegrationRuntimeArtifacts')
             ]).then(function (res) {
-                return Object.assign(res[0],
-                    { IntegrationDesigntimeArtifacts: res[1].value },
-                    { IntegrationRuntimeArtifacts: res[2].value }
-                )
+
+                var data = res.shift() // header
+                data["DesigntimeArtifacts"] = []
+
+                var rtArts = res.pop().value // all stuff, cuz osgi bundles have idea of packages
+                data["RuntimeArtifacts"] = rtArts // for stuff in second table (see "Claimed" flag below and in xml)
+
+                var deployed = rtArts.reduce((prev, cur) => Object.assign(prev, { [cur.Id]: cur }), {})
+
+                res.forEach( artifactType => {
+
+                    artifactType.value.forEach( a => {
+
+                        Object.assign(a, { Runtime: deployed[a.Id] || {} })
+                        if (a.Runtime["Id"]) deployed[a.Id]["Claimed"] = true // to filter out others
+
+                        a["IsDeployed"] = !!a.Runtime["Version"]
+                        a["HasDraft"] = a.Runtime["Id"] && a["Version"] != a.Runtime["Version"]
+                        a["Type"] = artifactType["@odata.context"].match(/.*#(\w+)Design/)[1] // because I can )
+        
+                    })
+                    data["DesigntimeArtifacts"].push(...artifactType.value)
+                })
+                rtArts.forEach( r => r.Claimed = !!r.Claimed ) // filter fn is not called for undefined (
+                data["DesigntimeArtifactsCount"] = data["DesigntimeArtifacts"].length
+                return data
             })
         },
 
-        enrichData: function (data) {
-            var dtArts = data["IntegrationDesigntimeArtifacts"] // only current package
-            var rtArts = data["IntegrationRuntimeArtifacts"] // all stuff, cuz osgi bundles have idea of packages
-            var deployed = rtArts.reduce((prev, cur) => Object.assign(prev, { [cur.Id]: cur }), {})
-            dtArts.forEach(a => {
-                Object.assign(a, { Runtime: deployed[a.Id] || {} })
-                a["IsDeployed"] = !!a.Runtime["Version"]
-                a["HasDraft"] = a.Runtime && a["Version"] != a.Runtime["Version"]
-            })
-            data["IntegrationDesigntimeArtifactsCount"] = dtArts.length
-            return data
+        filterClaimed:function(claimed){
+            return !claimed // not used for now
         },
 
         gotoPackage: function (e) {

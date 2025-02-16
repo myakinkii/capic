@@ -8,10 +8,10 @@
     xmlns:macros="sap.fe.macros">
 <Page >
     <Table width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
-        items="{pkg>IntegrationDesigntimeArtifacts}">
+        items="{pkg>DesigntimeArtifacts}">
         <headerToolbar>
             <Toolbar width="100%">
-                <Label text="[PKG] IntegrationDesigntimeArtifacts ({pkg>IntegrationDesigntimeArtifactsCount})"/>
+                <Label text="[PKG] DesigntimeArtifacts ({pkg>DesigntimeArtifactsCount})"/>
                 <ToolbarSpacer/>
                 <CheckBox text="{i18n>filterDeployed}" selected="{ui>/filter/IsDeployed}" select="filterDTArtifacts" />
                 <CheckBox text="{i18n>filterDrafts}" selected="{ui>/filter/HasDraft}" select="filterDTArtifacts" />
@@ -44,7 +44,7 @@
                 <cells>
                     <ObjectIdentifier text="{pkg>Id}" title="{pkg>Name}"/>
                     <Text text="{pkg>Description}"/>
-                    <Text text="{pkg>Runtime/Type}"/>
+                    <Text text="{pkg>Type}"/>
                     <ObjectStatus text="{pkg>Runtime/Status}"/>
                     <!-- <Link text="{pkg>Runtime/Version} / {pkg>Version}"/> -->
                     <ObjectNumber  active="true" inverted="true"
@@ -70,13 +70,14 @@
 
     <Table width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
 		items="{
-			path : 'pkg>IntegrationRuntimeArtifacts',
-			filters:[{path:'Type', operator: 'NE', value1: 'INTEGRATION_FLOW'}],
+			path : 'pkg>RuntimeArtifacts',
+			filters:[{ path:'Claimed', operator: 'NE', value1: true }],
+            _filters:[{ path:'Claimed', test:'.filterClaimed' }],
 			sorter : { path : 'DeployedOn', descending : true }
 		}">
         <headerToolbar>
             <Toolbar width="100%">
-                <Label text="[ALL] IntegrationRuntimeArtifacts"/>
+                <Label text="[OTHER] RuntimeArtifacts"/>
                 <ToolbarSpacer/>
                 <SearchField width="20rem" liveChange="searchArtifacts"/>
                 <Button icon="sap-icon://chain-link" press="gotoMonitoring"/>
