@@ -43,7 +43,7 @@
             </Column>
         </columns>
         <items>
-            <ColumnListItem _type="Navigation" press="navtoDTArtifacts" vAlign="Middle">
+            <ColumnListItem type="Navigation" press="navtoDTArtifacts" vAlign="Middle">
                 <cells>
                     <ObjectIdentifier text="{pkg>Id}" title="{pkg>Name}"/>
                     <Text text="{pkg>Description}"/>

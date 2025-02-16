@@ -40,9 +40,8 @@ sap.ui.define([
 
         onRouteMatched: function (e) {
             var pars = e.getParameter("arguments")
-            var cfg = e.getParameter("config")
             var serviceUrl = this.getView().getModel().getServiceUrl()
-            var packageUrl = cfg.pattern.replace('{key}', pars.key)
+            var packageUrl = `/IntegrationPackages(${pars.key})`
             BusyIndicator.show(50)
             this.fetchModelDataFor(serviceUrl, packageUrl).then(function (res) {
                 this.getView().getModel("pkg").setData(res)
@@ -110,6 +109,9 @@ sap.ui.define([
 
         navtoDTArtifacts: function (e) {
             var ctx = e.getSource().getBindingContext("pkg").getObject()
+            // var fakePath = `/IntegrationPackages('${ctx.PackageId}')/FakeDesigntimeArtifacts(Id='${ctx.Id}',Type='${ctx.Type}')`
+            // var fakeCtx = this.getView().getModel().bindContext(fakePath)
+            // this.routing.navigate(fakeCtx)
             this.routing.navigateToRoute("FakeDesigntimeArtifactsRoute", {
                 key: `'${ctx.PackageId}'`,
                 key2: `Id='${ctx.Id}',Type='${ctx.Type}'`

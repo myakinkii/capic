@@ -37,10 +37,20 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', 'ValueMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
 
+    const mapToArtifactDT = {
+        INTEGRATION_FLOW: 'integrationflows',
+        SCRIPT_COLLECTION: 'scriptcollections',
+        VALUE_MAPPING: 'valuemappings',
+        MESSAGE_MAPPING: 'messagemappings'
+    }
+
     this.on('READ', 'FakeDesigntimeArtifacts', async (req, next) => {
         if (req.params.length == 2) { // detail-detail
-            const [_, { Id, Type }] = req.params
-            return { Id, Type } // just echo for now
+            const [{ Id: PackageId }, { Id, Type }] = req.params
+            return {
+                Id, Type, PackageId,
+                ArtifactURL: `${CPI_TENANT_URL}/shell/design/contentpackage/${PackageId}/${mapToArtifactDT[Type]}/${Id}`
+            }
         } else return next()
     })
 

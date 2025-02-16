@@ -21,11 +21,10 @@ service CpiLocalService {
 
     @readonly
     entity FakeDesigntimeArtifacts {
-        key Id        : String;
-        key Type      : String;
-            Name      : String;
-            Version   : String;
-            PackageId : String;
+        key Id          : String;
+        key Type        : String;
+            PackageId   : String;
+            ArtifactURL : String;
     }
 
     @readonly
@@ -71,12 +70,25 @@ annotate CpiLocalService.IntegrationPackages with @UI: {
     }
 };
 
-annotate CpiLocalService.FakeDesigntimeArtifacts with @UI: {HeaderInfo: {
-    TypeName      : '{i18n>DesigntimeArtifacts}',
-    TypeNamePlural: '{i18n>DesigntimeArtifacts}',
-    Title         : {Value: Id},
-    Description   : {Value: Name}
-}, };
+annotate CpiLocalService.FakeDesigntimeArtifacts with @UI: {
+    HeaderInfo        : {
+        TypeName      : '{i18n>DesigntimeArtifacts}',
+        TypeNamePlural: '{i18n>DesigntimeArtifacts}',
+        Title         : {Value: Id},
+        Description   : {Value: Type}
+    },
+    LineItem          : [{Value: Id}],
+    HeaderFacets      : [{
+        $Type : 'UI.ReferenceFacet',
+        Target: '@UI.FieldGroup#Design',
+    }],
+    FieldGroup #Design: {Data: [{
+        Label: '{i18n>ArtifactURL}',
+        Value: ArtifactURL,
+        Url  : ArtifactURL,
+        $Type: 'UI.DataFieldWithUrl'
+    }]},
+};
 
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
 

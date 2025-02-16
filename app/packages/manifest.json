@@ -64,7 +64,7 @@
                 {
                     "name": "IntegrationPackagesDetailsRoute",
                     "target": "IntegrationPackagesDetailsTarget",
-                    "pattern": "IntegrationPackages({key})"
+                    "pattern": "IntegrationPackages({key}):?query:"
                 },
                 {
                     "name": "FakeDesigntimeArtifactsRoute",
@@ -75,7 +75,7 @@
             "targets": {
                 "IntegrationPackagesListTarget": {
                     "type": "Component",
-                    "id": "IntegrationPackagesListTarget",
+                    "id": "PackagesList",
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
@@ -100,7 +100,7 @@
                             "viewName": "packages.Detail",
                             "entitySet": "IntegrationPackages",
                             "navigation": {
-                                "IntegrationDesigntimeArtifacts": {
+                                "FakeDesigntimeArtifacts": {
                                     "detail": {
                                         "route": "FakeDesigntimeArtifactsRoute"
                                     }
@@ -111,7 +111,7 @@
                 },
                 "FakeDesigntimeArtifactsTarget": {
                     "type": "Component",
-                    "id": "IntegrationDesigntimeArtifactsTarget",
+                    "id": "FakeDesigntimeArtifactsTarget",
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
