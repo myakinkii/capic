@@ -21,6 +21,13 @@ sap.ui.define([
                 filter: { // calculated properties enriched by enrichData
                     IsDeployed: false,
                     HasDraft: false,
+                    Type: ''
+                },
+                typeFilters: { // also acts as mapping
+                    Integration: { key: 'INTEGRATION_FLOW', val: 'Integration' },
+                    ScriptCollection: { key: 'SCRIPT_COLLECTION', val: 'ScriptCollection' },
+                    ValueMapping: { key: 'VALUE_MAPPING', val: 'ValueMapping' },
+                    MessageMapping: { key: 'MESSAGE_MAPPING', val: 'MessageMapping' },
                 },
                 search: ['Id', 'Name']
             }), "ui")
@@ -47,6 +54,7 @@ sap.ui.define([
         },
 
         fetchModelDataFor: function (serviceUrl, pkgUrl) {
+            var TYPE_MAPPING = this.getView().getModel("ui").getProperty("/typeFilters")
             return Promise.all([
                 promisedFetch(serviceUrl + pkgUrl),
                 promisedFetch(serviceUrl + pkgUrl + '/IntegrationDesigntimeArtifacts'),
@@ -73,7 +81,8 @@ sap.ui.define([
 
                         a["IsDeployed"] = !!a.Runtime["Version"]
                         a["HasDraft"] = a.Runtime["Id"] && a["Version"] != a.Runtime["Version"]
-                        a["Type"] = artifactType["@odata.context"].match(/.*#(\w+)Design/)[1] // because I can )
+                        var dtType = artifactType["@odata.context"].match(/.*#(\w+)Design/)[1] // because I can )
+                        a["Type"] = TYPE_MAPPING[dtType].key // to map to runtime name
 
                     })
                     data["DesigntimeArtifacts"].push(...artifactType.value)
@@ -128,7 +137,7 @@ sap.ui.define([
                 BusyIndicator.hide()
                 if (res.value.length == 0) return MessageBox.show('NOT_FOUND')
                 sap.m.URLHelper.redirect(res.value[0].DeployURL, true)
-            }).catch(function(err){
+            }).catch(function (err) {
                 BusyIndicator.hide()
                 MessageBox.show('ERROR')
             })
