@@ -40,7 +40,7 @@
             </Column>
         </columns>
         <items>
-            <ColumnListItem type="Navigation" press="navtoDTArtifacts" vAlign="Middle">
+            <ColumnListItem _type="Navigation" press="navtoDTArtifacts" vAlign="Middle">
                 <cells>
                     <ObjectIdentifier text="{pkg>Id}" title="{pkg>Name}"/>
                     <Text text="{pkg>Description}"/>
@@ -62,7 +62,7 @@
                             ],
                             formatter: '.formatVersionStatus'
                         }" />
-                    <Button icon="sap-icon://action" />
+                    <Button icon="sap-icon://action" press="openActions" />
                 </cells>
             </ColumnListItem>
         </items>
@@ -116,7 +116,7 @@
                     <ObjectStatus text="{pkg>Status}"/>
                     <!-- <Link text="{pkg>Version}"/> -->
                     <ObjectNumber  active="true" inverted="true" number="{pkg>Version}" />
-                    <Button icon="sap-icon://action" />
+                    <Button icon="sap-icon://action" press="openActions" />
                 </cells>
             </ColumnListItem>
         </items>

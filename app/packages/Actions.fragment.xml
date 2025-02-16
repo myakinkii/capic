@@ -1,0 +1,5 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <ActionSheet>
+        <Button text="{i18n>gotoOperations}" icon="sap-icon://chain-link" press="gotoOperations" />
+    </ActionSheet>
+</core:FragmentDefinition>

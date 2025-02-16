@@ -1,9 +1,10 @@
 sap.ui.define([
     "sap/fe/core/PageController",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment",
     "sap/ui/model/Filter",
-    "sap/ui/core/BusyIndicator"
-], function (PageController, JSONModel, Filter, BusyIndicator) {
+    "sap/ui/core/BusyIndicator", "sap/m/MessageBox",
+], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageBox) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -17,12 +18,17 @@ sap.ui.define([
             this.getAppComponent().getRouter().getRoute("IntegrationPackagesDetailsRoute").attachMatched(this.onRouteMatched, this) // like in good old days )
             this.getView().setModel(new JSONModel(), "pkg")
             this.getView().setModel(new JSONModel({
-                filter :{ // calculated properties enriched by enrichData
+                filter: { // calculated properties enriched by enrichData
                     IsDeployed: false,
                     HasDraft: false,
                 },
                 search: ['Id', 'Name']
             }), "ui")
+
+            this.actionsPromise = Fragment.load({ name: "packages.Actions", controller: this }).then(function (act) {
+                this.getView().addDependent(act)
+                return act
+            }.bind(this))
         },
 
         onRouteMatched: function (e) {
@@ -30,7 +36,7 @@ sap.ui.define([
             var cfg = e.getParameter("config")
             var serviceUrl = this.getView().getModel().getServiceUrl()
             var packageUrl = cfg.pattern.replace('{key}', pars.key)
-            BusyIndicator.show()
+            BusyIndicator.show(50)
             this.fetchModelDataFor(serviceUrl, packageUrl).then(function (res) {
                 this.getView().getModel("pkg").setData(res)
                 BusyIndicator.hide()
@@ -58,9 +64,9 @@ sap.ui.define([
 
                 var deployed = rtArts.reduce((prev, cur) => Object.assign(prev, { [cur.Id]: cur }), {})
 
-                res.forEach( artifactType => {
+                res.forEach(artifactType => {
 
-                    artifactType.value.forEach( a => {
+                    artifactType.value.forEach(a => {
 
                         Object.assign(a, { Runtime: deployed[a.Id] || {} })
                         if (a.Runtime["Id"]) deployed[a.Id]["Claimed"] = true // to filter out others
@@ -68,17 +74,17 @@ sap.ui.define([
                         a["IsDeployed"] = !!a.Runtime["Version"]
                         a["HasDraft"] = a.Runtime["Id"] && a["Version"] != a.Runtime["Version"]
                         a["Type"] = artifactType["@odata.context"].match(/.*#(\w+)Design/)[1] // because I can )
-        
+
                     })
                     data["DesigntimeArtifacts"].push(...artifactType.value)
                 })
-                rtArts.forEach( r => r.Claimed = !!r.Claimed ) // filter fn is not called for undefined (
+                rtArts.forEach(r => r.Claimed = !!r.Claimed) // filter fn is not called for undefined (
                 data["DesigntimeArtifactsCount"] = data["DesigntimeArtifacts"].length
                 return data
             })
         },
 
-        filterClaimed:function(claimed){
+        filterClaimed: function (claimed) {
             return !claimed // not used for now
         },
 
@@ -87,27 +93,50 @@ sap.ui.define([
             sap.m.URLHelper.redirect(url, true)
         },
 
-        gotoMonitoring: function(e){
+        gotoMonitoring: function (e) {
             var pkgUrl = e.getSource().getBindingContext("pkg").getProperty("PackageURL")
             var url = pkgUrl.split('shell')[0] + 'shell/monitoring/Artifacts'
             sap.m.URLHelper.redirect(url, true)
         },
 
-        navtoDTArtifacts:function(e){
+        navtoDTArtifacts: function (e) {
             var ctx = e.getSource().getBindingContext("pkg").getObject()
-            this.routing.navigateToRoute("IntegrationDesigntimeArtifactsRoute",{ 
-                key: `'${ctx.PackageId}'`, 
+            this.routing.navigateToRoute("IntegrationDesigntimeArtifactsRoute", {
+                key: `'${ctx.PackageId}'`,
                 key2: `Id='${ctx.Id}',Version='${ctx.Version}'`
             })
         },
 
-        fetchMagicUrl: function () {
-            // IntegrationPackages('PIPKG')/IntegrationDesigntimeArtifacts(Id='echo_test',Version='1.1.0')/IntegrationRuntimeArtifacts
+        openActions: function (e) {
+            var ctx = e.getSource().getBindingContext("pkg")
+            this.actionsPromise.then(act => {
+                act.setBindingContext(ctx, "pkg")
+                act.openBy(e.getSource())
+            })
+        },
+
+        gotoOperations: function (e) {
+            var odataCtx = this.getView().getBindingContext()
+            var ctx = e.getSource().getBindingContext("pkg")
+            var rt = ctx.getProperty("Runtime") || ctx.getObject()
+            if (!rt.Id) return MessageBox.show('NOT_DEPLOYED')
+            var url = `${odataCtx.getModel().getServiceUrl()}${odataCtx.getPath()}`
+            url += `/IntegrationDesigntimeArtifacts(Id='${rt.Id}',Version='${rt.Version}')`
+            url += `/IntegrationRuntimeArtifacts`
+            BusyIndicator.show(50)
+            promisedFetch(url).then(function (res) {
+                BusyIndicator.hide()
+                if (res.value.length == 0) return MessageBox.show('NOT_FOUND')
+                sap.m.URLHelper.redirect(res.value[0].DeployURL, true)
+            }).catch(function(err){
+                BusyIndicator.hide()
+                MessageBox.show('ERROR')
+            })
         },
 
         filterDTArtifacts: function (e) {
             var filterData = this.getView().getModel("ui").getProperty("/filter")
-            var filters = Object.entries(filterData).filter(([_, v]) => !!v ).map(([k, v]) => {
+            var filters = Object.entries(filterData).filter(([_, v]) => !!v).map(([k, v]) => {
                 return new Filter({ path: k, operator: "EQ", value1: v })
             })
             e.getSource().getParent().getParent().getBinding("items").filter(new Filter(filters, true), 'Application')
@@ -125,14 +154,14 @@ sap.ui.define([
             e.getSource().getParent().getParent().getBinding("items").filter(filters, 'Control')
         },
 
-        formatVersion:function(rtVer, dtVer){
+        formatVersion: function (rtVer, dtVer) {
             if (!rtVer) return dtVer
-            return rtVer==dtVer ? rtVer : rtVer+'*'
+            return rtVer == dtVer ? rtVer : rtVer + '*'
         },
 
-        formatVersionStatus:function(rtVer, dtVer){
+        formatVersionStatus: function (rtVer, dtVer) {
             if (!rtVer || !dtVer) return 'None'
-            return rtVer==dtVer ? 'Success' : 'Warning'
+            return rtVer == dtVer ? 'Success' : 'Warning'
         }
 
     })
