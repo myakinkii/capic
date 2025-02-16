@@ -67,29 +67,9 @@
                     "pattern": "IntegrationPackages({key})"
                 },
                 {
-                    "name": "IntegrationDesigntimeArtifactsRoute",
-                    "target": "IntegrationDesigntimeArtifactsTarget",
-                    "pattern": "IntegrationPackages({key})/IntegrationDesigntimeArtifacts({key2}):?query:"
-                },
-                {
-                    "name": "ValueMappingDesigntimeArtifactsRoute",
-                    "target": "ValueMappingDesigntimeArtifactsTarget",
-                    "pattern": "IntegrationPackages({key})/ValueMappingDesigntimeArtifacts({key2}):?query:"
-                },
-                {
-                    "name": "MessageMappingDesigntimeArtifactsRoute",
-                    "target": "MessageMappingDesigntimeArtifactsTarget",
-                    "pattern": "IntegrationPackages({key})/MessageMappingDesigntimeArtifacts({key2}):?query:"
-                },
-                {
-                    "name": "ScriptCollectionDesigntimeArtifactsRoute",
-                    "target": "ScriptCollectionDesigntimeArtifactsTarget",
-                    "pattern": "IntegrationPackages({key})/ScriptCollectionDesigntimeArtifacts({key2}):?query:"
-                },
-                {
-                    "name": "CustomTagsRoute",
-                    "target": "CustomTagsTarget",
-                    "pattern": "IntegrationPackages({key})/CustomTags({key2}):?query:"
+                    "name": "FakeDesigntimeArtifactsRoute",
+                    "target": "FakeDesigntimeArtifactsTarget",
+                    "pattern": "IntegrationPackages({key})/FakeDesigntimeArtifacts({key2}):?query:"
                 }
             ],
             "targets": {
@@ -122,97 +102,20 @@
                             "navigation": {
                                 "IntegrationDesigntimeArtifacts": {
                                     "detail": {
-                                        "route": "IntegrationDesigntimeArtifactsRoute"
+                                        "route": "FakeDesigntimeArtifactsRoute"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "_IntegrationPackagesDetailsTarget": {
-                    "type": "Component",
-                    "id": "IntegrationPackagesDetailsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
-                    "options": {
-                        "settings": {
-                            "entitySet": "IntegrationPackages",
-                            "navigation": {
-                                "IntegrationDesigntimeArtifacts": {
-                                    "detail": {
-                                        "route": "IntegrationDesigntimeArtifactsRoute"
-                                    }
-                                },
-                                "ValueMappingDesigntimeArtifacts": {
-                                    "detail": {
-                                        "route": "ValueMappingDesigntimeArtifactsRoute"
-                                    }
-                                },
-                                "MessageMappingDesigntimeArtifacts": {
-                                    "detail": {
-                                        "route": "MessageMappingDesigntimeArtifactsRoute"
-                                    }
-                                },
-                                "ScriptCollectionDesigntimeArtifacts": {
-                                    "detail": {
-                                        "route": "ScriptCollectionDesigntimeArtifactsRoute"
-                                    }
-                                },
-                                "CustomTags": {
-                                    "detail": {
-                                        "route": "CustomTagsRoute"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "IntegrationDesigntimeArtifactsTarget": {
+                "FakeDesigntimeArtifactsTarget": {
                     "type": "Component",
                     "id": "IntegrationDesigntimeArtifactsTarget",
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
-                            "entitySet": "IntegrationPackages/IntegrationDesigntimeArtifacts"
-                        }
-                    }
-                },
-                "ValueMappingDesigntimeArtifactsTarget": {
-                    "type": "Component",
-                    "id": "ValueMappingDesigntimeArtifactsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
-                    "options": {
-                        "settings": {
-                            "entitySet": "IntegrationPackages/ValueMappingDesigntimeArtifacts"
-                        }
-                    }
-                },
-                "MessageMappingDesigntimeArtifactsTarget": {
-                    "type": "Component",
-                    "id": "MessageMappingDesigntimeArtifactsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
-                    "options": {
-                        "settings": {
-                            "entitySet": "IntegrationPackages/MessageMappingDesigntimeArtifacts"
-                        }
-                    }
-                },
-                "ScriptCollectionDesigntimeArtifactsTarget": {
-                    "type": "Component",
-                    "id": "ScriptCollectionDesigntimeArtifactsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
-                    "options": {
-                        "settings": {
-                            "entitySet": "IntegrationPackages/ScriptCollectionDesigntimeArtifacts"
-                        }
-                    }
-                },
-                "CustomTagsTarget": {
-                    "type": "Component",
-                    "id": "CustomTagsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
-                    "options": {
-                        "settings": {
-                            "entitySet": "IntegrationPackages/CustomTags"
+                            "entitySet": "IntegrationPackages/FakeDesigntimeArtifacts"
                         }
                     }
                 }

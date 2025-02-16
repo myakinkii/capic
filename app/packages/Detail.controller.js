@@ -110,9 +110,9 @@ sap.ui.define([
 
         navtoDTArtifacts: function (e) {
             var ctx = e.getSource().getBindingContext("pkg").getObject()
-            this.routing.navigateToRoute("IntegrationDesigntimeArtifactsRoute", {
+            this.routing.navigateToRoute("FakeDesigntimeArtifactsRoute", {
                 key: `'${ctx.PackageId}'`,
-                key2: `Id='${ctx.Id}',Version='${ctx.Version}'`
+                key2: `Id='${ctx.Id}',Type='${ctx.Type}'`
             })
         },
 

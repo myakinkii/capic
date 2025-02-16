@@ -37,6 +37,13 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', 'ValueMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
 
+    this.on('READ', 'FakeDesigntimeArtifacts', async (req, next) => {
+        if (req.params.length == 2) { // detail-detail
+            const [_, { Id, Type }] = req.params
+            return { Id, Type } // just echo for now
+        } else return next()
+    })
+
     this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
         if (req.params.length == 1) { // details
             const [{ Id }] = req.params

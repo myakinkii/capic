@@ -4,9 +4,15 @@ service CpiLocalService {
 
     @readonly
     entity IntegrationPackages                 as
-        projection on external.IntegrationPackages {
+        select from external.IntegrationPackages
+        mixin {
+            FakeDesigntimeArtifacts : Association to many FakeDesigntimeArtifacts
+                                          on FakeDesigntimeArtifacts.PackageId = Id
+        }
+        into {
             *,
-            '' as PackageURL : String
+            '' as PackageURL : String,
+            FakeDesigntimeArtifacts
         }
         excluding {
             PackageContent,
@@ -14,21 +20,25 @@ service CpiLocalService {
         };
 
     @readonly
-    entity IntegrationDesigntimeArtifacts      as
-        select from external.IntegrationDesigntimeArtifacts
-        mixin {
-            IntegrationRuntimeArtifacts : Association to many IntegrationRuntimeArtifacts
-                                              on  IntegrationRuntimeArtifacts.Id      = Id
-                                              and IntegrationRuntimeArtifacts.Version = Version
-        }
-        into {
-            *,
-            IntegrationRuntimeArtifacts
-        }
-        excluding {
-            ArtifactContent,
-            blob
-        };
+    entity FakeDesigntimeArtifacts {
+        key Id        : String;
+        key Type      : String;
+            Name      : String;
+            Version   : String;
+            PackageId : String;
+    }
+
+    @readonly
+    entity IntegrationDesigntimeArtifacts      as projection on external.IntegrationDesigntimeArtifacts;
+
+    @readonly
+    entity ScriptCollectionDesigntimeArtifacts as projection on external.ScriptCollectionDesigntimeArtifacts;
+
+    @readonly
+    entity ValueMappingDesigntimeArtifacts     as projection on external.ValueMappingDesigntimeArtifacts;
+
+    @readonly
+    entity MessageMappingDesigntimeArtifacts   as projection on external.MessageMappingDesigntimeArtifacts;
 
     @readonly
     entity IntegrationRuntimeArtifacts         as
@@ -41,15 +51,6 @@ service CpiLocalService {
             action syncGitToPackage(pckgId : String not null, xmlString : LargeString not null, version : String, commitMsg : String) returns String;
             action deployKarafFromPackage(pckgId : String not null)                                                                   returns String;
         };
-
-    @readonly
-    entity ScriptCollectionDesigntimeArtifacts as projection on external.ScriptCollectionDesigntimeArtifacts;
-
-    @readonly
-    entity ValueMappingDesigntimeArtifacts     as projection on external.ValueMappingDesigntimeArtifacts;
-
-    @readonly
-    entity MessageMappingDesigntimeArtifacts   as projection on external.MessageMappingDesigntimeArtifacts;
 }
 
 
@@ -67,50 +68,16 @@ annotate CpiLocalService.IntegrationPackages with @UI: {
         TypeNamePlural: '{i18n>IntegrationPackages}',
         Title         : {Value: Id},
         Description   : {Value: Name}
-    },
-// Facets    : [{
-//     $Type : 'UI.ReferenceFacet',
-//     Target: 'IntegrationDesigntimeArtifacts/@UI.LineItem',
-//     Label : '{i18n>IntegrationDesigntimeArtifacts}'
-// }]
+    }
 };
 
-/*
-annotate CpiLocalService.IntegrationDesigntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
+annotate CpiLocalService.FakeDesigntimeArtifacts with @UI: {HeaderInfo: {
+    TypeName      : '{i18n>DesigntimeArtifacts}',
+    TypeNamePlural: '{i18n>DesigntimeArtifacts}',
+    Title         : {Value: Id},
+    Description   : {Value: Name}
+}, };
 
-annotate CpiLocalService.IntegrationDesigntimeArtifacts with @UI: {
-    Identification: [
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CpiLocalService.syncGit',
-            Label : '{i18n>syncGit}'
-        },
-        {
-            $Type : 'UI.DataFieldForAction',
-            Action: 'CpiLocalService.deployKaraf',
-            Inline: true,
-            Label : '{i18n>deployKaraf}'
-        }
-    ],
-    LineItem      : [
-        {Value: Id},
-        {Value: Name},
-        {Value: CreatedBy},
-        {Value: Version},
-    ],
-    HeaderInfo    : {
-        TypeName      : '{i18n>IntegrationDesigntimeArtifact}',
-        TypeNamePlural: '{i18n>IntegrationDesigntimeArtifacts}',
-        Title         : {Value: Id},
-        Description   : {Value: Name}
-    },
-    Facets        : [{
-        $Type : 'UI.ReferenceFacet',
-        Target: 'IntegrationRuntimeArtifacts/@UI.LineItem#EXT',
-        Label : '{i18n>IntegrationRuntimeArtifacts}'
-    }]
-};
-*/
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @(Capabilities.SearchRestrictions: {Searchable: false});
 
 annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
@@ -148,15 +115,5 @@ annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
         {Value: Id},
         {Value: Type},
         {Value: Version}
-    ],
-    LineItem #EXT       : [
-        {Value: Type},
-        {Value: Version},
-        {
-            Label: '{i18n>DeployedOn}',
-            Value: DeployedOn,
-            Url  : DeployURL,
-            $Type: 'UI.DataFieldWithUrl'
-        }
     ]
 };
