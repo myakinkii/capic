@@ -17,10 +17,36 @@
                                     "tileType": "sap.ushell.ui.tile.StaticTile",
                                     "properties": {
                                         "chipId": "catalogTile_10",
-                                        "title": "Setup",
-                                        "subtitle": "Auth and Paths",
+                                        "title": "Config",
+                                        "subtitle": "Setup stuff",
                                         "icon": "sap-icon://Fiori2/F0001",
                                         "targetURL": "#project-setup"
+                                    }
+                                },
+                                {
+                                    "id": "browse_package",
+                                    "title": "Packages",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Content",
+                                        "subtitle": "Browse stuff",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#package-browse"
+                                    }
+                                },
+                                {
+                                    "id": "write_ftp",
+                                    "title": "Input data",
+                                    "size": "1x1",
+                                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                                    "properties": {
+                                        "chipId": "catalogTile_10",
+                                        "title": "Local Ftp",
+                                        "subtitle": "Test stuff",
+                                        "icon": "sap-icon://Fiori2/F0001",
+                                        "targetURL": "#ftp-write"
                                     }
                                 }
                             ]
@@ -29,11 +55,11 @@
                             "id": "Cpi",
                             "title": "CPI",
                             "isPreset": true,
-                            "isVisible": true,
+                            "isVisible": false,
                             "isGroupLocked": false,
                             "tiles": [
                                 {
-                                    "id": "browse_package",
+                                    "id": "_browse_package",
                                     "title": "Packages",
                                     "size": "1x1",
                                     "tileType": "sap.ushell.ui.tile.StaticTile",
@@ -64,7 +90,7 @@
                             "id": "FTP",
                             "title": "Ftp",
                             "isPreset": true,
-                            "isVisible": true,
+                            "isVisible": false,
                             "isGroupLocked": false,
                             "tiles": [
                                 {
@@ -81,7 +107,7 @@
                                     }
                                 },
                                 {
-                                    "id": "write_ftp",
+                                    "id": "_write_ftp",
                                     "title": "Input data",
                                     "size": "1x1",
                                     "tileType": "sap.ushell.ui.tile.StaticTile",
