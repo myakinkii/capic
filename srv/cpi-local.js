@@ -1,4 +1,4 @@
-const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleXml } = require('./lib/BundleHandler')
+const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
@@ -44,12 +44,20 @@ module.exports = cds.service.impl(async function () {
         MESSAGE_MAPPING: 'messagemappings'
     }
 
-    this.on('UPDATE', 'FakeDesigntimeArtifacts', async (req, next) => {
-        // to allow playing with CodeEditor or maybe sync back content for iflows later..
+    const tmpFile = {} // simple hack as we only edit one artifact in single-user mode
+
+    this.on("flushTmpFile", async (req) => {
+        if (tmpFile.Content) saveBundleXml(tmpFile)
     })
+
+    this.on('UPDATE', 'FakeDesigntimeArtifacts', async (req, next) => {
+        Object.assign(tmpFile, req.data)
+    })
+
     this.on('READ', 'FakeDesigntimeArtifacts', async (req, next) => {
         if (req.params.length == 2) { // detail-detail
             const [{ Id: PackageId }, { Id, Type }] = req.params
+            if (tmpFile.Id && tmpFile.Id != Id) Object.assign(tmpFile, { Id, Content: '' }) // had someone else
             return {
                 Id, Type, PackageId,
                 Content: getBundleXml(PackageId, Id, Type),

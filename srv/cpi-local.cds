@@ -25,7 +25,9 @@ service CpiLocalService {
             PackageId   : String;
             ArtifactURL : String;
             Content     : LargeString;
-    }
+    };
+
+    action flushTmpFile();
 
     @readonly
     entity IntegrationDesigntimeArtifacts      as projection on external.IntegrationDesigntimeArtifacts;

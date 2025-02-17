@@ -1,3 +1,20 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:code="sap.ui.codeeditor">
-    <code:CodeEditor height="30rem" type="xml" value="{Content}" />
+<Panel core:require="{handler: 'packages/CodeActions'}">
+    <headerToolbar>
+        <Toolbar>
+            <Title text="SOURCE" />
+            <ToolbarSpacer/>
+            <Button visible="{= ${path:'Type',targetType:'any'} === 'INTEGRATION_FLOW' }" 
+                type="Information" icon="sap-icon://save" press="handler.flushTmpFile"/>
+        </Toolbar >
+    </headerToolbar>
+    <code:CodeEditor editable="{ 
+            parts: [
+                { path: 'Content', targetType: 'any' },
+                { path: 'Type', targetType: 'any' }
+            ],
+            formatter: 'handler.formatEditable'
+        }" 
+        height="30rem" type="xml" value="{Content}" />
+</Panel>
 </core:FragmentDefinition>

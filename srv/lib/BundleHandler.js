@@ -8,10 +8,15 @@ const KARAF_PATH = process.env.KARAF_PATH
 const xmlFormat = require('xml-formatter')
 
 const objTypeToPathMap = {
-    INTEGRATION_FLOW: (_, bundlePath, bundleId) => `${bundlePath}/OSGI-INF/blueprint/beans.xml`,
+    INTEGRATION_FLOW: (_, bundlePath, bundleId) => `${KARAF_PATH}/deploy/${bundleId}.xml`,
+    // INTEGRATION_FLOW: (_, bundlePath, bundleId) => `${bundlePath}/OSGI-INF/blueprint/beans.xml`,
     VALUE_MAPPING: (_, bundlePath, bundleId) => `${bundlePath}/value_mapping.xml`,
     MESSAGE_MAPPING: (_, bundlePath, bundleId) => `${bundlePath}/src/main/resources/mapping/${bundleId}.mmap`,
     SCRIPT_COLLECTION: (_, bundlePath, bundleId) => `${bundlePath}/META-INF/MANIFEST.MF` // not a valid xml though
+}
+
+const saveBundleXml = ({ Id:bundleId, Content:data }) => {
+    fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
@@ -21,7 +26,7 @@ const getBundleXml = (pckgId, bundleId, objType) => {
         const data = fs.readFileSync(filePath, 'utf8')
         return xmlFormat(data)
     } catch (e) {
-        return 'NO_VALID_XML_ARTIFACT_FOUND'
+        return ''
     }
 }
 
@@ -102,6 +107,7 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
 }
 
 module.exports = {
+    saveBundleXml,
     getBundleXml,
     syncBundleToPackageRepo,
     deployBundleToKaraf
