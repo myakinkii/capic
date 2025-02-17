@@ -19,7 +19,6 @@ service CpiLocalService {
             blob
         };
 
-    @readonly
     entity FakeDesigntimeArtifacts {
         key Id          : String;
         key Type        : String;
@@ -70,6 +69,14 @@ annotate CpiLocalService.IntegrationPackages with @UI: {
         Description   : {Value: Name}
     }
 };
+
+
+annotate CpiLocalService.FakeDesigntimeArtifacts with @(
+    Capabilities.DeleteRestrictions: {Deletable: false},
+    Capabilities.InsertRestrictions: {Insertable: false},
+    Capabilities.UpdateRestrictions: {Updatable: true},
+    Capabilities.SearchRestrictions: {Searchable: false}
+);
 
 annotate CpiLocalService.FakeDesigntimeArtifacts with @UI: {
     HeaderInfo        : {

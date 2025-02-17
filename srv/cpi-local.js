@@ -44,6 +44,9 @@ module.exports = cds.service.impl(async function () {
         MESSAGE_MAPPING: 'messagemappings'
     }
 
+    this.on('UPDATE', 'FakeDesigntimeArtifacts', async (req, next) => {
+        // to allow playing with CodeEditor or maybe sync back content for iflows later..
+    })
     this.on('READ', 'FakeDesigntimeArtifacts', async (req, next) => {
         if (req.params.length == 2) { // detail-detail
             const [{ Id: PackageId }, { Id, Type }] = req.params
