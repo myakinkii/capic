@@ -115,7 +115,21 @@
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
-                            "entitySet": "IntegrationPackages/FakeDesigntimeArtifacts"
+                            "entitySet": "IntegrationPackages/FakeDesigntimeArtifacts",
+                            "content": {
+                                "body": {
+                                    "sections": {
+                                        "CodeSectionQualifier": {
+                                            "template": "packages.CodeSection",
+                                            "position": {
+                                                "anchor": "Section",
+                                                "placement": "After"
+                                            },
+                                            "title": "{i18n>CodeSection}"
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

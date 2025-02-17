@@ -1,4 +1,4 @@
-const { syncBundleToPackageRepo, deployBundleToKaraf } = require('./lib/BundleHandler')
+const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleXml } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
@@ -49,6 +49,7 @@ module.exports = cds.service.impl(async function () {
             const [{ Id: PackageId }, { Id, Type }] = req.params
             return {
                 Id, Type, PackageId,
+                Content: getBundleXml(PackageId, Id, Type),
                 ArtifactURL: `${CPI_TENANT_URL}/shell/design/contentpackage/${PackageId}/${mapToArtifactDT[Type]}/${Id}`
             }
         } else return next()

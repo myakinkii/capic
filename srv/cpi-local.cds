@@ -25,6 +25,7 @@ service CpiLocalService {
         key Type        : String;
             PackageId   : String;
             ArtifactURL : String;
+            Content     : LargeString;
     }
 
     @readonly

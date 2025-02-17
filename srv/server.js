@@ -53,16 +53,14 @@ cds.on('bootstrap', app => {
     ftp.on('login', ({ connection, username, password }, resolve, reject) => resolve({ root: FTP_DIR }))
     ftp.listen().then(() => { console.log(`FTP is starting at ${ftp_host} : ${ftp_port} / ${FTP_DIR}`) })
 
-    const setHeaders = (res, path) => {
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8')
-    }
+    const setHeaders = (res, path) => { res.setHeader('Content-Type', 'text/plain; charset=utf-8') }
 
     const xmlish = (text) => { try { return xmlFormat(text) } catch (e) { return false } }
     const jsonish = (text) => { try { return beautify(JSON.parse(text),null,2) } catch (e) { return false } }
 
-    const formatData = (req, res, next) => {
+    const getDataFormatter = (DIR) => (req, res, next) => {
         try {
-            const data = fs.readFileSync(FTP_DIR + req.url, 'utf8') // will throw if we are folder
+            const data = fs.readFileSync(DIR + req.url, 'utf8') // will throw if we are folder
             let formatted
             if (formatted=xmlish(data)){
                 res.setHeader('Content-Type', 'application/xml; charset=utf-8')
@@ -75,7 +73,7 @@ cds.on('bootstrap', app => {
             next() // neit
         }
     }
-    app.use('/ftp', formatData, express.static(FTP_DIR, { setHeaders }), serveIndex(FTP_DIR, { 'icons': true }))
+    app.use('/ftp', getDataFormatter(FTP_DIR), express.static(FTP_DIR, { setHeaders }), serveIndex(FTP_DIR, { 'icons': true }))
 
     app.use('/local/webshell/:cmd', (req, res, next) => {
         // for now we assume we are single-user mode with one cmd being processed
@@ -97,5 +95,8 @@ cds.on('bootstrap', app => {
             }
         }, 200)
     })
+
+    // const GIT_DIR = process.env.CPI_EXPORT_PATH // in case sap.ui.codeeditor.CodeEditor is not enough
+    // if (GIT_DIR) app.use('/git', getDataFormatter(GIT_DIR), express.static(GIT_DIR, { setHeaders }), serveIndex(GIT_DIR, { 'icons': true }))
 
 })
