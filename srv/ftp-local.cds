@@ -1,12 +1,23 @@
+using {cpi as external} from '../srv/external/cpi';
+
 service FtpLocalService {
+
+    @readonly
+    entity IntegrationRuntimeArtifacts as
+        projection on external.IntegrationRuntimeArtifacts {
+            key Id
+        }
 
     @odata.singleton
     entity FtpIn {
         fileName : String;
         content  : LargeString;
+        context  : String;
+        iflows   : Association to many IntegrationRuntimeArtifacts
     }
 
     action unlinkInFile(fileName : String);
+    action checkCreateFolders();
 
     entity FtpOut {
         key fileName : String;
@@ -22,7 +33,8 @@ annotate FtpLocalService.FtpOut with @(
 );
 
 annotate FtpLocalService.FtpOut with @UI: {LineItem: [{
-    Value: fileName,
-    Url  : url,
-    $Type: 'UI.DataFieldWithUrl'
+    ![@HTML5.CssDefaults]: {width: 'auto'},
+    Value                : fileName,
+    Url                  : url,
+    $Type                : 'UI.DataFieldWithUrl'
 }]};

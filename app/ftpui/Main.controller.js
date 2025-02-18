@@ -22,6 +22,12 @@ sap.ui.define(["sap/fe/core/PageController"], function (PageController) {
             this.getView().getModel("ui").setProperty("/isEditable", event.getParameter("pressed"))
         },
 
+        checkCreateFolders:function(e){
+            this.editFlow.invokeAction('/checkCreateFolders', {
+                model: e.getSource().getBindingContext().getModel()
+            })
+        },
+
         unlinkInFile: function (e) {
             var fileName = e.getSource().getBindingContext().getProperty("fileName")
             this.editFlow.invokeAction('/unlinkInFile', {
