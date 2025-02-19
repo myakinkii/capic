@@ -33,6 +33,9 @@
       },
       "webshell": {
         "impl": "srv/lib/MyRemoteServiceWebshell.js"
+      },
+      "operations": {
+        "impl": "srv/lib/MyRemoteServiceOperations.js"
       }
     },
     "launchpad": {

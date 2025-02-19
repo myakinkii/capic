@@ -1,4 +1,4 @@
-const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
+const { syncBundleToPackageRepo, deployBundleToKaraf, findBundleInfo, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
@@ -7,7 +7,7 @@ const DownloadContentCommand = 'com.sap.it.nm.commands.deploy.DownloadContentCom
 module.exports = cds.service.impl(async function () {
 
     const cpi = await cds.connect.to('cpi')
-    const webshell = await cds.connect.to('webshell')
+    const operations = await cds.connect.to('operations')
 
     this.on('syncGitToPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
@@ -76,9 +76,17 @@ module.exports = cds.service.impl(async function () {
         const result = await cpi.run(req.query)
         if (result.length > 1) return result // only allow one by one
         for (let r of result) {
-            const headers = await webshell.run(`headers ${r.Id}`)
-            const [_, artifactId] = headers.split("\n").find(l => l.startsWith('SAP-ArtifactId')).split(" = ")
-            r.DeployURL = `${CPI_TENANT_URL}/Operations/${DownloadContentCommand}?artifactIds=${artifactId}`
+            const list = await operations.run({ cmd:'IntegrationComponentsList' }) // xml
+            const artifact = findBundleInfo(list, r.Id)
+            r.DeployURL = `${CPI_TENANT_URL}/Operations/${DownloadContentCommand}?artifactIds=${artifact.id._text}`
+            // const content = await operations.run({ // xml
+            //     cmd:'DownloadContent', 
+            //     params: { artifactIds: artifact.id._text }
+            // })
+            // const details = await operations.run({ // xml
+            //     cmd:'IntegrationComponentDetail', 
+            //     params: { artifactId: artifact.id._text }
+            // })
         }
         return result
     })

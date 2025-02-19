@@ -21,6 +21,12 @@ const saveBundleXml = ({ Id:bundleId, PackageId:pckgId ,Content:data }) => {
     fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
+const findBundleInfo = (integrationComponentsList, Id) => {
+    const xml = xml2js(integrationComponentsList, { compact: true, spaces: 4 })
+    const list = xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"]
+    return list.artifactInformations.find( info => info.name._text == Id)
+}
+
 const getBundleXml = (pckgId, bundleId, objType) => {
     try {
         const bundlePath = `${CPI_EXPORT_PATH}/${pckgId}/${bundleId}`
@@ -110,6 +116,7 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
 
 module.exports = {
     saveBundleXml,
+    findBundleInfo,
     getBundleXml,
     syncBundleToPackageRepo,
     deployBundleToKaraf

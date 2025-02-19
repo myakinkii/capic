@@ -24,9 +24,9 @@ class MyRemoteService extends cds.Service {
         this.authToken = null
     }
 
-    async prepareAxiosRequest(reqOptions, endpointUrl) {
+    async prepareAxiosRequest(reqOptions, endpointUrl, borrowSvcCreds) {
 
-        const destination = this.options.credentials
+        const destination = borrowSvcCreds ? cds.requires[borrowSvcCreds].credentials : this.options.credentials
 
         if (!destination?.url) throw new Error('CREDENTIALS_NOT_SET')
 
