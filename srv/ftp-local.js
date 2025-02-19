@@ -63,6 +63,6 @@ module.exports = cds.service.impl(async function() {
 
     this.on('DELETE', 'FtpOut', async (req, next) => {
         const [{ fileName }] = req.params
-        fs.unlinkSync(ctxdPath`out/${fileName}`)
+        fs.unlinkSync(ctxdPath`/out/${fileName}`)
     })
 })
