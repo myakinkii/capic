@@ -57,7 +57,8 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', 'FakeDesigntimeArtifacts', async (req, next) => {
         if (req.params.length == 2) { // detail-detail
             const [{ Id: PackageId }, { Id, Type }] = req.params
-            if (tmpFile.Id && tmpFile.Id != Id) Object.assign(tmpFile, { Id, Content: '' }) // had someone else
+            if (tmpFile.Id && tmpFile.Id != Id) Object.assign(tmpFile, { Content: '' }) // had someone else
+            Object.assign(tmpFile, { Id, PackageId }) // always, not to lose package id
             return {
                 Id, Type, PackageId,
                 Content: getBundleXml(PackageId, Id, Type),

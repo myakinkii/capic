@@ -15,8 +15,10 @@ const objTypeToPathMap = {
     SCRIPT_COLLECTION: (_, bundlePath, bundleId) => `${bundlePath}/META-INF/MANIFEST.MF` // not a valid xml though
 }
 
-const saveBundleXml = ({ Id:bundleId, Content:data }) => {
-    fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data.replaceAll(' /$',' $')) // some strange stuff in ace editor
+const saveBundleXml = ({ Id:bundleId, PackageId:pckgId ,Content:data }) => {
+    data = data.replaceAll(' /$',' $') // some strange stuff in ace editor
+    fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/blueprint.xml`, data ) // kinda backup of local flow
+    fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
