@@ -16,7 +16,7 @@ const objTypeToPathMap = {
 }
 
 const saveBundleXml = ({ Id:bundleId, Content:data }) => {
-    fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
+    fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data.replaceAll(' /$',' $')) // some strange stuff in ace editor
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
