@@ -7,11 +7,15 @@ const getList = () => { try { return fs.readdirSync(JAR_DIR) } catch (e) { retur
 
 const getManifest = (jarFile) => { try { return execSync(`unzip -p ${jarFile} META-INF/MANIFEST.MF`, { cwd: JAR_DIR }).toString() } catch (e) { return '' } }
 
-let [_, __, jar, dir] = process.argv
+let [_, __, jar, showUnresolved ] = process.argv
 
 if (!jar) process.exit()
 
-if (dir) JAR_DIR = dir
+const parts = jar.split("/")
+
+jar = parts.pop()
+
+if (parts.length) JAR_DIR = parts.join("/")
 
 const infos = getList().reduce((infos, file) => {
     if (!file.endsWith('.jar')) return infos
@@ -91,6 +95,6 @@ if (!root) process.exit()
 const resolved = {}
 resolveDeps(root, resolved)
 
-console.log('unresolved', Object.entries(resolved).filter(([_, v]) => v === false).map(e => e[0]).sort())
+if (showUnresolved) console.log('unresolved', Object.entries(resolved).filter(([_, v]) => v === false).map(e => e[0]).sort())
 const found = Object.entries(resolved).filter(([_, v]) => v === true).map(e => e[0])
 console.log('cp', `${JAR_DIR}/${jar}` ,found.map( j => `${JAR_DIR}/${j}`).join(' ')) // and hope for the best )
