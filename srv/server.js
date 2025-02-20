@@ -43,7 +43,8 @@ cds.on('bootstrap', app => {
             return headers
         },
         userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
-            return proxyResData.toString('utf8').replaceAll(cpiRuntimeHost + '/http', 'cpi') // replace links back
+            if (userReq.url.startsWith('/file_browse')) return proxyResData.toString('utf8').replaceAll(cpiRuntimeHost + '/http', 'cpi') // replace links back
+            return proxyResData
         }
     }))
 
