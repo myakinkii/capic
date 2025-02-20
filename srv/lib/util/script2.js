@@ -93,4 +93,4 @@ resolveDeps(root, resolved)
 
 console.log('unresolved', Object.entries(resolved).filter(([_, v]) => v === false).map(e => e[0]).sort())
 const found = Object.entries(resolved).filter(([_, v]) => v === true).map(e => e[0])
-console.log('cp', found.map( j => `${JAR_DIR}/${j}`).join(' ')) // and hope for the best )
+console.log('cp', `${JAR_DIR}/${jar}` ,found.map( j => `${JAR_DIR}/${j}`).join(' ')) // and hope for the best )
