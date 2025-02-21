@@ -107,7 +107,7 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
         execSync('unzip -o bundle.jar', { cwd: exportDir })
 
         const msg = `${bundleId} - ${bundleVersion} - ${commitMsg}`
-        execSync(`git add . && git commit -m '${msg}'`, { cwd: exportDir })
+        execSync(`git add -- . ':!blueprint.xml' . && git commit -m '${msg}'`, { cwd: exportDir })
         return msg
     } catch (err) {
         const errMsg = err.stderr?.toString() || err.stdout?.toString() || err.message
