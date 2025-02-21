@@ -1,4 +1,4 @@
-const { syncBundleToPackageRepo, deployBundleToKaraf, findBundleInfo, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
+const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
@@ -9,9 +9,23 @@ module.exports = cds.service.impl(async function () {
     const cpi = await cds.connect.to('cpi')
     const operations = await cds.connect.to('operations')
 
+    const getSelf = async (id) => operations.run({ cmd: 'IntegrationComponentsList' })
+        .then(list => findBundleInfo(list, id))
+
+    const getArtifactIds = () => operations.run({ cmd: 'IntegrationComponentsList' })
+        .then( list => getBundleInfos(list)
+        .reduce((prev, { name: { _text: n }, id: { _text: id } }) => Object.assign(prev, { [n]: id }), {}))
+
     this.on('syncGitToPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
-        const { pckgId, version, xmlString, commitMsg } = req.data
+        const { pckgId, version, commitMsg } = req.data
+
+        const artifact = await getSelf(bundleId)
+        const xmlString = await operations.run({
+            cmd: 'DownloadContent',
+            params: { artifactIds: artifact.id._text }
+        })
+
         const res = await syncBundleToPackageRepo(pckgId, bundleId, version, commitMsg, xmlString)
         return `SYNCED_TO: ${pckgId}/${bundleId} \n COMMIT_MSG: ${res} `
     })
@@ -73,22 +87,10 @@ module.exports = cds.service.impl(async function () {
             const q = SELECT.from('IntegrationRuntimeArtifacts').where({ Id })
             req.query = q
         }
-        const result = await cpi.run(req.query)
-        if (result.length > 1) return result // only allow one by one
-        for (let r of result) {
-            const list = await operations.run({ cmd:'IntegrationComponentsList' }) // xml
-            const artifact = findBundleInfo(list, r.Id)
-            r.DeployURL = `${CPI_TENANT_URL}/Operations/${DownloadContentCommand}?artifactIds=${artifact.id._text}`
-            // const content = await operations.run({ // xml
-            //     cmd:'DownloadContent', 
-            //     params: { artifactIds: artifact.id._text }
-            // })
-            // const details = await operations.run({ // xml
-            //     cmd:'IntegrationComponentDetail', 
-            //     params: { artifactId: artifact.id._text }
-            // })
-        }
-        return result
+        const ids = await getArtifactIds()
+        return cpi.run(req.query).then(re => re.map(r => Object.assign(r, {
+            DeployURL: `${CPI_TENANT_URL}/Operations/${operations.getCommand('IntegrationComponentDetail')}?artifactId=${ids[r.Id]}`
+        })))
     })
 
 });

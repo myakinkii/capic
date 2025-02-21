@@ -49,8 +49,8 @@ service CpiLocalService {
                 '' as DeployURL : String
         }
         actions {
-            action syncGitToPackage(pckgId : String not null, xmlString : LargeString not null, version : String, commitMsg : String) returns String;
-            action deployKarafFromPackage(pckgId : String not null)                                                                   returns String;
+            action syncGitToPackage(pckgId : String not null, version : String, commitMsg : String) returns String;
+            action deployKarafFromPackage(pckgId : String not null)                                 returns String;
         };
 }
 
@@ -136,6 +136,12 @@ annotate CpiLocalService.IntegrationRuntimeArtifacts with @UI: {
     LineItem            : [
         {Value: Id},
         {Value: Type},
-        {Value: Version}
+        {Value: Version},
+        {
+            Label: '{i18n>DeployedOn}',
+            Value: DeployedOn,
+            Url  : DeployURL,
+            $Type: 'UI.DataFieldWithUrl'
+        }
     ]
 };

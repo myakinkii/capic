@@ -150,18 +150,15 @@ sap.ui.define([
             if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
 
             var rtOdataCtx = pkgOdataCtx.getModel().bindContext(`/IntegrationRuntimeArtifacts('${rt.Id}')`)
-            navigator.clipboard.readText().then(function(res){
-                // BusyIndicator.show(50)
-                return this.editFlow.invokeAction('CpiLocalService.syncGitToPackage', {
+             this.editFlow.invokeAction('CpiLocalService.syncGitToPackage', {
                     contexts: rtOdataCtx,
                     parameterValues: [
                         { name: "pckgId", value: pkgOdataCtx.getProperty("Id") },
-                        { name: "xmlString", value: res },
+                        // { name: "xmlString", value: res },
                         { name: "version", value: rt.Version }
                     ],
                     skipParameterDialog: false
-                })
-            }.bind(this)).then(function (res) {
+            }).then(function (res) {
                 // BusyIndicator.hide()
                 MessageToast.show(res.getObject().value)
             }).catch(function (err) {

@@ -22,9 +22,13 @@ const saveBundleXml = ({ Id:bundleId, PackageId:pckgId ,Content:data }) => {
 }
 
 const findBundleInfo = (integrationComponentsList, Id) => {
+    const infos = getBundleInfos(integrationComponentsList)
+    return infos.find( info => info.name._text == Id)
+}
+
+const getBundleInfos = (integrationComponentsList) => {
     const xml = xml2js(integrationComponentsList, { compact: true, spaces: 4 })
-    const list = xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"]
-    return list.artifactInformations.find( info => info.name._text == Id)
+    return xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"].artifactInformations
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
@@ -116,6 +120,7 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
 
 module.exports = {
     saveBundleXml,
+    getBundleInfos,
     findBundleInfo,
     getBundleXml,
     syncBundleToPackageRepo,
