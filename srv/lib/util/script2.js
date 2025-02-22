@@ -7,7 +7,7 @@ const getList = () => { try { return fs.readdirSync(JAR_DIR) } catch (e) { retur
 
 const getManifest = (jarFile) => { try { return execSync(`unzip -p ${jarFile} META-INF/MANIFEST.MF`, { cwd: JAR_DIR }).toString() } catch (e) { return '' } }
 
-let [_, __, jar, showUnresolved ] = process.argv
+let [_, __, jar, showStats] = process.argv
 
 if (!jar) process.exit()
 
@@ -68,12 +68,13 @@ const deps = Object.values(infos).reduce((prev, cur) => {
     return prev
 }, { imports: {}, exports: {} })
 
-
-console.log('info about', JAR_DIR)
-console.log('jars read',Object.keys(infos).length)
-console.log('imports found', Object.keys(deps.imports).length)
-console.log('exports found',Object.keys(deps.exports).length)
-console.log('possible collisions',Object.entries(deps.exports).filter(([_, v]) => v.length > 1).length)
+if (showStats) {
+    console.log('info about', JAR_DIR)
+    console.log('jars read', Object.keys(infos).length)
+    console.log('imports found', Object.keys(deps.imports).length)
+    console.log('exports found', Object.keys(deps.exports).length)
+    console.log('possible collisions', Object.entries(deps.exports).filter(([_, v]) => v.length > 1).length)
+}
 
 const resolveDeps = (info, resolved) => {
     if (info.imports) info.imports.forEach(i => {
@@ -89,12 +90,15 @@ const resolveDeps = (info, resolved) => {
     })
 }
 
-console.log('looking for', jar)
-const root = infos[jar]
+let root = infos[jar]
+if (!root) {
+    jar = Object.keys(infos).find(j => j.startsWith(jar)) // first match
+    if (jar) root = infos[jar]
+}
 if (!root) process.exit()
 const resolved = {}
 resolveDeps(root, resolved)
 
-if (showUnresolved) console.log('unresolved', Object.entries(resolved).filter(([_, v]) => v === false).map(e => e[0]).sort())
+if (showStats) console.log('unresolved', Object.entries(resolved).filter(([_, v]) => v === false).map(e => e[0]).sort())
 const found = Object.entries(resolved).filter(([_, v]) => v === true).map(e => e[0])
-console.log('cp', `${JAR_DIR}/${jar}` ,found.map( j => `${JAR_DIR}/${j}`).join(' ')) // and hope for the best )
+console.log('cp', `${JAR_DIR}/${jar}`, found.map(j => `${JAR_DIR}/${j}`).join(' ')) // and hope for the best )
