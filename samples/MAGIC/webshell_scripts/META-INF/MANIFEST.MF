@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: webshell_scripts
+Bundle-SymbolicName: webshell_scripts
+Bundle-Version: 1.0.0
+SAP-BundleType: ScriptCollection
+SAP-NodeType: IFLMAP
+Import-Package: org.osgi.framework, com.sap.script.artifact.bundle.activ
+ ator
+Provide-Capability: scriptcollection.webshell_scripts;version:Version="1
+ .0.0"
+Origin-Bundle-Name: webshell_scripts
+Origin-Bundle-SymbolicName: webshell_scripts
+SAP-ArtifactId: 23333dd7-b1e6-4484-b43e-a008bb802ea2
+Bundle-Activator: com.sap.script.artifact.bundle.activator.ScriptCollect
+ ionBundleActivator
+SAP-StartOrder: 70
+
