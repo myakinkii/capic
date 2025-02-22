@@ -50,7 +50,7 @@ service CpiLocalService {
         }
         actions {
             action syncGitToPackage(pckgId : String not null, version : String, commitMsg : String) returns String;
-            action deployKarafFromPackage(pckgId : String not null)                                 returns String;
+            action deployKarafFromPackage(pckgId : String not null, tryLocal : Boolean)             returns String;
         };
 }
 

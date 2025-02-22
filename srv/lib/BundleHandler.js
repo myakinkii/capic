@@ -15,15 +15,15 @@ const objTypeToPathMap = {
     SCRIPT_COLLECTION: (_, bundlePath, bundleId) => `${bundlePath}/META-INF/MANIFEST.MF` // not a valid xml though
 }
 
-const saveBundleXml = ({ Id:bundleId, PackageId:pckgId ,Content:data }) => {
-    data = data.replaceAll(' /$',' $') // some strange stuff in ace editor
-    fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/blueprint-local.xml`, data ) // kinda backup of local flow
+const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
+    data = data.replaceAll(' /$', ' $') // some strange stuff in ace editor
+    fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/blueprint-local.xml`, data) // kinda backup of local flow
     fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
 const findBundleInfo = (integrationComponentsList, Id) => {
     const infos = getBundleInfos(integrationComponentsList)
-    return infos.find( info => info.name._text == Id)
+    return infos.find(info => info.name._text == Id)
 }
 
 const getBundleInfos = (integrationComponentsList) => {
@@ -42,7 +42,7 @@ const getBundleXml = (pckgId, bundleId, objType) => {
     }
 }
 
-const deployBundleToKaraf = async (pckgId, bundleId) => {
+const deployBundleToKaraf = async (pckgId, bundleId, fromLocalBlueprint) => {
 
     const fromXml = (tryLocal) => {
         try {
@@ -66,8 +66,7 @@ const deployBundleToKaraf = async (pckgId, bundleId) => {
 
     if (!KARAF_PATH) throw new Error('KARAF_PATH_NOT_SET')
     let from
-    if (from = fromXml(true)) return from
-    else if (from = fromXml()) return from
+    if (from = fromXml(fromLocalBlueprint)) return from
     else if (from = fromJar()) return from
     else throw new Error('DEPLOY_FAILED')
 }

@@ -13,8 +13,8 @@ module.exports = cds.service.impl(async function () {
         .then(list => findBundleInfo(list, id))
 
     const getArtifactIds = () => operations.run({ cmd: 'IntegrationComponentsList' })
-        .then( list => getBundleInfos(list)
-        .reduce((prev, { name: { _text: n }, id: { _text: id } }) => Object.assign(prev, { [n]: id }), {}))
+        .then(list => getBundleInfos(list)
+            .reduce((prev, { name: { _text: n }, id: { _text: id } }) => Object.assign(prev, { [n]: id }), {}))
 
     this.on('syncGitToPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
@@ -31,8 +31,8 @@ module.exports = cds.service.impl(async function () {
 
     this.on('deployKarafFromPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
-        const { pckgId } = req.data
-        const res = await deployBundleToKaraf(pckgId, bundleId)
+        const { pckgId, tryLocal } = req.data
+        const res = await deployBundleToKaraf(pckgId, bundleId, tryLocal)
         return `DEPLOYED_FROM: ${pckgId}/${bundleId}/${res}`
     })
 
