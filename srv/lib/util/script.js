@@ -1,11 +1,11 @@
 const fs = require('fs')
 const { execSync } = require('child_process')
 
-let JAR_DIR = './_jars'
+let JAR_DIR = './jars'
 const localCpiUrl = 'http://localhost:4004/cpi'
-const karafHome = `${localCpiUrl}/file_download/home/vcap/app`
-const karafCacheUrl = `${karafHome}/data/cache`
-const karafWarUrl = `${karafHome}/webapps`
+const karafDownloadHome = `${localCpiUrl}/files/download/home/vcap/app`
+const karafCacheUrl = `${karafDownloadHome}/data/cache`
+const karafWarUrl = `${karafDownloadHome}/webapps`
 
 const getInfo = () => execSync(`curl ${localCpiUrl}/webshell/info > _info.txt`, { cwd: JAR_DIR })
 const getBundleInfo = (n) => execSync(`curl ${karafCacheUrl}/bundle${n}/bundle.info`, { cwd: JAR_DIR }).toString().split('\n')[1]
@@ -38,7 +38,7 @@ try {
     process.exit()
 }
 
-console.log('getting info into _info.txt)')
+console.log('getting info into _info.txt')
 getInfo()
 
 const csv = []
@@ -56,9 +56,8 @@ do {
 
 const warName = getWarName(info)
 console.log('getting war from webapps', warName)
-// getWar(warName)
-// unzipWar(warName)
+getWar(warName) // its around 200mb, can crash cpi, but after restart typically works
+unzipWar(warName)
 
-console.log('writing csv')
-// fs.writeFileSync(`${JAR_DIR}/_bundles.csv`, csv.map(b => b.join(";")).join("\n"))
-
+console.log('writing csv into _bundles.csv')
+fs.writeFileSync(`${JAR_DIR}/_bundles.csv`, csv.map(b => b.join(",")).join("\n"))
