@@ -232,6 +232,11 @@ sap.ui.define([
             var ctx = e.getSource().getBindingContext("pkg")
             var rt = ctx.getProperty("Runtime") || ctx.getObject()
 
+            if (!rt.ArtifactId) {
+                MessageToast.show('NOT_DEPLOYED')
+                return
+            }
+
             var resolvedDlg
             this.runtimeDetailsPromise.then(function (dlg) {
                 resolvedDlg = dlg
