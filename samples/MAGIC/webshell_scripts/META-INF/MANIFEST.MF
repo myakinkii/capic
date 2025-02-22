@@ -11,7 +11,7 @@ Provide-Capability: scriptcollection.webshell_scripts;version:Version="1
  .0.0"
 Origin-Bundle-Name: webshell_scripts
 Origin-Bundle-SymbolicName: webshell_scripts
-SAP-ArtifactId: 23333dd7-b1e6-4484-b43e-a008bb802ea2
+SAP-ArtifactId: 00d44e3e-9985-4103-8efd-e2b159563ed1
 Bundle-Activator: com.sap.script.artifact.bundle.activator.ScriptCollect
  ionBundleActivator
 SAP-StartOrder: 70

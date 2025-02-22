@@ -1,3 +1,12 @@
+/********************************************************
+* Copyright 2019 Vadim Klimov https://github.com/vadimklimov
+*
+* Licensed who knows how
+*
+* More info here https://community.sap.com/t5/technology-blogs-by-members/execution-of-osgi-shell-commands-on-cpi-runtime-node/ba-p/13428250
+*
+********************************************************/
+
 import com.sap.gateway.ip.core.customdev.util.Message
 import groovy.io.GroovyPrintStream
 import org.apache.karaf.shell.api.console.Session

@@ -1,3 +1,12 @@
+/********************************************************
+* Copyright 2019 Ariel Bravo https://github.com/ambravo
+*
+* Licensed who knows how
+*
+* More info here https://community.sap.com/t5/technology-blogs-by-members/exploring-cpi-s-filesystem-s-content/ba-p/13414683
+*
+********************************************************/
+
 import com.sap.gateway.ip.core.customdev.util.Message
 import java.text.SimpleDateFormat
 
