@@ -50,7 +50,7 @@
                     <Text text="{pkg>Type}"/>
                     <ObjectStatus text="{pkg>Runtime/Status}"/>
                     <!-- <Link text="{pkg>Runtime/Version} / {pkg>Version}"/> -->
-                    <ObjectNumber  active="true" inverted="true"
+                    <ObjectNumber  active="true" inverted="true" press="showRuntimeDetails"
                         number="{
                             parts:[
                                 {path: 'pkg>Runtime/Version'},
@@ -118,7 +118,7 @@
                     <Text text="{pkg>Type}"/>
                     <ObjectStatus text="{pkg>Status}"/>
                     <!-- <Link text="{pkg>Version}"/> -->
-                    <ObjectNumber  active="true" inverted="true" number="{pkg>Version}" />
+                    <ObjectNumber  active="true" inverted="true" number="{pkg>Version}" press="showRuntimeDetails" />
                     <Button icon="sap-icon://action" press="openActions" />
                 </cells>
             </ColumnListItem>

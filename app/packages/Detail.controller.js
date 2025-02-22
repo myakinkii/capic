@@ -36,6 +36,15 @@ sap.ui.define([
                 this.getView().addDependent(act)
                 return act
             }.bind(this))
+
+            this.runtimeDetailsPromise = Fragment.load({ name: "packages.RuntimeDetails", controller: this }).then(function (dlg) {
+                this.getView().addDependent(dlg)
+                dlg.setModel(new JSONModel(), "cpi")
+                dlg.getEndButton().attachPress(function () {
+                    dlg.close()
+                })
+                return dlg
+            }.bind(this))
         },
 
         onRouteMatched: function (e) {
@@ -131,7 +140,7 @@ sap.ui.define([
             var ctx = e.getSource().getBindingContext("pkg")
             var rt = ctx.getProperty("Runtime") || ctx.getObject()
             if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
-                
+
             var url = `${pkgOdataCtx.getModel().getServiceUrl()}IntegrationRuntimeArtifacts('${rt.Id}')`
             BusyIndicator.show(50)
             promisedFetch(url).then(function (res) {
@@ -150,14 +159,14 @@ sap.ui.define([
             if (!rt.Id) return MessageToast.show('NOT_DEPLOYED')
 
             var rtOdataCtx = pkgOdataCtx.getModel().bindContext(`/IntegrationRuntimeArtifacts('${rt.Id}')`)
-             this.editFlow.invokeAction('CpiLocalService.syncGitToPackage', {
-                    contexts: rtOdataCtx,
-                    parameterValues: [
-                        { name: "pckgId", value: pkgOdataCtx.getProperty("Id") },
-                        // { name: "xmlString", value: res },
-                        { name: "version", value: rt.Version }
-                    ],
-                    skipParameterDialog: false
+            this.editFlow.invokeAction('CpiLocalService.syncGitToPackage', {
+                contexts: rtOdataCtx,
+                parameterValues: [
+                    { name: "pckgId", value: pkgOdataCtx.getProperty("Id") },
+                    // { name: "xmlString", value: res },
+                    { name: "version", value: rt.Version }
+                ],
+                skipParameterDialog: false
             }).then(function (res) {
                 // BusyIndicator.hide()
                 MessageBox.show(res.getObject().value)
@@ -176,11 +185,11 @@ sap.ui.define([
 
             var rtOdataCtx = pkgOdataCtx.getModel().bindContext(`/IntegrationRuntimeArtifacts('${rt.Id}')`)
             this.editFlow.invokeAction('CpiLocalService.deployKarafFromPackage', {
-                    contexts: rtOdataCtx,
-                    parameterValues: [
-                        { name: "pckgId", value: pkgOdataCtx.getProperty("Id") }
-                    ],
-                    skipParameterDialog: true
+                contexts: rtOdataCtx,
+                parameterValues: [
+                    { name: "pckgId", value: pkgOdataCtx.getProperty("Id") }
+                ],
+                skipParameterDialog: true
             }).then(function (res) {
                 MessageToast.show(res.getObject().value)
             }).catch(function (err) {
@@ -217,6 +226,30 @@ sap.ui.define([
         formatVersionStatus: function (rtVer, dtVer) {
             if (!rtVer || !dtVer) return 'None'
             return rtVer == dtVer ? 'Success' : 'Warning'
+        },
+
+        showRuntimeDetails: function (e) {
+            var ctx = e.getSource().getBindingContext("pkg")
+            var rt = ctx.getProperty("Runtime") || ctx.getObject()
+
+            var resolvedDlg
+            this.runtimeDetailsPromise.then(function (dlg) {
+                resolvedDlg = dlg
+                BusyIndicator.show(50)
+                return this.editFlow.invokeAction('/getRuntimeDetails', {
+                    model: this.getView().getModel(),
+                    parameterValues: [{ name: "artifactId", value: rt.ArtifactId }],
+                    skipParameterDialog: true
+                })
+            }.bind(this)).then(function (res) {
+                BusyIndicator.hide()
+                resolvedDlg.getModel("cpi").setData(res.value)
+                resolvedDlg.open()
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                console.log(err)
+                MessageToast.show('ERROR')
+            })
         }
 
     })

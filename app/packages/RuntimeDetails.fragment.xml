@@ -1,0 +1,50 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+    <Dialog contentWidth="50rem" showHeader="false">
+        <Panel headerText="endpointInformation" >
+            <List binding="{cpi>/endpointInformation/0}" items="{cpi>endpointInstances}">
+                <StandardListItem wrapping="true" info="{cpi>endpointCategory}" title="{cpi>endpointUrl}" />
+            </List>
+        </Panel>
+        <Panel headerText="artifact">
+            <f:Form editable="false">
+                <f:layout>
+                    <!-- <f:ColumnLayout columnsM="1" columnsL="1" columnsXL="1" /> -->
+                    <f:ResponsiveGridLayout adjustLabelSpan="false"
+                        labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+                        emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
+                        columnsXL="1" columnsL="1" columnsM="1" />
+                </f:layout>
+                <f:FormContainer title="artifactInformation">
+                    <f:FormElement label="{i18n>deployState}">
+                        <Text text="{cpi>/artifactInformation/deployState}"/>
+                    </f:FormElement>
+                    <f:FormElement label="{i18n>deployedOn}">
+                        <Text text="{cpi>/artifactInformation/deployedOn}"/>
+                    </f:FormElement>
+                    <f:FormElement label="{i18n>deployedBy}">
+                        <Text text="{cpi>/artifactInformation/deployedBy}"/>
+                    </f:FormElement>
+                </f:FormContainer>
+                <f:FormContainer title="logConfiguration">
+                    <f:FormElement label="{i18n>logLevel}">
+                        <Text text="{cpi>/logConfiguration/logLevel}"/>
+                    </f:FormElement>
+                    <f:FormElement label="{i18n>traceActive}">
+                        <Text text="{cpi>/logConfiguration/traceActive}"/>
+                    </f:FormElement>
+                </f:FormContainer>
+                <f:FormContainer expandable="true" expanded="false" title="tags" formElements="{
+                        path: 'cpi>/artifactInformation/tags',
+                        sorter: { path: 'name', descending: false }
+                    }">
+                    <f:FormElement label="{cpi>name}">
+                        <Text text="{cpi>value}"/>
+                    </f:FormElement>
+                </f:FormContainer>
+            </f:Form>
+        </Panel>
+        <endButton>
+            <Button text="{i18n>btnClose}" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

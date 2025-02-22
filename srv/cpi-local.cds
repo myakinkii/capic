@@ -46,12 +46,16 @@ service CpiLocalService {
         projection on external.IntegrationRuntimeArtifacts {
             key Id,
                 *,
-                '' as DeployURL : String
+                '' as DeployURL  : String,
+                '' as ArtifactId : UUID
         }
         actions {
             action syncGitToPackage(pckgId : String not null, version : String, commitMsg : String) returns String;
             action deployKarafFromPackage(pckgId : String not null, tryLocal : Boolean)             returns String;
         };
+
+    action getRuntimeDetails(artifactId : UUID not null) returns String;
+
 }
 
 

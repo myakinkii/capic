@@ -88,8 +88,13 @@ module.exports = cds.service.impl(async function () {
         }
         const ids = await getArtifactIds()
         return cpi.run(req.query).then(re => re.map(r => Object.assign(r, {
+            ArtifactId: ids[r.Id],
             DeployURL: `${CPI_TENANT_URL}/Operations/${operations.getCommand('IntegrationComponentDetail')}?artifactId=${ids[r.Id]}`
         })))
+    })
+
+    this.on('getRuntimeDetails', async (req) => {
+        return operations.run({ cmd: 'IntegrationComponentDetail', params: req.data })
     })
 
 });
