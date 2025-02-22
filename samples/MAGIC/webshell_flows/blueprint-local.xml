@@ -1,0 +1,157 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:Generator="com.sap.it.gnb.ifl.common.gen.pluggability.api.GeneratorHandler" xmlns:bsn="http://sapcd.com/bsnagt" xmlns:camel="http://camel.apache.org/schema/blueprint" xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cxfcore="http://cxf.apache.org/blueprint/core" xmlns:exsl="http://exslt.org/common" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:hci-ph="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:idocsoap="urn:sap-com:document:sap:idoc:soap:messages" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:ns="https://bsnschemas.netweaver.neo.com/bsnflow" xmlns:orange="http://xi.com/orange" xmlns:sap-cxf-generic-request="http://camel.apache.org/cxf/jaxws/dispatch" xmlns:sap-cxf-generic-request-reply="http://camel.apache.org/cxf/jaxws/provider" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:str="http://exslt.org/strings" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager" xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd           http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd           http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd           http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd           http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd           http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd           http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd           http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd">
+    <!--<reference id="cxfTracingFeatureFactory" interface="com.sap.it.op.agent.trace.cxf.CxfTracingFeatureFactory"/>-->
+    <!--<bean class="com.sap.esb.monitoring.cxf.runtime.feature.RuntimeFeature" id="cxf.feature.RuntimeFeature"/>-->
+    <!--<reference id="MessageProcessingLogSink" interface="com.sap.it.op.agent.api.MessageProcessingLogSink"/>-->
+    <!--<reference id="IntegrationOperationsErrorEventPublisher" interface="com.sap.it.op.ed.IntegrationOperationsErrorEventPublisher"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplInterceptor" id="itOpAgentMplInterceptor"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplEventNotifier" id="itOpAgentMplEventNotifier">-->
+    <!--    <property name="messageProcessingLogSink">-->
+    <!--        <ref component-id="MessageProcessingLogSink"/>-->
+    <!--    </property>-->
+    <!--</bean>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.CustomShutdownStrategy" id="CustomShutdownStrategy">-->
+    <!--    <property name="timeout" value="60"/>-->
+    <!--    <property name="suppressLoggingOnTimeout" value="true"/>-->
+    <!--    <property name="shutdownNowOnTimeout" value="true"/>-->
+    <!--</bean>-->
+    <bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>
+    <bean class="java.util.HashMap" id="userdefinedNamespaces"/>
+    <camel:camelContext id="webshell_flows" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
+        <camel:globalOptions>
+            <camel:globalOption key="CamelLogDebugBodyMaxChars" value="-1"/>
+            <camel:globalOption key="CamelMaximumEndpointCacheSize" value="50"/>
+        </camel:globalOptions>
+        <camel:streamCaching id="webshell_flows_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
+        <!--<camel:route id="Process_19">-->
+        <!--    <camel:from id="MessageFlow_30_276991626162070" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/files/download*&amp;senderAuthType=RoleBased&amp;xsrfProtection=false&amp;returnExceptionToSender=false&amp;userRole=ESBMessaging.send"/>-->
+        <!--    <camel:to uri="sap-pp-util://sender"/>-->
+        <!--    <camel:onException id="MessageFlow_30_276991629548800">-->
+        <!--        <camel:exception>-->
+        <!--            com.sap.esb.size.limiter.SizeLimitExceededException-->
+        <!--        </camel:exception>-->
+        <!--        <camel:handled>-->
+        <!--            <camel:constant>-->
+        <!--                false-->
+        <!--            </camel:constant>-->
+        <!--        </camel:handled>-->
+        <!--    </camel:onException>-->
+        <!--    <camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>-->
+        <!--    <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>-->
+        <!--    <camel:setHeader id="CallActivity_21_276991631775110" name="scriptFile">-->
+        <!--        <camel:constant>-->
+        <!--            file_browser.groovy-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="functionName">-->
+        <!--        <camel:constant>-->
+        <!--            download-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="scriptBundleId">-->
+        <!--        <camel:constant>-->
+        <!--            webshell_scripts-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="scriptFileType">-->
+        <!--        <camel:constant>-->
+        <!--            groovy-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:bean method="process" ref="scriptprocessor"/>-->
+        <!--    <camel:unmarshal id="CallActivity_25_276991635332726">-->
+        <!--        <camel:custom ref="base64"/>-->
+        <!--    </camel:unmarshal>-->
+        <!--    <camel:setProperty id="EndEvent_27_276991638709656" name="SAP_MarkMessageAsFailed">-->
+        <!--        <camel:constant>-->
+        <!--            false-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setProperty>-->
+        <!--</camel:route>-->
+        <camel:route id="Process_1">
+            <camel:from uri="ftp://cpi@localhost:2021/webshell?password=cpi&amp;passiveMode=true&amp;doneFileName=done&amp;delete=true&amp;binary=true&amp;delay=100&amp;autoCreate=false"/>
+            <!--<camel:from id="MessageFlow_4_276991661967689" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/webshell&amp;senderAuthType=RoleBased&amp;xsrfProtection=false&amp;returnExceptionToSender=false&amp;userRole=ESBMessaging.send"/>-->
+            <!--<camel:to uri="sap-pp-util://sender"/>-->
+            <!--<camel:onException id="MessageFlow_4_276991666402189">-->
+            <!--    <camel:exception>-->
+            <!--        com.sap.esb.size.limiter.SizeLimitExceededException-->
+            <!--    </camel:exception>-->
+            <!--    <camel:handled>-->
+            <!--        <camel:constant>-->
+            <!--            false-->
+            <!--        </camel:constant>-->
+            <!--    </camel:handled>-->
+            <!--</camel:onException>-->
+            <!--<camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>-->
+            <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>
+            <camel:setHeader id="CallActivity_9_276991668565954" name="scriptFile">
+                <camel:constant>
+                    webshell.groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="functionName">
+                <camel:constant>
+                    execute
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>
+                    webshell_scripts
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>
+                    groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setProperty id="EndEvent_2_276991671837225" name="SAP_MarkMessageAsFailed">
+                <camel:constant>
+                    false
+                </camel:constant>
+            </camel:setProperty>
+            <camel:to uri="ftp://cpi@localhost:2021/webshell?password=cpi&amp;passiveMode=true"/>
+        </camel:route>
+        <!--<camel:route id="Process_12">-->
+        <!--    <camel:from id="MessageFlow_18_276991673335213" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/files/browse*&amp;senderAuthType=RoleBased&amp;xsrfProtection=false&amp;returnExceptionToSender=false&amp;userRole=ESBMessaging.send"/>-->
+        <!--    <camel:to uri="sap-pp-util://sender"/>-->
+        <!--    <camel:onException id="MessageFlow_18_276991676717106">-->
+        <!--        <camel:exception>-->
+        <!--            com.sap.esb.size.limiter.SizeLimitExceededException-->
+        <!--        </camel:exception>-->
+        <!--        <camel:handled>-->
+        <!--            <camel:constant>-->
+        <!--                false-->
+        <!--            </camel:constant>-->
+        <!--        </camel:handled>-->
+        <!--    </camel:onException>-->
+        <!--    <camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>-->
+        <!--    <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>-->
+        <!--    <camel:setHeader id="CallActivity_14_276991678941115" name="scriptFile">-->
+        <!--        <camel:constant>-->
+        <!--            file_browser.groovy-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="functionName">-->
+        <!--        <camel:constant>-->
+        <!--            browse-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="scriptBundleId">-->
+        <!--        <camel:constant>-->
+        <!--            webshell_scripts-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:setHeader name="scriptFileType">-->
+        <!--        <camel:constant>-->
+        <!--            groovy-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setHeader>-->
+        <!--    <camel:bean method="process" ref="scriptprocessor"/>-->
+        <!--    <camel:setProperty id="EndEvent_16_276991682334489" name="SAP_MarkMessageAsFailed">-->
+        <!--        <camel:constant>-->
+        <!--            false-->
+        <!--        </camel:constant>-->
+        <!--    </camel:setProperty>-->
+        <!--</camel:route>-->
+    </camel:camelContext>
+</blueprint>
