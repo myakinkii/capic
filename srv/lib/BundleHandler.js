@@ -44,11 +44,11 @@ const getBundleXml = (pckgId, bundleId, objType) => {
 
 const deployBundleToKaraf = async (pckgId, bundleId) => {
 
-    const fromBeans = () => {
+    const fromXml = (tryLocal) => {
         try {
-            const beanPath = 'OSGI-INF/blueprint/beans.xml'
-            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${beanPath} ${KARAF_PATH}/deploy/${bundleId}.xml`)
-            return beanPath
+            const blueprint = tryLocal ? 'blueprint-local.xml' : 'OSGI-INF/blueprint/beans.xml'
+            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${blueprint} ${KARAF_PATH}/deploy/${bundleId}.xml`)
+            return blueprint
         } catch (err) {
             return false
         }
@@ -56,9 +56,9 @@ const deployBundleToKaraf = async (pckgId, bundleId) => {
 
     const fromJar = () => {
         try {
-            const bundlePath = 'bundle.jar'
-            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${bundlePath} ${KARAF_PATH}/deploy/${bundleId}.jar`)
-            return bundlePath
+            const bundle = 'bundle.jar'
+            execSync(`cp ${CPI_EXPORT_PATH}/${pckgId}/${bundleId}/${bundle} ${KARAF_PATH}/deploy/${bundleId}.jar`)
+            return bundle
         } catch (err) {
             return false
         }
@@ -66,7 +66,8 @@ const deployBundleToKaraf = async (pckgId, bundleId) => {
 
     if (!KARAF_PATH) throw new Error('KARAF_PATH_NOT_SET')
     let from
-    if (from = fromBeans()) return from
+    if (from = fromXml(true)) return from
+    else if (from = fromXml()) return from
     else if (from = fromJar()) return from
     else throw new Error('DEPLOY_FAILED')
 }
