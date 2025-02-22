@@ -7,11 +7,11 @@
                     <core:Item key="{Id}" text="{Id}" />
                 </Select>
                 <Label text="{i18n>pkgId}" />
-                <Select items="{/RezipPackages}" forceSelection="false" selectedKey="{srcPkgId}">
+                <Select items="{/RezipPackages}" forceSelection="false" selectedKey="{srcPkgId}" change="copyPackage">
                     <core:Item key="{Id}" text="{Id}" />
                 </Select>
                 <Label text="{i18n>bundleId}" />
-                <Input value="{srcBundleId}" />
+                <Input value="{srcBundleId}"  change="copyBundle" />
                 <core:Title text="To" />
                 <Label text="{i18n>createPkgFlag}" />
                 <CheckBox selected="{createPkgFlag}" />

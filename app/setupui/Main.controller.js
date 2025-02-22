@@ -24,6 +24,16 @@ sap.ui.define([
             this.rezipDialogPromise.then(dlg => dlg.open())
         },
 
+        copyPackage:function(e){
+            var ctx = e.getSource().getBindingContext()
+            ctx.setProperty("pkgId", e.getParameter("selectedItem").getKey())
+        },
+
+        copyBundle:function(e){
+            var ctx = e.getSource().getBindingContext()
+            ctx.setProperty("bundleId", e.getParameter("value"))
+        },
+
         rezipArtifact: function (e) {
             var ctx = e.getSource().getBindingContext().getObject()
             BusyIndicator.show(50)
