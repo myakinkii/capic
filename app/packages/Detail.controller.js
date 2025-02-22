@@ -3,8 +3,8 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
     "sap/ui/model/Filter",
-    "sap/ui/core/BusyIndicator", "sap/m/MessageToast",
-], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageToast) {
+    "sap/ui/core/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox"
+], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageToast, MessageBox) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -160,7 +160,7 @@ sap.ui.define([
                     skipParameterDialog: false
             }).then(function (res) {
                 // BusyIndicator.hide()
-                MessageToast.show(res.getObject().value)
+                MessageBox.show(res.getObject().value)
             }).catch(function (err) {
                 // BusyIndicator.hide()
                 console.log(err)

@@ -26,8 +26,7 @@ module.exports = cds.service.impl(async function () {
             params: { artifactIds: artifact.id._text }
         })
 
-        const res = await syncBundleToPackageRepo(pckgId, bundleId, version, commitMsg, xmlString)
-        return `SYNCED_TO: ${pckgId}/${bundleId} \n COMMIT_MSG: ${res} `
+        return syncBundleToPackageRepo(pckgId, bundleId, version, commitMsg, xmlString)
     })
 
     this.on('deployKarafFromPackage', async (req) => {
