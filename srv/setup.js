@@ -15,7 +15,7 @@ const temp = {
     },
     envPars: {
         CPI_TENANT_URL: '',
-        CPI_EXPORT_PATH: '',
+        CPI_EXPORT_PATH: './samples',
         KARAF_PATH: '',
         FTP_DIR: '',
     }
