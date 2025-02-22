@@ -118,7 +118,7 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
     return 'ok'
 }
 
-const rezipBundle = (data, srcPkg, srcBundle) => {
+const rezipBundle = (data, srcDir) => {
 
     let tmpDir = './.tmp'
     if (fs.existsSync(tmpDir)) execSync(`rm -rf ${tmpDir}`)
@@ -130,7 +130,6 @@ const rezipBundle = (data, srcPkg, srcBundle) => {
     execSync('rm bundle.zip', { cwd: tmpDir })
     execSync('rm -rf ./src', { cwd: tmpDir })
 
-    const srcDir = `${CPI_EXPORT_PATH}/${srcPkg}/${srcBundle}`
     execSync(`cp -rp ${srcDir}/src ${tmpDir}/src`)
     execSync('zip -D -r rezip.zip ./', { cwd: tmpDir })
 

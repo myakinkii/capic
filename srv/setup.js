@@ -120,7 +120,8 @@ module.exports = cds.service.impl(async function () {
 
         const dummyData = await cpi.run(`/${entity}(Id='${artifact.Id}',Version='${artifact.Version}')/$value`)
 
-        const rezip64 = rezipBundle(dummyData, srcPkgId, srcBundleId)
+        const srcDir = `${temp.envPars.CPI_EXPORT_PATH}/${srcPkgId}/${srcBundleId}`
+        const rezip64 = rezipBundle(dummyData, srcDir)
 
         await cpi.run(cds.delete(entity, { Id: artifact.Id, Version: artifact.Version }))
 
