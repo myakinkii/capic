@@ -118,7 +118,27 @@ const syncBundleToPackageRepo = async (pckgId, bundleId, bundleVersion, commitMs
     return 'ok'
 }
 
+const rezipBundle = (data, srcPkg, srcBundle) => {
+
+    let tmpDir = './.tmp'
+    if (fs.existsSync(tmpDir)) execSync(`rm -rf ${tmpDir}`)
+
+    fs.mkdirSync(tmpDir)
+    fs.writeFileSync(`${tmpDir}/bundle.zip`, Buffer.from(data))
+    execSync('unzip -o bundle.zip', { cwd: tmpDir })
+
+    execSync('rm bundle.zip', { cwd: tmpDir })
+    execSync('rm -rf ./src', { cwd: tmpDir })
+
+    const srcDir = `${CPI_EXPORT_PATH}/${srcPkg}/${srcBundle}`
+    execSync(`cp -rp ${srcDir}/src ${tmpDir}/src`)
+    execSync('zip -D -r rezip.zip ./', { cwd: tmpDir })
+
+    return fs.readFileSync(`${tmpDir}/rezip.zip`).toString('base64')
+}
+
 module.exports = {
+    rezipBundle,
     saveBundleXml,
     getBundleInfos,
     findBundleInfo,

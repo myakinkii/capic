@@ -1,0 +1,30 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+    <Dialog binding="{/Rezip}" contentWidth="50rem" showHeader="false">
+            <f:SimpleForm  editable="true" layout="ResponsiveGridLayout" columnsXL="2" columnsL="2" columnsM="2">
+                <core:Title text="From" />
+                <Label text="{i18n>objType}" />
+                <Select items="{/RezipTypes}" selectedKey="{objType}">
+                    <core:Item key="{Id}" text="{Id}" />
+                </Select>
+                <Label text="{i18n>pkgId}" />
+                <Select items="{/RezipPackages}" forceSelection="false" selectedKey="{srcPkgId}">
+                    <core:Item key="{Id}" text="{Id}" />
+                </Select>
+                <Label text="{i18n>bundleId}" />
+                <Input value="{srcBundleId}" />
+                <core:Title text="To" />
+                <Label text="{i18n>createPkgFlag}" />
+                <CheckBox selected="{createPkgFlag}" />
+                <Label text="{i18n>pkgId}" />
+                <Input value="{pkgId}" />
+                <Label text="{i18n>bundleId}" />
+                <Input value="{bundleId}" />
+            </f:SimpleForm>
+        <beginButton>
+            <Button text="{i18n>btnRezip}" press="rezipArtifact"/>
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>btnClose}" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

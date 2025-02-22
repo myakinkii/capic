@@ -6,6 +6,9 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" >
     <Page>
+    <headerContent>
+        <Button icon="sap-icon://activate" press="showRezipDlg" />
+    </headerContent>
     <content>
         <Panel expandable="true" expanded="true" class="sapUiMediumMarginTop">
             <headerToolbar>
@@ -28,7 +31,7 @@
                     <Title text="{i18n>cdsRcPars}" />
                     <ToolbarSpacer />
                     <Button custom:pars="cdsRcPars"  icon="sap-icon://save" press="persistPars"/>
-                </Toolbar >
+                </Toolbar>
             </headerToolbar>
             <f:SimpleForm editable="true" binding="{/CdsRcPars}">
 				<Label text="{i18n>cpi}" /> <TextArea rows="9" value="{cpi}" />

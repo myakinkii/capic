@@ -12,6 +12,7 @@ target/
 #private stuff
 .cdsrc.json
 .env
+.tmp
 test
 
 # Web IDE, App Studio

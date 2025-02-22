@@ -7,16 +7,26 @@ module.exports = class MyRemoteServiceApi extends require('./MyRemoteService') {
         this.on('*', async (req) => {
             const { query } = req
             // remove some stuff that if not supported by cpi odata v2 api
-            query.SELECT.columns = undefined
-            query.SELECT.orderBy = undefined
-            query.SELECT.count = undefined
-            query.SELECT.limit = undefined
-            query.SELECT.skip = undefined
+            if (query.SELECT){
+                query.SELECT.columns = undefined
+                query.SELECT.orderBy = undefined
+                query.SELECT.count = undefined
+                query.SELECT.limit = undefined
+                query.SELECT.skip = undefined
+            }
 
             // this converts our query to odata url
             const reqOptions = getReqOptions(req, query, this) // we stole it from actual remote service
             await this.prepareAxiosRequest(reqOptions, '/api/v1')
-            return this.runAxiosRequest(reqOptions).then(r => query.SELECT.one ? r.data.d : r.data.d.results)
+            if (typeof query =='string'){
+                reqOptions.responseType = 'arraybuffer'
+                reqOptions.headers.accept = 'application/zip'
+                
+            }
+            return this.runAxiosRequest(reqOptions).then(r => {
+                if (query.SELECT) return query.SELECT.one ? r.data.d : r.data.d.results
+                else return r.data?.d || r.data
+            })
         })
 
         await super.init()

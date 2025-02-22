@@ -14,5 +14,24 @@ service SetupService {
         webshell : String;
     }
 
+    @odata.singleton
+    entity Rezip {
+        objType       : String;
+        createPkgFlag : Boolean;
+        pkgId         : String;
+        bundleId      : String;
+        srcPkgId      : String;
+        srcBundleId   : String;
+    };
+
+    entity RezipTypes {
+        key Id: String;
+    }
+
+    entity RezipPackages {
+        key Id: String;
+    }
+
     action persist(pars : String);
+    action rezip(task : Rezip);
 }

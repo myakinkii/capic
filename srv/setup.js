@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { rezipBundle } = require('./lib/BundleHandler')
 
 // we are in single user mode, so we can do this ))
 const temp = {
@@ -31,7 +32,7 @@ try {
 
 try {
     const envData = fs.readFileSync(fileNames.envPars, 'utf8')
-    Object.assign(temp.envPars, envData.split("\n").filter(r => !!r ).reduce((prev, cur) => {
+    Object.assign(temp.envPars, envData.split("\n").filter(r => !!r).reduce((prev, cur) => {
         const [key, val] = cur.split('=')
         prev[key] = val
         return prev
@@ -67,13 +68,68 @@ module.exports = cds.service.impl(async function () {
     })
 
     const prepareData = {
-        envPars: (obj) => Object.entries(obj).map(([k, v]) => `${k}=${v||''}`).join('\n'),
+        envPars: (obj) => Object.entries(obj).map(([k, v]) => `${k}=${v || ''}`).join('\n'),
         cdsRcPars: (obj) => beautify(obj, null, 2)
     }
 
     this.on('persist', async (req, next) => {
         const { pars } = req.data
         fs.writeFileSync(fileNames[pars], prepareData[pars](temp[pars]))
+    })
+
+    const cpi = await cds.connect.to('cpi')
+
+    const mapToArtifactDT = {
+        INTEGRATION_FLOW: 'IntegrationDesigntimeArtifacts',
+        SCRIPT_COLLECTION: 'ScriptCollectionDesigntimeArtifacts',
+        MESSAGE_MAPPING: 'MessageMappingDesigntimeArtifacts'
+    }
+
+    this.on('READ', 'RezipTypes', async (req, next) => {
+        return Object.keys(mapToArtifactDT).map(Id => ({ Id }))
+    })
+
+    this.on('READ', 'RezipPackages', async (req, next) => {
+        return fs.readdirSync(`${temp.envPars.CPI_EXPORT_PATH}`).filter(f => !f.startsWith('.')).map(Id => ({ Id }))
+    })
+
+    this.on('READ', 'Rezip', async (req, next) => ({
+        objType: 'INTEGRATION_FLOW',
+        createPkgFlag: true,
+        pkgId: '',
+        bundleId: '',
+        srcPkgId: '',
+        srcBundleId: '',
+    }))
+
+    this.on('UPDATE', 'Rezip', async (req, next) => req.data)
+
+    this.on('rezip', async (req, next) => {
+
+        const { objType, createPkgFlag, pkgId, bundleId, srcPkgId, srcBundleId } = req.data.task
+
+        if (createPkgFlag) {
+            await cpi.run(cds.create('IntegrationPackages').entries({ Id: pkgId, Name: pkgId, ShortText: pkgId }))
+        }
+
+        const entity = mapToArtifactDT[objType]
+
+        const artifact = await cpi.run(cds.create(mapToArtifactDT[objType]).entries({
+            Id: bundleId, Name: bundleId, PackageId: pkgId
+        }))
+
+        const dummyData = await cpi.run(`/${entity}(Id='${artifact.Id}',Version='${artifact.Version}')/$value`)
+
+        const rezip64 = rezipBundle(dummyData, srcPkgId, srcBundleId)
+
+        await cpi.run(cds.delete(entity, { Id: artifact.Id, Version: artifact.Version }))
+
+        return await cpi.run(cds.create(entity, { Id: artifact.Id, Version: artifact.Version }).entries({
+            Name: artifact.Name,
+            Id: artifact.Id,
+            PackageId: pkgId,
+            ArtifactContent: rezip64
+        }))
     })
 
 })
