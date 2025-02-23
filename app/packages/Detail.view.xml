@@ -13,7 +13,7 @@
                 <ToolbarSpacer/>
                 <CheckBox text="{i18n>filterDeployed}" selected="{ui>/filter/IsDeployed}" select="filterDTArtifacts" />
                 <CheckBox text="{i18n>filterDrafts}" selected="{ui>/filter/HasDraft}" select="filterDTArtifacts" />
-                <ComboBox width="12rem" showClearIcon="true" change="filterDTArtifacts"
+                <ComboBox width="12rem" showClearIcon="true" change="filterArtifacts"
                     selectedKey="{ui>/filter/Type}" 
                     items="{ui>/typeFilters}">
                     <core:Item key="{ui>key}" text="{ui>val}" />
@@ -71,7 +71,7 @@
         </items>
     </Table>
 
-    <Table width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
+    <Table id="rtTable" width="100%" binding="{pkg>/}" growing="true" growingThreshold="10" 
 		items="{
 			path : 'pkg>RuntimeArtifacts',
 			filters:[{ path:'Claimed', operator: 'NE', value1: true }],

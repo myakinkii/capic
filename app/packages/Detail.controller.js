@@ -206,6 +206,17 @@ sap.ui.define([
             e.getSource().getParent().getParent().getBinding("items").filter(new Filter(filters, true), 'Application')
         },
 
+        filterArtifacts:function(e){
+            var selectedDtType = e.getParameter("value")
+            var filters = []
+            if (selectedDtType) {
+                var rtType = this.getView().getModel("ui").getProperty("/typeFilters/"+selectedDtType)
+                filters.push(new Filter({ path: 'Type', operator: "EQ", value1: rtType.key }))
+            }
+            this.getView().byId("rtTable").getBinding("items").filter(filters, 'Control')
+            this.filterDTArtifacts(e)
+        },
+
         searchArtifacts: function (e) {
             var fields = this.getView().getModel("ui").getProperty("/search")
             var filters = []
