@@ -13,7 +13,6 @@ target/
 .cdsrc.json
 .env
 .tmp
-test
 
 # Web IDE, App Studio
 .che/
