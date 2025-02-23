@@ -1,10 +1,13 @@
 {
   "name": "capic",
   "version": "1.0.0",
-  "description": "A simple CAP project to do something with CPI artifacts",
-  "repository": "<Add your repository here>",
-  "license": "UNLICENSED",
-  "private": true,
+  "description": "Assistant app for CPI local testing of iflows",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myakinkii/capic.git"
+  },
+  "license": "MIT",
+  "private": false,
   "dependencies": {
     "@sap/cds": "^8",
     "axios": "^1.7.9",
