@@ -19,6 +19,7 @@ sap.ui.define([
             this.getView().setModel(new JSONModel(), "pkg")
             this.getView().setModel(new JSONModel({
                 filter: { // calculated properties enriched by enrichData
+                    IsDeployedLocal: false,
                     IsDeployed: false,
                     HasDraft: false,
                     Type: ''
@@ -69,11 +70,15 @@ sap.ui.define([
                 promisedFetch(serviceUrl + pkgUrl + '/ScriptCollectionDesigntimeArtifacts'),
                 promisedFetch(serviceUrl + pkgUrl + '/ValueMappingDesigntimeArtifacts'),
                 promisedFetch(serviceUrl + pkgUrl + '/MessageMappingDesigntimeArtifacts'),
-                promisedFetch(serviceUrl + 'IntegrationRuntimeArtifacts')
+                promisedFetch(serviceUrl + 'IntegrationRuntimeArtifacts'),
+                promisedFetch(serviceUrl + 'DeployedArtifacts')
             ]).then(function (res) {
 
                 var data = res.shift() // header
                 data["DesigntimeArtifacts"] = []
+
+
+                var localArts = res.pop().value.reduce((prev, cur) => Object.assign(prev, { [cur.Id]: true }), {})
 
                 var rtArts = res.pop().value // all stuff, cuz osgi bundles have idea of packages
                 data["RuntimeArtifacts"] = rtArts // for stuff in second table (see "Claimed" flag below and in xml)
@@ -87,6 +92,7 @@ sap.ui.define([
                         Object.assign(a, { Runtime: deployed[a.Id] || {} })
                         if (a.Runtime["Id"]) deployed[a.Id]["Claimed"] = true // to filter out others
 
+                        a["IsDeployedLocal"] = !!localArts[a.Id]
                         a["IsDeployed"] = !!a.Runtime["Version"]
                         a["HasDraft"] = a.Runtime["Id"] && a["Version"] != a.Runtime["Version"]
                         var dtType = artifactType["@odata.context"].match(/.*#(\w+)Design/)[1] // because I can )

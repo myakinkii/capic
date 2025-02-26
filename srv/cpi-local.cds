@@ -27,6 +27,12 @@ service CpiLocalService {
             ArtifactURL : String;
             Content     : LargeString;
     };
+    
+    @readonly
+    @cds.persistence.skip: true
+    entity DeployedArtifacts {
+        key Id : String;
+    }
 
     action flushTmpFile();
 

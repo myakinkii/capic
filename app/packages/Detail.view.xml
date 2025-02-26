@@ -11,6 +11,7 @@
             <Toolbar width="100%">
                 <Label text="[PKG] DesigntimeArtifacts ({pkg>DesigntimeArtifactsCount})"/>
                 <ToolbarSpacer/>
+                <CheckBox text="{i18n>filterDeployedIflowKaraf}" selected="{ui>/filter/IsDeployedLocal}" select="filterDTArtifacts" />
                 <CheckBox text="{i18n>filterDeployed}" selected="{ui>/filter/IsDeployed}" select="filterDTArtifacts" />
                 <CheckBox text="{i18n>filterDrafts}" selected="{ui>/filter/HasDraft}" select="filterDTArtifacts" />
                 <ComboBox width="12rem" showClearIcon="true" change="filterArtifacts"
