@@ -1,6 +1,7 @@
 service SetupService {
 
     @odata.singleton
+    @cds.persistence.skip: true
     entity EnvPars {
         CPI_TENANT_URL  : String;
         CPI_EXPORT_PATH : String;
@@ -9,12 +10,14 @@ service SetupService {
     }
 
     @odata.singleton
+    @cds.persistence.skip: true
     entity CdsRcPars {
         cpi      : String;
         webshell : String;
     }
 
     @odata.singleton
+    @cds.persistence.skip: true
     entity Rezip {
         objType       : String;
         createPkgFlag : Boolean;
@@ -24,12 +27,14 @@ service SetupService {
         srcBundleId   : String;
     };
 
+    @cds.persistence.skip: true
     entity RezipTypes {
-        key Id: String;
+        key Id : String;
     }
 
+    @cds.persistence.skip: true
     entity RezipPackages {
-        key Id: String;
+        key Id : String;
     }
 
     action persist(pars : String);

@@ -19,6 +19,7 @@ service CpiLocalService {
             blob
         };
 
+    @cds.persistence.skip: true
     entity FakeDesigntimeArtifacts {
         key Id          : String;
         key Type        : String;
