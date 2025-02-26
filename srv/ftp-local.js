@@ -2,6 +2,7 @@ const fs = require('fs')
 const moment = require('moment')
 
 const FTP_DIR = process.env.FTP_DIR
+const KARAF_PATH = process.env.KARAF_PATH
 
 const ftpIn = {
     inputFileName: 'DATA_IN',
@@ -12,9 +13,10 @@ module.exports = cds.service.impl(async function() {
 
     const cpi = await cds.connect.to('cpi')
 
-    this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
-        const result = await cpi.run(SELECT.from('IntegrationRuntimeArtifacts'))
-        return result.filter(a => a.Type == 'INTEGRATION_FLOW').map( ({Id}) => ({Id}))
+    this.on('READ', 'DeployedArtifacts', async (req, next) => {
+        return fs.readdirSync(`${KARAF_PATH}/deploy`).filter( f => {
+            return f.endsWith('.xml')
+        }).map( f => ({Id: f.split('.')[0]}) )
     })
 
     this.on('READ', 'FtpIn', async (req, next) => {
