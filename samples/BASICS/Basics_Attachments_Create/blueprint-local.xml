@@ -1,0 +1,245 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:Generator="com.sap.it.gnb.ifl.common.gen.pluggability.api.GeneratorHandler" xmlns:bsn="http://sapcd.com/bsnagt" xmlns:camel="http://camel.apache.org/schema/blueprint" xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cxfcore="http://cxf.apache.org/blueprint/core" xmlns:exsl="http://exslt.org/common" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:hci-ph="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:idocsoap="urn:sap-com:document:sap:idoc:soap:messages" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:ns="https://bsnschemas.netweaver.neo.com/bsnflow" xmlns:orange="http://xi.com/orange" xmlns:sap-cxf-generic-request="http://camel.apache.org/cxf/jaxws/dispatch" xmlns:sap-cxf-generic-request-reply="http://camel.apache.org/cxf/jaxws/provider" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:str="http://exslt.org/strings" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager" xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd           http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd           http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd           http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd           http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd           http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd           http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd           http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd">
+    <!--<reference id="cxfTracingFeatureFactory" interface="com.sap.it.op.agent.trace.cxf.CxfTracingFeatureFactory"/>-->
+    <!--<bean class="com.sap.esb.monitoring.cxf.runtime.feature.RuntimeFeature" id="cxf.feature.RuntimeFeature"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.cxf.MplFeature" id="MonitoringInboundFeature">-->
+    <!--    <property name="messageProcessingLogSink">-->
+    <!--        <ref component-id="MessageProcessingLogSink"/>-->
+    <!--    </property>-->
+    <!--    <property name="centralMonitor">-->
+    <!--        <ref component-id="itOpAgentMplEventNotifier"/>-->
+    <!--    </property>-->
+    <!--    <property name="startComponent" value="true"/>-->
+    <!--    <property name="endComponent" value="false"/>-->
+    <!--    <property name="errorEventPublisher">-->
+    <!--        <ref component-id="IntegrationOperationsErrorEventPublisher"/>-->
+    <!--    </property>-->
+    <!--</bean>-->
+    <!--<reference id="MessageProcessingLogSink" interface="com.sap.it.op.agent.api.MessageProcessingLogSink"/>-->
+    <!--<reference id="IntegrationOperationsErrorEventPublisher" interface="com.sap.it.op.ed.IntegrationOperationsErrorEventPublisher"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplInterceptor" id="itOpAgentMplInterceptor"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplEventNotifier" id="itOpAgentMplEventNotifier">-->
+    <!--    <property name="messageProcessingLogSink">-->
+    <!--        <ref component-id="MessageProcessingLogSink"/>-->
+    <!--    </property>-->
+    <!--</bean>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.CustomShutdownStrategy" id="CustomShutdownStrategy">-->
+    <!--    <property name="timeout" value="60"/>-->
+    <!--    <property name="suppressLoggingOnTimeout" value="true"/>-->
+    <!--    <property name="shutdownNowOnTimeout" value="true"/>-->
+    <!--</bean>-->
+    <!--<bean class="org.apache.cxf.transport.common.gzip.GZIPFeature" id="GZIPFeature"/>-->
+    <!--<bean class="net.sf.saxon.xpath.XPathFactoryImpl" id="saxonFactory"/>-->
+    <!--<bean class="com.sap.esb.application.services.cxf.interceptor.IgnorableSapAndTransportBindingPolicyInterceptorProvider"/>-->
+    <!--<bean class="com.sap.esb.application.services.cxf.interceptor.PrincipalPropagationInterceptor" id="soap1xPPInterceptor"/>-->
+    <!--<bean class="com.sap.esb.application.services.cxf.interceptor.ReplyToInterceptor" id="cxf.interceptor.replyto"/>-->
+    <!--<reference filter="(usage=pp-prepare)" id="ppPreparationInterceptor" interface="org.apache.cxf.phase.PhaseInterceptor"/>-->
+    <!--<reference filter="(keystore=default)" id="accessor" interface="com.sap.esb.security.KeyCertificateAccessor"/>-->
+    <!--<bean activation="lazy" class="com.sap.esb.webservice.cxf.interceptor.size.ReturnCodeInterceptor" id="returnCodeInterceptor"/>-->
+    <!--<reference id="mpl.accessor" interface="com.sap.esb.webservice.mpl.access.CxfMPLAccessor"/>-->
+    <!--<reference id="node.info" interface="com.sap.esb.nodeinfo.NodeInformation"/>-->
+    <!--<bean activation="lazy" class="com.sap.esb.webservice.cxf.interceptor.store.SoapFaultInterceptor" id="soapFaultInterceptor">-->
+    <!--    <property name="mplAccessor" ref="mpl.accessor"/>-->
+    <!--    <property name="nodeInfo" ref="node.info"/>-->
+    <!--</bean>-->
+    <!--<reference id="auditLogService" interface="com.sap.esb.webservice.audit.log.AuditLogger"/>-->
+    <!--<bean class="com.sap.esb.application.services.cxf.interceptor.SimpleAuthorizingInterceptor" id="Sender_SOAP_authorizationInterceptor">-->
+    <!--    <property name="roles" value="ESBMessaging.send"/>-->
+    <!--    <property name="auditLogger" ref="auditLogService"/>-->
+    <!--</bean>-->
+    <!--<bean class="com.sap.esb.camel.webservice.cxfbinding.CxfBinding" id="cxfBinding.MessageFlow_2595134"/>-->
+    <!--<cxf:cxfEndpoint address="/custom/ModelingBasics/Attachments/CreateAttachments" bus="Participant_2595132_SOAP" endpointName="sap-cxf-generic-request-reply:port12" id="Sender_SOAP" serviceName="sap-cxf-generic-request-reply:service" wsdlURL="/sapruntimewsdl/GenericRequestReply_wsdl_custom_ModelingBasics_Attachments_CreateAttachments.wsdl">-->
+    <!--    <cxf:properties>-->
+    <!--        <entry key="dataFormat" value="PAYLOAD"/>-->
+    <!--        <entry key="synchronous" value="true"/>-->
+    <!--        <entry key="allowNonMatchingToDefaultSoapAction" value="true"/>-->
+    <!--        <entry key="soap.no.validate.parts" value="true"/>-->
+    <!--    </cxf:properties>-->
+    <!--    <cxf:inInterceptors>-->
+    <!--        <ref component-id="Sender_SOAP_authorizationInterceptor"/>-->
+    <!--    </cxf:inInterceptors>-->
+    <!--</cxf:cxfEndpoint>-->
+    <!--<cxfcore:bus bus="Participant_2595132_SOAP" id="Attachments_Create.Sender_SOAP">-->
+    <!--    <cxfcore:outFaultInterceptors>-->
+    <!--        <ref component-id="soapFaultInterceptor"/>-->
+    <!--        <ref component-id="returnCodeInterceptor"/>-->
+    <!--    </cxfcore:outFaultInterceptors>-->
+    <!--    <cxfcore:properties>-->
+    <!--        <entry key="bus.io.CachedOutputStream.CipherTransformation" value="AES/CTR/NoPadding"/>-->
+    <!--        <entry key="bus.io.CachedOutputStream.Threshold" value="1048576"/>-->
+    <!--        <entry key="org.apache.cxf.logging.FaultListener">-->
+    <!--            <bean class="com.sap.esb.monitoring.cxf.response.log.FaultListener"/>-->
+    <!--        </entry>-->
+    <!--    </cxfcore:properties>-->
+    <!--    <cxfcore:features>-->
+    <!--        <ref component-id="MessageFlow_2595134.cxfTracingFeature"/>-->
+    <!--        <ref component-id="cxf.feature.RuntimeFeature"/>-->
+    <!--        <ref component-id="MonitoringInboundFeature"/>-->
+    <!--        <ref component-id="GZIPFeature"/>-->
+    <!--        <sap-p:policies xmlns:sap-p="http://cxf.apache.org/policy">-->
+    <!--            <sap-p:alternativeSelector>-->
+    <!--                <bean class="com.sap.esb.webservice.policy.alternative.selector.AlternativeSelector" id="alternativeSelector">-->
+    <!--                    <property name="basicAuth" value="true"/>-->
+    <!--                </bean>-->
+    <!--            </sap-p:alternativeSelector>-->
+    <!--        </sap-p:policies>-->
+    <!--    </cxfcore:features>-->
+    <!--</cxfcore:bus>-->
+    <!--<bean class="org.apache.cxf.management.counters.CounterRepository" id="PerformanceCounterForSender_SOAP">-->
+    <!--    <property name="bus">-->
+    <!--        <ref component-id="Participant_2595132_SOAP"/>-->
+    <!--    </property>-->
+    <!--</bean>-->
+    <!--<bean factory-method="createCxfTracingFeature" factory-ref="cxfTracingFeatureFactory" id="MessageFlow_2595134.cxfTracingFeature">-->
+    <!--    <argument index="0" value="MessageFlow_2595134"/>-->
+    <!--</bean>-->
+    <bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>
+    <bean class="com.sap.it.iflow.saxonee.SaxonEEConsumerFactory" factory-method="getEnterpriseXPathFactoryInstance" id="saxonEEXpathFactory"/>
+    <bean class="com.sap.it.rt.xmltocsv.converter.XmlToCsvProcessor" id="xmltocsvprocessorCallActivity_2595164">
+        <property name="fieldDelimeter" value=","/>
+        <property name="recordIdentifier" value="Products/Product"/>
+        <property name="includeHeaders" value="true"/>
+        <property name="includeAttributes" value="false"/>
+        <property name="includeMaster" value="false"/>
+        <property name="replacePrefix" value="true"/>
+    </bean>
+    <bean class="java.util.HashMap" id="userdefinedNamespaces"/>
+    <camel:camelContext id="Basics_Attachments_Create" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
+        <camel:globalOptions>
+            <camel:globalOption key="CamelLogDebugBodyMaxChars" value="-1"/>
+            <camel:globalOption key="CamelMaximumEndpointCacheSize" value="50"/>
+        </camel:globalOptions>
+        <camel:streamCaching id="Basics_Attachments_Create_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
+        <camel:route id="Process_2595130">
+            <camel:from uri="ftp://cpi@localhost:2021/Basics_Attachments_Create/in?fileName=DATA_IN&amp;password=cpi&amp;passiveMode=true&amp;delete=true&amp;binary=true&amp;delay=10000&amp;autoCreate=false"/>
+            <camel:log message="Context name ${camelId}"/>
+            <camel:setHeader name="Content-Type">
+                <camel:constant>
+                    text/xml
+                </camel:constant>
+            </camel:setHeader>
+            <!--<camel:from id="MessageFlow_2595134_1201863812831558" uri="cxf:bean:Sender_SOAP?cxfBinding=#cxfBinding.MessageFlow_2595134"/>-->
+            <!--<camel:to uri="sap-pp-util://sender"/>-->
+            <!--<camel:onException id="MessageFlow_2595134_721672371634183">-->
+            <!--    <camel:exception>-->
+            <!--        com.sap.esb.size.limiter.SizeLimitExceededException-->
+            <!--    </camel:exception>-->
+            <!--    <camel:handled>-->
+            <!--        <camel:constant>-->
+            <!--            false-->
+            <!--        </camel:constant>-->
+            <!--    </camel:handled>-->
+            <!--</camel:onException>-->
+            <!--<camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments=104857600"/>-->
+            <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|Content-Type" pattern="*"/>
+            <camel:setHeader id="CallActivity_2595124_721672374090378" name="scriptFile">
+                <camel:constant>
+                    CreateAttachment.groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="functionName">
+                <camel:constant>
+                    processData
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>
+                    basics_scripts
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>
+                    groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setHeader id="CallActivity_2595161_721672377572081" name="Content-Type">
+                <camel:constant>
+                    text/csv
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setProperty name="count">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="java.lang.String">
+                    count(//ProductId)
+                </camel:xpath>
+            </camel:setProperty>
+            <camel:bean id="CallActivity_2595164_721672383458863" method="process" ref="xmltocsvprocessorCallActivity_2595164"/>
+            <camel:setHeader id="CallActivity_0_721672386919852" name="scriptFile">
+                <camel:constant>
+                    CreateAttachment.groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="functionName">
+                <camel:constant>
+                    processData
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>
+                    basics_scripts
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>
+                    groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setHeader id="CallActivity_2595159_721672391013848" name="Content-Type">
+                <camel:constant>
+                    text/plain
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setBody>
+                <camel:simple>
+                    this is a text file for ${exchangeProperty.count} products
+                </camel:simple>
+            </camel:setBody>
+            <camel:setHeader id="CallActivity_2595167_721672396032471" name="scriptFile">
+                <camel:constant>
+                    CreateAttachment.groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="functionName">
+                <camel:constant>
+                    processData
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptBundleId">
+                <camel:constant>
+                    basics_scripts
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setHeader name="scriptFileType">
+                <camel:constant>
+                    groovy
+                </camel:constant>
+            </camel:setHeader>
+            <camel:bean method="process" ref="scriptprocessor"/>
+            <camel:setBody id="CallActivity_2595153_721672399719720">
+                <camel:simple>
+                    &lt;info&gt;product details attached&lt;/info&gt;
+                </camel:simple>
+            </camel:setBody>
+            <camel:setHeader id="CallActivity_2595177_721672403739063" name="context">
+                <camel:simple>
+                    ${camelId}
+                </camel:simple>
+            </camel:setHeader>
+            <camel:setProperty id="EndEvent_2595135_721672408531136" name="SAP_MarkMessageAsFailed">
+                <camel:constant>
+                    false
+                </camel:constant>
+            </camel:setProperty>
+            <camel:split>
+                <camel:method beanType="org.apache.camel.component.mail.SplitAttachmentsExpression"/>
+                <camel:setHeader name="context">
+                    <camel:simple>
+                        ${camelId}
+                    </camel:simple>
+                </camel:setHeader>
+                <camel:to uri="direct-vm:/Common_Generic_Receiver"/>
+            </camel:split>
+            <camel:to uri="direct-vm:/Common_Generic_Receiver"/>
+        </camel:route>
+    </camel:camelContext>
+</blueprint>

@@ -22,3 +22,41 @@ X-CSRF-Token: {{csrf_token1}}
     "productIdentifier": "HT-1081"
 }
 
+
+### Basics_Attachments_Create
+@CreateAttachments = /cxf/custom/ModelingBasics/Attachments/CreateAttachments
+
+###
+POST {{cloudUrl}}{{CreateAttachments}}
+Authorization: Basic {{auth}}
+Content-Type: text/xml
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header/>
+    <soap:Body>
+        <Products>
+            <Product>
+                <ProductId>HT-1080</ProductId>
+                <Name>Photo Scan</Name>
+                <Category>Scanners</Category>
+                <DimensionDepth>0.4800</DimensionDepth>
+                <DimensionHeight>0.0500</DimensionHeight>
+                <DimensionUnit>m</DimensionUnit>
+                <DimensionWidth>0.3400</DimensionWidth>
+                <Weight>2.300</Weight>
+                <WeightUnit>KG</WeightUnit>
+            </Product>
+            <Product>
+                <ProductId>HT-1081</ProductId>
+                <Name>Power Scan</Name>
+                <Category>Scanners</Category>
+                <DimensionDepth>0.4300</DimensionDepth>
+                <DimensionHeight>0.0700</DimensionHeight>
+                <DimensionUnit>m</DimensionUnit>
+                <DimensionWidth>0.3100</DimensionWidth>
+                <Weight>2.400</Weight>
+                <WeightUnit>KG</WeightUnit>
+            </Product>
+        </Products>
+    </soap:Body>
+</soap:Envelope>

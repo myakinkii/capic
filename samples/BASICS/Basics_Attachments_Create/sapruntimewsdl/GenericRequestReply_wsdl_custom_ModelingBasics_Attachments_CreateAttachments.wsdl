@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://camel.apache.org/cxf/jaxws/provider" xmlns:ns1="http://cxf.component.camel.apache.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://camel.apache.org/cxf/jaxws/provider" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://cxf.component.camel.apache.org/" xmlns="http://cxf.component.camel.apache.org/" xmlns:tns="http://camel.apache.org/cxf/jaxws/provider" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="invoke" nillable="true" type="xsd:anyType"/>
+            <xsd:element name="invokeResponse" nillable="true" type="xsd:anyType"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="invokeResponse">
+        <wsdl:part element="ns1:invokeResponse" name="invokeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="invoke">
+        <wsdl:part element="ns1:invoke" name="invoke"/>
+    </wsdl:message>
+    <wsdl:portType name="DefaultPayloadProviderSEI">
+        <wsdl:operation name="invoke">
+            <wsdl:input message="tns:invoke" name="invoke"/>
+            <wsdl:output message="tns:invokeResponse" name="invokeResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="DefaultPayloadProviderSEIServiceSoapBinding" type="tns:DefaultPayloadProviderSEI">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+            <wsp:PolicyReference URI="#BN__binding"/>
+        </wsp:Policy>
+        <wsdl:operation name="invoke">
+            <soap:operation soapAction="" style="document"/>
+            <wsdl:input name="invoke">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="invokeResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="DefaultPayloadProviderSEIServiceSoap12Binding" type="tns:DefaultPayloadProviderSEI">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+            <wsp:PolicyReference URI="#BN__binding"/>
+        </wsp:Policy>
+        <wsdl:operation name="invoke">
+            <soap12:operation soapAction="" style="document"/>
+            <wsdl:input name="invoke">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="invokeResponse">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="service">
+        <wsdl:port binding="tns:DefaultPayloadProviderSEIServiceSoap12Binding" name="port12">
+            <soap:address location="https://host:port/path"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:DefaultPayloadProviderSEIServiceSoapBinding" name="port">
+            <soap:address location="https://host:port/path"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsp:UsingPolicy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" required="true"/>
+    <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" wsu:Id="BN__binding" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:TransportBinding xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+                    <wsp:Policy>
+                        <sp:TransportToken>
+                            <wsp:Policy>
+                                <sp:HttpsToken>
+                                    <wsp:Policy>
+                                        <wsp:ExactlyOne>
+                                            <sp:HttpBasicAuthentication/>
+                                            <sp:RequireClientCertificate/>
+                                        </wsp:ExactlyOne>
+                                    </wsp:Policy>
+                                </sp:HttpsToken>
+                            </wsp:Policy>
+                        </sp:TransportToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <wsp:ExactlyOne>
+                                    <sp:Basic256/>
+                                    <sp:Basic192/>
+                                    <sp:Basic128/>
+                                    <sp:TripleDes/>
+                                    <sp:Basic256Rsa15/>
+                                    <sp:Basic192Rsa15/>
+                                    <sp:Basic128Rsa15/>
+                                    <sp:TripleDesRsa15/>
+                                    <sp:Basic256Sha256/>
+                                    <sp:Basic192Sha256/>
+                                    <sp:Basic128Sha256/>
+                                    <sp:TripleDesSha256/>
+                                    <sp:Basic256Sha256Rsa15/>
+                                    <sp:Basic192Sha256Rsa15/>
+                                    <sp:Basic128Sha256Rsa15/>
+                                    <sp:TripleDesSha256Rsa15/>
+                                </wsp:ExactlyOne>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                    </wsp:Policy>
+                </sp:TransportBinding>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+</wsdl:definitions>
