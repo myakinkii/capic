@@ -20,7 +20,7 @@
     <!--</bean>-->
     <!--<reference id="clusterLockManager" interface="com.sap.it.nm.concurrent.ClusterLockManager"/>-->
     <!--<reference id="authenticationHeaderProvider" interface="com.sap.it.nm.security.AuthenticationHeaderProvider"/>-->
-    <!--<bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>-->
+    <bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>
     <!--<reference filter="(strategyName=datastore)" id="headerFilterStrategy.CallActivity_98246459" interface="org.apache.camel.spi.HeaderFilterStrategy"/>-->
     <!--<bean class="java.util.HashMap" id="userdefinedNamespaces"/>-->
     <camel:camelContext id="Common_Generic_Receiver" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
