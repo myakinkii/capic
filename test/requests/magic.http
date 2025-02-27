@@ -1,0 +1,21 @@
+@localUrl = http://localhost:4004
+@cloudUrl = {{$dotenv CPI_IFLOW_URL}}
+@auth = {{$dotenv CPI_IFLOW_CLIENT}}:{{$dotenv CPI_IFLOW_SECRET}}
+
+### local webshell
+GET {{localUrl}}/local/webshell/info
+
+### get csrf
+# @name getToken
+HEAD {{cloudUrl}}/http/webshell
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token = {{getToken.response.headers.x-csrf-token}}
+
+### test cloud post
+POST {{cloudUrl}}/http/webshell
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token}}
+
+info

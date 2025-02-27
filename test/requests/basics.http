@@ -1,0 +1,24 @@
+@cloudUrl = {{$dotenv CPI_IFLOW_URL}}
+@auth = {{$dotenv CPI_IFLOW_CLIENT}}:{{$dotenv CPI_IFLOW_SECRET}}
+
+### Basics_Sender_Initiated_External
+@SenderInitiatedScenario = /http/custom/ModelingBasics/FirstFlowWithSenderChannel
+
+### csrf
+# @name getToken1
+HEAD {{cloudUrl}}{{SenderInitiatedScenario}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token1 = {{getToken1.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{SenderInitiatedScenario}}
+Authorization: Basic {{auth}}
+Content-Type: application/json
+X-CSRF-Token: {{csrf_token1}}
+
+{
+    "productIdentifier": "HT-1081"
+}
+
