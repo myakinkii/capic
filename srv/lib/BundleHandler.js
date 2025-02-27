@@ -42,6 +42,8 @@ const getBundleXml = (pckgId, bundleId, objType) => {
     }
 }
 
+const getDeployedToKarafBundles = () => fs.readdirSync(`${KARAF_PATH}/deploy`)
+
 const deployBundleToKaraf = async (pckgId, bundleId, fromLocalBlueprint) => {
 
     const fromXml = (tryLocal) => {
@@ -144,5 +146,6 @@ module.exports = {
     findBundleInfo,
     getBundleXml,
     syncBundleToPackageRepo,
+    getDeployedToKarafBundles,
     deployBundleToKaraf
 }

@@ -1,8 +1,9 @@
 const fs = require('fs')
 const moment = require('moment')
 
+const { getDeployedToKarafBundles } = require('./lib/BundleHandler')
+
 const FTP_DIR = process.env.FTP_DIR
-const KARAF_PATH = process.env.KARAF_PATH
 
 const ftpIn = {
     inputFileName: 'DATA_IN',
@@ -14,9 +15,7 @@ module.exports = cds.service.impl(async function() {
     const cpi = await cds.connect.to('cpi')
 
     this.on('READ', 'DeployedArtifacts', async (req, next) => {
-        return fs.readdirSync(`${KARAF_PATH}/deploy`).filter( f => {
-            return f.endsWith('.xml')
-        }).map( f => ({Id: f.split('.')[0]}) )
+        return getDeployedToKarafBundles().filter( f => f.endsWith('.xml')).map( f => ({Id: f.split('.')[0]}) )
     })
 
     this.on('READ', 'FtpIn', async (req, next) => {

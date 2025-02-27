@@ -1,6 +1,7 @@
-const { syncBundleToPackageRepo, deployBundleToKaraf, getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml } = require('./lib/BundleHandler')
-const fs = require('fs')
-const KARAF_PATH = process.env.KARAF_PATH
+const { 
+    syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf, 
+    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml
+} = require('./lib/BundleHandler')
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
 const DownloadContentCommand = 'com.sap.it.nm.commands.deploy.DownloadContentCommand'
@@ -81,11 +82,8 @@ module.exports = cds.service.impl(async function () {
         } else return next()
     })
 
-    this.on('READ', 'DeployedArtifacts', async (req, next) => {
-        return fs.readdirSync(`${KARAF_PATH}/deploy`).filter( f => {
-            return f.endsWith('.xml')
-        }).map( f => ({Id: f.split('.')[0]}) )
-    })
+    // here we return absolutely everything cuz we want to see our scripts or mappings
+    this.on('READ', 'DeployedArtifacts', async (req, next) => getDeployedToKarafBundles().map( f => ({Id: f.split('.')[0]}) ))
 
     this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
         if (req.params.length == 1) { // details
