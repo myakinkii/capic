@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: basics_scripts
+Bundle-SymbolicName: basics_scripts
+Bundle-Version: 1.0.0
+SAP-BundleType: ScriptCollection
+SAP-NodeType: IFLMAP
+Import-Package: org.osgi.framework, com.sap.script.artifact.bundle.activ
+ ator
+Provide-Capability: scriptcollection.basics_scripts;version:Version="1.0
+ .0"
+Origin-Bundle-Name: basics_scripts
+Origin-Bundle-SymbolicName: basics_scripts
+SAP-ArtifactId: f98f4bac-6199-4a40-bb3e-8aa424298d54
+Bundle-Activator: com.sap.script.artifact.bundle.activator.ScriptCollect
+ ionBundleActivator
+SAP-StartOrder: 70
+

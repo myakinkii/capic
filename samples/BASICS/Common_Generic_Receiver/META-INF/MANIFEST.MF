@@ -1,0 +1,72 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common_Generic_Receiver
+Bundle-SymbolicName: Common_Generic_Receiver; singleton:=true
+Bundle-Version: 1.0.0
+SAP-BundleType: IntegrationFlow
+SAP-NodeType: IFLMAP
+SAP-RuntimeProfile: iflmap
+Import-Package:  com.sap.it.nm.security, com.sap.esb.secure.parameter.im
+ pl, com.sap.it.nm.concurrent, com.sap.esb.camel.route.policy, org.sprin
+ gframework.transaction.support, org.springframework.jdbc.datasource, or
+ g.mozilla.javascript, org.codehaus.groovy.reflection, org.codehaus.groo
+ vy.runtime.callsite, org.codehaus.groovy.runtime.typehandling, org.code
+ haus.groovy.runtime, groovy.lang, org.codehaus.groovy.jsr223, com.sap.g
+ ateway.ip.core.customdev.util, com.sap.gateway.ip.core.customdev.loggin
+ g, com.sap.gateway.ip.core.customdev.processor, com.sap.esb.datastore.w
+ rapper, com.sap.esb.monitoring.cxf.response.log, com.sap.esb.monitoring
+ .cxf.runtime.feature, com.sap.it.op.agent.trace.cxf, com.sap.esb.size.l
+ imiter, com.sap.esb.camel.webservice.endpoint.configurer, com.sap.esb.w
+ ebservice.security.crypto.api, com.sap.esb.webservice.policy.alternativ
+ e.selector, org.apache.cxf.ws.security.wss4j, org.apache.wss4j.common.c
+ rypto, javax.security.auth.callback, com.sap.it.iflow.model.runtime, co
+ m.sap.it.iflow.model, com.sap.sod.utils.idoc.soap.interceptors, com.sap
+ .sod.utils.idoc.soap.processors, com.sap.sod.utils.idoc.soap, com.sap.s
+ od.utils.soap.processors, com.sap.sod.utils.soap, com.sap.sod.utils.enc
+ oding.processors, com.sap.sod.utils.cxf.interceptors, com.sap.it.rt.scc
+ .proxy, com.sap.esb.camel.jdbc.inprogress.repository, com.sap.esb.camel
+ .jdbc.idempotency.repository, com.sap.esb.camel.webservice.cxfbinding, 
+ com.sap.esb.camel.mpl.access, com.sap.esb.camel.eip.splitter, com.sap.e
+ sb.camel.xmljson, com.sap.it.op.ed, com.sap.it.op.agent.ed.plugins.came
+ l.api, com.sap.esb.webservice.authorization.supplier.api, org.apache.cx
+ f.interceptor.security, org.apache.camel.language.xpath, javax.xml.tran
+ sform.sax, net.sf.saxon.xpath, net.sf.saxon,com.sap.esb.application.ser
+ vices.cxf.interceptor,com.sap.esb.security,com.sap.it.op.agent.api,com.
+ sap.it.op.agent.collector.camel,com.sap.it.op.agent.collector.cxf,com.s
+ ap.it.op.agent.mpl,javax.jms,javax.jws,javax.wsdl,javax.xml.bind.annota
+ tion,javax.xml.namespace,javax.xml.ws,org.apache.camel,org.apache.camel
+ .builder,org.apache.camel.component.cxf,org.apache.camel.model,org.apac
+ he.camel.processor,org.apache.camel.processor.aggregate,org.apache.came
+ l.spring.spi,org.apache.commons.logging,org.apache.cxf.binding,org.apac
+ he.cxf.binding.soap,org.apache.cxf.binding.soap.spring,org.apache.cxf.b
+ us,org.apache.cxf.bus.resource,org.apache.cxf.bus.spring,org.apache.cxf
+ .buslifecycle,org.apache.cxf.catalog,org.apache.cxf.configuration.jsse,
+ org.apache.cxf.configuration.spring,org.apache.cxf.endpoint,org.apache.
+ cxf.headers,org.apache.cxf.interceptor,org.apache.cxf.management.counte
+ rs,org.apache.cxf.message,org.apache.cxf.phase,org.apache.cxf.resource,
+ org.apache.cxf.service.factory,org.apache.cxf.service.model,org.apache.
+ cxf.transport,org.apache.cxf.transport.common.gzip,org.apache.cxf.trans
+ port.http,org.apache.cxf.transport.http.policy,org.apache.cxf.workqueue
+ ,org.apache.cxf.ws.rm.persistence,org.apache.cxf.wsdl11,org.osgi.framew
+ ork,org.slf4j,org.springframework.beans.factory.config,com.sap.esb.came
+ l.security.cms,org.apache.camel.spi,com.sap.esb.webservice.audit.log,co
+ m.sap.esb.camel.endpoint.configurator.api,com.sap.esb.camel.jdbc.idempo
+ tency.reorg,javax.sql,org.apache.camel.processor.idempotent.jdbc,org.os
+ gi.service.blueprint
+Origin-Bundle-Name: Common_Generic_Receiver
+Origin-Bundle-SymbolicName: Common_Generic_Receiver
+WorkspaceProfile: iflmap
+SAP-ArtifactId: c6f1a477-270d-4f2d-ad2f-8c8053e9ece3
+Import-Service:  com.sap.esb.camel.security.cms.SignatureSplitter;multip
+ le:=false, org.apache.cxf.ws.rm.persistence.RMStore;multiple:=false, ja
+ vax.sql.DataSource;multiple:=false;filter="(dataSourceName=default)", j
+ avax.sql.DataSource;multiple:=false;filter="(name=wrapper)", com.sap.es
+ b.security.TrustManagerFactory;multiple:=false, com.sap.esb.security.Ke
+ yManagerFactory;multiple:=false, com.sap.esb.camel.endpoint.configurato
+ r.api.EndpointConfigurator;multiple:=false;filter="(endpointType=SFTP)"
+ ,com.sap.esb.webservice.audit.log.AuditLogger
+SAP-PreDeployment: 
+SAP-StartOrder: 100
+Require-Capability: SAP-ProcessDirect;resolution:=optional
+Bundle-ClassPath: .
+
