@@ -28,7 +28,8 @@ const findBundleInfo = (integrationComponentsList, Id) => {
 
 const getBundleInfos = (integrationComponentsList) => {
     const xml = xml2js(integrationComponentsList, { compact: true, spaces: 4 })
-    return xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"].artifactInformations || []
+    const artifactInfo = xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"].artifactInformations || []
+    return Array.isArray(artifactInfo) ? artifactInfo : [artifactInfo] // cuz when just one is deployed we have obj here... smh
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
