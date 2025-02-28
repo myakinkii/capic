@@ -28,7 +28,7 @@ const findBundleInfo = (integrationComponentsList, Id) => {
 
 const getBundleInfos = (integrationComponentsList) => {
     const xml = xml2js(integrationComponentsList, { compact: true, spaces: 4 })
-    return xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"].artifactInformations
+    return xml["com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListResponse"].artifactInformations || []
 }
 
 const getBundleXml = (pckgId, bundleId, objType) => {
