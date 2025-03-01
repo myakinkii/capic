@@ -12,10 +12,10 @@ async function fetchAuthToken(dst) {
 async function getCsrfToken(url, authToken) {
     return axios.head(url, {
         headers: { 'Authorization': `Bearer ${authToken}`, 'X-CSRF-Token': 'fetch' }
-    }).then(r => ({ token: r.headers["x-csrf-token"], cookies: r.headers["set-cookie"] }))
+    }).then(r => ({ 'X-CSRF-Token': r.headers["x-csrf-token"], 'Cookie': r.headers["set-cookie"] }))
 }
 
-class MyRemoteService extends cds.Service {
+class BaseService extends cds.Service {
 
     async init() {
         await super.init()
@@ -36,14 +36,18 @@ class MyRemoteService extends cds.Service {
             this.auth = { token, scope, expires: Date.now() + 1000 * expires_in }
         }
 
-        reqOptions.baseURL = destination.url + endpointUrl
-        const csrf = await getCsrfToken(reqOptions.baseURL, this.auth.token)
+        reqOptions.baseURL = endpointUrl.startsWith('http') ? endpointUrl : destination.url + endpointUrl
 
         reqOptions.headers = Object.assign(reqOptions.headers || {}, {
-            'Authorization': `Bearer ${this.auth.token}`,
-            'X-CSRF-Token': csrf.token,
-            'Cookie': csrf.cookies // cpi REALLY WANTS it
+            'Authorization': `Bearer ${this.auth.token}`
         })
+
+        try {
+            const csrf = await getCsrfToken(reqOptions.baseURL, this.auth.token)
+            Object.assign(reqOptions.headers, csrf)
+        } catch (e){
+            // we assume, there's no csrf protection
+        }
     }
 
     async runAxiosRequest(reqOptions) {
@@ -51,4 +55,4 @@ class MyRemoteService extends cds.Service {
     }
 }
 
-module.exports = MyRemoteService
+module.exports = BaseService

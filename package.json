@@ -36,13 +36,16 @@
       "cpi": {
         "kind": "odata-v2",
         "model": "srv/external/cpi",
-        "impl": "srv/lib/MyRemoteServiceApi.js"
+        "impl": "srv/lib/remote/ApiService.js"
+      },
+      "iflow": {
+        "impl": "srv/lib/remote/IflowService.js"
       },
       "webshell": {
-        "impl": "srv/lib/MyRemoteServiceWebshell.js"
+        "impl": "srv/lib/remote/WebshellService.js"
       },
       "operations": {
-        "impl": "srv/lib/MyRemoteServiceOperations.js"
+        "impl": "srv/lib/remote/OperationsService.js"
       }
     },
     "launchpad": {

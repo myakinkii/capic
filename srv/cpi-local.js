@@ -10,6 +10,7 @@ module.exports = cds.service.impl(async function () {
 
     const cpi = await cds.connect.to('cpi')
     const operations = await cds.connect.to('operations')
+    const iflow = await cds.connect.to('iflow')
 
     const getSelf = async (id) => operations.run({ cmd: 'IntegrationComponentsList' })
         .then(list => findBundleInfo(list, id))
@@ -102,4 +103,23 @@ module.exports = cds.service.impl(async function () {
         return operations.run({ cmd: 'IntegrationComponentDetail', params: req.data })
     })
 
+    this.on('testIflowEndpoint', async (req) => {
+        const { endpoint, text } = req.data
+        let body, headers
+        // body and headers are separated by empty line
+        // BUT body can have empty lines too, but for now we dont care
+        const parts =  text.split('\n\n')
+        if (parts.length==1) {
+            body = parts[0]
+        } else {
+            body = parts[1]
+            headers = parts[0].split('\n').reduce( (prev, cur) => {
+                const [ key, value ] = cur.split(': ')
+                prev[key] = value
+                return prev
+            }, {})
+        }
+        return iflow.run({ endpoint, body, headers })
+    })
+    
 });

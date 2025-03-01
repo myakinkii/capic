@@ -1,6 +1,6 @@
 const { getReqOptions } = require('@sap/cds/libx/_runtime/remote/utils/client')
 
-module.exports = class MyRemoteServiceApi extends require('./MyRemoteService') {
+module.exports = class ApiService extends require('./BaseService') {
 
     async init() {
 

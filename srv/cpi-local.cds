@@ -27,7 +27,7 @@ service CpiLocalService {
             ArtifactURL : String;
             Content     : LargeString;
     };
-    
+
     @readonly
     @cds.persistence.skip: true
     entity DeployedArtifacts {
@@ -61,7 +61,8 @@ service CpiLocalService {
             action deployKarafFromPackage(pckgId : String not null, tryLocal : Boolean)             returns String;
         };
 
-    action getRuntimeDetails(artifactId : UUID not null) returns String;
+    action getRuntimeDetails(artifactId : UUID not null)            returns String;
+    action testIflowEndpoint(endpoint : String, text : LargeString) returns LargeString;
 
 }
 

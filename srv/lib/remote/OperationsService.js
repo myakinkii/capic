@@ -5,7 +5,7 @@ const OP_COMMANDS = {
     DownloadContent: 'com.sap.it.nm.commands.deploy.DownloadContentCommand', // artifactIds
 }
 
-module.exports = class MyRemoteServiceOperations extends require('./MyRemoteService') {
+module.exports = class OperationsService extends require('./BaseService') {
 
     getCommand(cmd) { return OP_COMMANDS[cmd] }
 

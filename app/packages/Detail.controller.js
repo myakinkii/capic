@@ -272,6 +272,27 @@ sap.ui.define([
                 console.log(err)
                 MessageToast.show('ERROR')
             })
+        },
+
+        testEndpoint: function(e){
+            var endpoint = e.getSource().getBindingContext("cpi").getProperty("endpointUrl")
+            var text = prompt() // yeah why not )
+            BusyIndicator.show(50)
+            this.editFlow.invokeAction('/testIflowEndpoint', {
+                model: this.getView().getModel(),
+                parameterValues: [
+                    { name: "endpoint", value: endpoint },
+                    { name: "text", value: text },
+                ],
+                skipParameterDialog: true
+            }).then(function (res) {
+                BusyIndicator.hide()
+                MessageBox.show(res.value)
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                console.log(err)
+                MessageToast.show('ERROR')
+            })
         }
 
     })

@@ -1,4 +1,4 @@
-module.exports = class MyRemoteServiceWebshell extends require('./MyRemoteService') {
+module.exports = class WebshellService extends require('./BaseService') {
 
     async init() {
 
