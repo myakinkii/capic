@@ -2,8 +2,16 @@
     <Dialog contentWidth="50rem" showHeader="false">
         <Panel headerText="endpointInformation" >
             <List binding="{cpi>/endpointInformation/0}" items="{cpi>endpointInstances}">
-                <StandardListItem type="Detail" detailPress="testEndpoint" 
-                    wrapping="true" info="{cpi>endpointCategory}" title="{cpi>endpointUrl}" />
+                <!-- <StandardListItem type="Detail" detailPress="testEndpoint" 
+                    wrapping="true" info="{cpi>endpointCategory}" title="{cpi>endpointUrl}" /> -->
+                <CustomListItem>
+                    <VBox class="sapUiSmallMarginBegin sapUiTinyMarginTopBottom" >
+                        <Label text="{cpi>endpointCategory}"/>
+                        <Link text="{cpi>endpointUrl}" wrapping="true"
+                            enabled="{= ${cpi>endpointCategory} === 'ENTRY_POINT' }" 
+                            press="testEndpoint"/>
+                    </VBox>
+		        </CustomListItem>
             </List>
         </Panel>
         <Panel headerText="artifact">
