@@ -150,7 +150,7 @@ module.exports = cds.service.impl(async function () {
 
             let result
             dw.stdout.on('data', (data) => result = data )
-            dw.on('exit', (code) => resolve(result.toString()) )
+            dw.on('exit', (code) => resolve(result?.toString()) )
         })
     })
 
