@@ -1,63 +1,33 @@
 const fs = require('fs')
-const { execSync } = require('child_process')
+
+const { getKarafInfo, handleJars, handleWar } = require('./setupFuncs')
 
 let JAR_DIR = './jars'
-const localCpiUrl = 'http://localhost:4004/cpi'
-const karafDownloadHome = `${localCpiUrl}/files/download/home/vcap/app`
-const karafCacheUrl = `${karafDownloadHome}/data/cache`
-const karafWarUrl = `${karafDownloadHome}/webapps`
 
-const getInfo = () => execSync(`curl ${localCpiUrl}/webshell/info > _info.txt`, { cwd: JAR_DIR })
-const getBundleInfo = (n) => execSync(`curl ${karafCacheUrl}/bundle${n}/bundle.info`, { cwd: JAR_DIR }).toString().split('\n')[1]
-const formatJarInfo = (n, info) => [n, ...info.split(":")[1].split("/")]
-
-const isJar = (info) => info.startsWith("mvn")
-const getJarName = (info) => info.split(":")[1].split("/").filter((s, i) => !!i).join("-")
-const getJar = (n, jarName) => execSync(`curl ${karafCacheUrl}/bundle${n}/version0.0/bundle.jar > ${jarName}.jar`, { cwd: JAR_DIR })
-
-const isWar = (info) => info.startsWith("jar")
-const getWarName = (info) => info.split("!")[0].split("/")[7]
-const getWar = (warName) => execSync(`curl ${karafWarUrl}/${warName} > _${warName}`, { cwd: JAR_DIR })
-const unzipWar = (warName) => execSync(`unzip _${warName} -d war`, { cwd: JAR_DIR })
-
-let [_, __, startId, dir] = process.argv
-
-if (!startId) startId = 1
-
-if (!Number.isInteger(startId = +startId)) {
-    console.log('not an integer')
-    process.exit()
-}
+const [_, __, startIdOrWarFile, dir] = process.argv
 
 if (dir) JAR_DIR = dir
 
-try {
-    fs.readdirSync(JAR_DIR)
-} catch (e) {
+if (!fs.existsSync(JAR_DIR)) {
     console.log('no such dir')
     process.exit()
 }
 
-console.log('getting info into _info.txt')
-getInfo()
+let startId, warFile
+if (!startIdOrWarFile) startId = 1
+if (!Number.isInteger(startId = +startIdOrWarFile)) warFile = startIdOrWarFile
 
-const csv = []
-console.log('starting from', startId, 'to', JAR_DIR)
-let info
-do {
-    info = getBundleInfo(startId)
-    if (isJar(info)) {
-        console.log('getting jar from cache', info)
-        getJar(startId, getJarName(info))
-        csv.push(formatJarInfo(startId, info))
-    }
-    startId++
-} while (!isWar(info))
+if (!warFile) {
+    console.log('getting info into _info.txt')
+    getKarafInfo(JAR_DIR)
 
-const warName = getWarName(info)
-console.log('getting war from webapps', warName)
-getWar(warName) // its around 200mb, can crash cpi, but after restart typically works
-unzipWar(warName)
+    console.log('starting download from', startId, 'to', JAR_DIR)
+    warFile = handleJars(startId, JAR_DIR)
+}
 
-console.log('writing csv into _bundles.csv')
-fs.writeFileSync(`${JAR_DIR}/_bundles.csv`, csv.map(b => b.join(",")).join("\n"))
+try {
+    console.log('getting war', warFile)
+    handleWar(warFile, JAR_DIR)
+} catch (e){
+    console.log('failed to download war')
+}

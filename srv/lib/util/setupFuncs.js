@@ -1,7 +1,53 @@
 const fs = require('fs')
 const { execSync } = require('child_process')
 
-const getList = (JAR_DIR) => { try { return fs.readdirSync(JAR_DIR) } catch (e) { return [] } }
+const localCpiUrl = 'http://localhost:4004/cpi'
+const karafDownloadHome = `${localCpiUrl}/files/download/home/vcap/app`
+
+const getKarafInfo = (JAR_DIR) => execSync(`curl ${localCpiUrl}/webshell/info > _info.txt`, { cwd: JAR_DIR })
+
+const handleJars = (startId, JAR_DIR ) => {
+
+    const karafCacheUrl = `${karafDownloadHome}/data/cache`
+    
+    const getBundleInfo = (n) => execSync(`curl ${karafCacheUrl}/bundle${n}/bundle.info`, { cwd: JAR_DIR }).toString().split('\n')[1]
+    const formatJarInfo = (n, info) => [n, ...info.split(":")[1].split("/")]
+    
+    const isJar = (info) => info.startsWith("mvn")
+    const getJarName = (info) => info.split(":")[1].split("/").filter((s, i) => !!i).join("-")
+    const getJar = (n, jarName) => execSync(`curl ${karafCacheUrl}/bundle${n}/version0.0/bundle.jar > ${jarName}.jar`, { cwd: JAR_DIR })
+    
+    const isWar = (info) => info.startsWith("jar")
+    const getWarName = (info) => info.split("!")[0].split("/")[7]
+
+    const csv = []
+    let info
+    do {
+        info = getBundleInfo(startId)
+        if (isJar(info)) {
+            getJar(startId, getJarName(info))
+            csv.push(formatJarInfo(startId, info))
+        }
+        startId++
+    } while (!isWar(info))
+
+    fs.writeFileSync(`${JAR_DIR}/_bundles.csv`, csv.map(b => b.join(",")).join("\n"))
+
+    return getWarName(info)
+}
+
+const handleWar = (warName, JAR_DIR) => {
+
+    const karafWarUrl = `${karafDownloadHome}/webapps`
+
+    const getWar = (warName) => execSync(`curl ${karafWarUrl}/${warName} > _${warName}`, { cwd: JAR_DIR })
+    const unzipWar = (warName) => execSync(`unzip _${warName} -d war`, { cwd: JAR_DIR })
+
+    getWar(warName) // its around 200mb, can crash cpi, works unreliably
+    unzipWar(warName)
+}
+
+const getJarList = (JAR_DIR) => { try { return fs.readdirSync(JAR_DIR) } catch (e) { return [] } }
 
 const getManifest = (JAR_DIR, jarFile) => { try { return execSync(`unzip -p ${jarFile} META-INF/MANIFEST.MF`, { cwd: JAR_DIR }).toString() } catch (e) { return '' } }
 
@@ -10,7 +56,7 @@ const extractTokens = (str) => { // not a proper parser, just some heuristics
     return firstArr.reduce((prev, cur) => prev.concat(...cur.split(",")), [])
 }
 
-const getInfos = (JAR_DIR) => getList(JAR_DIR).reduce((infos, file) => {
+const getManifestInfos = (JAR_DIR) => getJarList(JAR_DIR).reduce((infos, file) => {
     if (!file.endsWith('.jar')) return infos
     let buff = ''
 
@@ -76,7 +122,7 @@ const extractArray = (obj, flag) => Object.entries(obj).filter(([_, v]) => v ===
 
 const doMagic = (path, jars) => {
 
-    const infos = getInfos(path)
+    const infos = getManifestInfos(path)
     const deps = calcDeps(infos)
     const results = {}
 
@@ -88,9 +134,8 @@ const doMagic = (path, jars) => {
 }
 
 module.exports = {
-    getInfos,
-    findRoot,
-    calcDeps,
-    resolveDeps,
+    getKarafInfo,
+    handleJars,
+    handleWar,
     doMagic
 }
