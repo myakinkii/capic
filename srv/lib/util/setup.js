@@ -83,7 +83,7 @@ if (dryRun) {
     console.log('karaf features install')
     console.log(karafFeaturesInstall)
 } else { // run and hope for the best )
-    // execSync(karafFeaturesInstall, { cwd: KARAF_PATH }) // investigate later
+    execSync(karafFeaturesInstall, { cwd: KARAF_PATH, stdio: 'inherit' })
     execSync(copyFromCache)
     execSync(copyFromWar)
 }
