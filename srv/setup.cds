@@ -39,4 +39,8 @@ service SetupService {
 
     action persist(pars : String);
     action rezip(task : Rezip);
+
+    action setupDownload(warName: String) returns String;
+    action setupKaraf();
+
 }

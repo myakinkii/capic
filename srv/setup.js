@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { spawn } = require('child_process')
 const { rezipBundle } = require('./lib/BundleHandler')
 
 // we are in single user mode, so we can do this ))
@@ -18,6 +19,7 @@ const temp = {
         CPI_EXPORT_PATH: './samples',
         KARAF_PATH: '../karaf',
         FTP_DIR: '../ftp',
+        JAR_DIR: '../jars'
     }
 }
 
@@ -131,6 +133,38 @@ module.exports = cds.service.impl(async function () {
             PackageId: pkgId,
             ArtifactContent: rezip64
         }))
+    })
+
+    this.on('setupDownload', async (req) => {
+
+        const downloadDir = temp.envPars.JAR_DIR
+        if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir)
+
+        const { warName } = req.data
+        return new Promise( (resolve, reject) => {
+            
+            const jarDownloadScript = `${process.cwd()}/srv/lib/util/download.js`
+            const dw = spawn(process.execPath, [jarDownloadScript, warName ], {
+                env: temp.envPars, shell: true, stdio: 'pipe'
+            })
+
+            let result
+            dw.stdout.on('data', (data) => result = data )
+            dw.on('exit', (code) => resolve(result.toString()) )
+        })
+    })
+
+    this.on('setupKaraf', async (req) => {
+
+        return new Promise( (resolve, reject) => {
+
+            const karafSetupScript = `${process.cwd()}/srv/lib/util/setup.js`
+            const st = spawn(process.execPath, [karafSetupScript], {
+                env: temp.envPars, shell: true, stdio: 'inherit'
+            })
+
+            st.on('exit', resolve)
+        })
     })
 
 })
