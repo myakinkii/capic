@@ -84,7 +84,7 @@ module.exports = cds.service.impl(async function () {
         const { param } = req.data
         let dir = temp.envPars[param]
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
-        if (param == 'FTP_DIR' && !fs.existsSync(dir = `${dir}/webshell}`)) fs.mkdirSync(dir)
+        if (param == 'FTP_DIR' && !fs.existsSync(dir = `${dir}/webshell`)) fs.mkdirSync(dir)
     })
 
     const cpi = await cds.connect.to('cpi')
