@@ -3,6 +3,7 @@
     controllerName="setup.Main"
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
     xmlns:f="sap.ui.layout.form"
     xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" >
     <Page>
@@ -23,6 +24,11 @@
                 <Label text="{i18n>CPI_EXPORT_PATH}" /> <Input value="{CPI_EXPORT_PATH}" />
                 <Label text="{i18n>FTP_DIR}" /> <Input value="{FTP_DIR}" />
                 <Label text="{i18n>KARAF_PATH}" /> <Input value="{KARAF_PATH}" />
+                <Button icon="sap-icon://wrench" text="{i18n>setupKaraf}" press="showSetupKarafDialog">
+                    <layoutData>
+                        <l:GridData span="XL1 L1 M1 S1" />
+                    </layoutData>
+                </Button>
             </f:SimpleForm>
         </Panel>
         <Panel expandable="true" expanded="true" class="sapUiMediumMarginTop">

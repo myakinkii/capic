@@ -6,8 +6,11 @@ const JAR_DIR = process.env.JAR_DIR || './jars'
 const [_, __, startIdOrWarFile] = process.argv
 
 let startId, warFile
-if (!startIdOrWarFile) startId = 1
-if (!Number.isInteger(startId = +startIdOrWarFile)) warFile = startIdOrWarFile
+startId = parseInt(startIdOrWarFile)
+if (!Number.isInteger(startId)){
+    startId = 1
+    warFile = startIdOrWarFile
+}
 
 try {
     getKarafInfo(JAR_DIR)
@@ -15,5 +18,5 @@ try {
     handleWar(warFile, JAR_DIR)
     process.stdout.write('')
 } catch (e){
-    process.stdout.write(warFile)
+    process.stdout.write('_'+warFile)
 }

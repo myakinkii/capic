@@ -7,6 +7,7 @@ service SetupService {
         CPI_EXPORT_PATH : String;
         KARAF_PATH      : String;
         FTP_DIR         : String;
+        JAR_DIR         : String;
     }
 
     @odata.singleton
@@ -39,8 +40,8 @@ service SetupService {
 
     action persist(pars : String);
     action rezip(task : Rezip);
-
-    action setupDownload(warName: String) returns String;
+    action checkWarRetry()                 returns String;
+    action setupDownload(warName : String) returns String;
     action setupKaraf();
 
 }
