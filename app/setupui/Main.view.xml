@@ -22,7 +22,19 @@
             <f:SimpleForm editable="true" binding="{/EnvPars}">
 				<Label text="{i18n>CPI_TENANT_URL}" /> <Input value="{CPI_TENANT_URL}" />
                 <Label text="{i18n>CPI_EXPORT_PATH}" /> <Input value="{CPI_EXPORT_PATH}" />
+                <Button icon="sap-icon://curriculum" text="{i18n>checkDir}"
+                    custom:param="CPI_EXPORT_PATH" press="checkCreateFolders">
+                    <layoutData>
+                        <l:GridData span="XL1 L1 M1 S1" />
+                    </layoutData>
+                </Button>
                 <Label text="{i18n>FTP_DIR}" /> <Input value="{FTP_DIR}" />
+                <Button icon="sap-icon://curriculum" text="{i18n>checkDir}"
+                    custom:param="FTP_DIR" press="checkCreateFolders">
+                    <layoutData>
+                        <l:GridData span="XL1 L1 M1 S1" />
+                    </layoutData>
+                </Button>
                 <Label text="{i18n>KARAF_PATH}" /> <Input value="{KARAF_PATH}" />
                 <Button icon="sap-icon://wrench" text="{i18n>setupKaraf}" press="showSetupKarafDialog">
                     <layoutData>

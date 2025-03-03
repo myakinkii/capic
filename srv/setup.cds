@@ -13,7 +13,7 @@ service SetupService {
     @odata.singleton
     @cds.persistence.skip: true
     entity CdsRcPars {
-        cpi      : String;
+        cpi   : String;
         iflow : String;
     }
 
@@ -38,6 +38,7 @@ service SetupService {
         key Id : String;
     }
 
+    action checkCreateFolders(param : String);
     action persist(pars : String);
     action rezip(task : Rezip);
     action checkWarRetry()                 returns String;

@@ -12,7 +12,7 @@
         <ComboBox _binding="{/FtpIn}" width="40rem" forceSelection="false" selectedKey="{context}" items="{/FtpIn/iflows}">
             <core:Item key="{Id}" text="{Id}" />
         </ComboBox>
-        <Button icon="sap-icon://bbyd-active-sales" press="checkCreateFolders" />
+        <Button icon="sap-icon://curriculum" press="checkCreateFolders" />
     </headerContent>
     <content>
     
@@ -43,7 +43,7 @@
                     <Link text="refresh" press="forceRefresh" />
                     <ToolbarSpacer/>
                     <Link href="/ftp/{context}/out/" text="{i18n>navToOut}" icon="sap-icon://folder" press="openFtp"/>
-                </Toolbar >
+                </Toolbar>
             </headerToolbar>
             <macros:Table id="macroTable" metaPath="/FtpOut/@com.sap.vocabularies.UI.v1.LineItem" personalization="false" enableExport="false" enablePaste="false" />
         </Panel>

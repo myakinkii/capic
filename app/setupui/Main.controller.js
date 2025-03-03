@@ -60,6 +60,15 @@ sap.ui.define([
             })
         },
 
+        checkCreateFolders:function(e){
+            var param = e.getSource().data("param")
+            this.editFlow.invokeAction('/checkCreateFolders', {
+                model: this.getView().getModel(),
+                parameterValues: [{ name: "param", value: param }],
+                skipParameterDialog: true
+            })
+        },
+
         persistPars: function (e) {
             var pars = e.getSource().data("pars") // env or cdsrc
             this.editFlow.invokeAction('/persist', {
