@@ -14,8 +14,11 @@ if (!fs.existsSync(JAR_DIR)) {
 }
 
 let startId, warFile
-if (!startIdOrWarFile) startId = 1
-if (!Number.isInteger(startId = +startIdOrWarFile)) warFile = startIdOrWarFile
+startId = parseInt(startIdOrWarFile)
+if (!Number.isInteger(startId)){
+    startId = 1
+    warFile = startIdOrWarFile
+}
 
 if (!warFile) {
     console.log('getting info into _info.txt')

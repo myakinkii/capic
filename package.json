@@ -44,6 +44,9 @@
       "webshell": {
         "impl": "srv/lib/remote/WebshellService.js"
       },
+      "download": {
+        "impl": "srv/lib/remote/FileDownloadService.js"
+      },
       "operations": {
         "impl": "srv/lib/remote/OperationsService.js"
       }

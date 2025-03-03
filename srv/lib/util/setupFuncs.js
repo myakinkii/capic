@@ -1,24 +1,59 @@
 const fs = require('fs')
 const { execSync } = require('child_process')
 
+const karafHome = '/home/vcap/app'
 const localCpiUrl = 'http://localhost:4004/cpi'
-const karafDownloadHome = `${localCpiUrl}/files/download/home/vcap/app`
+const karafDownloadHome = `${localCpiUrl}/files/download${karafHome}`
+
+const isJar = (info) => info.startsWith("mvn")
+const getJarName = (info) => info.split(":")[1].split("/").filter((s, i) => !!i).join("-")
+const isWar = (info) => info.startsWith("jar")
+const getWarName = (info) => info.split("!")[0].split("/")[7]
+const formatJarInfo = (n, info) => [n, ...info.split(":")[1].split("/")]
+
+const handleJarsAsync = async (downloader, startId, JAR_DIR) => {
+
+    const karafCacheUrl = `${karafHome}/data/cache`
+    const getBundleInfo = async (startId) => downloader.run(`${karafCacheUrl}/bundle${startId}/bundle.info`).then( d => d.toString().split('\n')[1] )
+    const getJar = async (n) => downloader.run(`${karafCacheUrl}/bundle${n}/version0.0/bundle.jar`)
+
+    const csv = []
+    let info, jarName, data
+    do {
+        info = await getBundleInfo(startId)
+        if (isJar(info)) {
+            jarName = getJarName(info)
+            data = await getJar(startId)
+            fs.writeFileSync(`${JAR_DIR}/${jarName}.jar`, data)
+            csv.push(formatJarInfo(startId, info))
+        }
+        startId++
+    } while (!isWar(info))
+
+    fs.writeFileSync(`${JAR_DIR}/_bundles.csv`, csv.map(b => b.join(",")).join("\n"))
+
+    return getWarName(info)
+}
+
+const handleWarAsync = async (downloader, warName, JAR_DIR) => {
+
+    const karafWarUrl = `${karafHome}/webapps`
+    const getWar = async (warName) => downloader.run(`${karafWarUrl}/${warName}`)
+    const unzipWar = (warName) => execSync(`unzip _${warName} -d war`, { cwd: JAR_DIR })
+
+    fs.writeFileSync(`${JAR_DIR}/_${warName}`, '') // empty file to rety later
+    const data = await getWar(warName) // its around 200mb, can crash cpi, works unreliably
+    fs.writeFileSync(`${JAR_DIR}/_${warName}`, data)
+    unzipWar(warName)
+}
 
 const getKarafInfo = (JAR_DIR) => execSync(`curl ${localCpiUrl}/webshell/info > _info.txt`, { cwd: JAR_DIR })
 
 const handleJars = (startId, JAR_DIR ) => {
 
-    const karafCacheUrl = `${karafDownloadHome}/data/cache`
-    
+    const karafCacheUrl = `${karafDownloadHome}/data/cache`    
     const getBundleInfo = (n) => execSync(`curl ${karafCacheUrl}/bundle${n}/bundle.info`, { cwd: JAR_DIR }).toString().split('\n')[1]
-    const formatJarInfo = (n, info) => [n, ...info.split(":")[1].split("/")]
-    
-    const isJar = (info) => info.startsWith("mvn")
-    const getJarName = (info) => info.split(":")[1].split("/").filter((s, i) => !!i).join("-")
     const getJar = (n, jarName) => execSync(`curl ${karafCacheUrl}/bundle${n}/version0.0/bundle.jar > ${jarName}.jar`, { cwd: JAR_DIR })
-    
-    const isWar = (info) => info.startsWith("jar")
-    const getWarName = (info) => info.split("!")[0].split("/")[7]
 
     const csv = []
     let info
@@ -136,6 +171,8 @@ const doMagic = (path, jars) => {
 module.exports = {
     getKarafInfo,
     handleJars,
+    handleJarsAsync,
     handleWar,
+    handleWarAsync,
     doMagic
 }

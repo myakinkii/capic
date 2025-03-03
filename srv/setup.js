@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { spawn } = require('child_process')
 const { rezipBundle } = require('./lib/BundleHandler')
+const { handleJarsAsync, handleWarAsync } = require('./lib/util/setupFuncs')
 
 // we are in single user mode, so we can do this ))
 const temp = {
@@ -148,23 +149,22 @@ module.exports = cds.service.impl(async function () {
         }
     })
 
+    const downloader = await cds.connect.to('download')
+
     this.on('setupDownload', async (req) => {
 
         const downloadDir = temp.envPars.JAR_DIR
         if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir)
 
-        const { warName } = req.data
-        return new Promise( (resolve, reject) => {
-            
-            const jarDownloadScript = `${process.cwd()}/srv/lib/util/download.js`
-            const dw = spawn(process.execPath, [jarDownloadScript, warName ], {
-                env: temp.envPars, shell: true, stdio: 'pipe'
-            })
+        let { warName } = req.data
+        if (!warName) warName = await handleJarsAsync(downloader, 1, downloadDir)
 
-            let result
-            dw.stdout.on('data', (data) => result = data.toString() )
-            dw.on('exit', (code) => resolve(result) )
-        })
+        try {
+            await handleWarAsync(downloader, warName, downloadDir)
+            return ''
+        } catch (e){
+            return warName
+        }
     })
 
     this.on('setupKaraf', async (req) => {

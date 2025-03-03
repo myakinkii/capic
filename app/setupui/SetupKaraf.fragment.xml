@@ -35,10 +35,13 @@
 
             <core:Title text="{i18n>karafStep3}" />
             <Label text="{i18n>karafInstall}" />
-            <Button icon="sap-icon://activate" press="karafInstall"
+            <Button type="Accept" 
+                icon="sap-icon://activate" 
+                text="{i18n>karafInstallButton}" 
+                press="karafInstall"
                 enabled="{= ${dlg>/downloadTarget} === '' }" >
                 <layoutData>
-                    <l:GridData span="XL1 L1 M1 S1" />
+                    <l:GridData span="XL3 L5 M5 S12" />
                 </layoutData>
             </Button>
 
