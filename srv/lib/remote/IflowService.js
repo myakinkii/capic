@@ -6,7 +6,7 @@ module.exports = class IflowService extends require('./BaseService') {
         this.on('*', async (req) => {
             const { query: { endpoint, body, headers} } = req
             const reqOptions = { method: 'POST', data: body, headers }
-            await this.prepareAxiosRequest(reqOptions, endpoint, 'webshell')
+            await this.prepareAxiosRequest(reqOptions, endpoint)
             return this.runAxiosRequest(reqOptions).then(r => r.data)
         })
 

@@ -40,8 +40,8 @@
                 </Toolbar>
             </headerToolbar>
             <f:SimpleForm editable="true" binding="{/CdsRcPars}">
-				<Label text="{i18n>cpi}" /> <TextArea rows="9" value="{cpi}" />
-                <Label text="{i18n>webshell}" /> <TextArea rows="9" value="{webshell}" />
+				<Label text="{i18n>apiCreds}" /> <TextArea rows="9" value="{cpi}" />
+                <Label text="{i18n>iflowCreds}" /> <TextArea rows="9" value="{iflow}" />
             </f:SimpleForm>
         </Panel>
     </content>

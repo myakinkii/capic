@@ -10,7 +10,7 @@ const temp = {
             "cpi": {
                 "credentials": {}
             },
-            "webshell": {
+            "iflow": {
                 "credentials": {}
             }
         }
@@ -52,8 +52,8 @@ module.exports = cds.service.impl(async function () {
     const beautify = require("json-beautify")
 
     this.on('READ', 'CdsRcPars', async (req, next) => {
-        const { requires: { cpi: { credentials: cpi }, webshell: { credentials: webshell } } } = temp.cdsRcPars
-        return { cpi: beautify(cpi, null, 2), webshell: beautify(webshell, null, 2) }
+        const { requires: { cpi: { credentials: cpi }, iflow: { credentials: iflow } } } = temp.cdsRcPars
+        return { cpi: beautify(cpi, null, 2), iflow: beautify(iflow, null, 2) }
     })
 
     this.on('UPDATE', 'CdsRcPars', async (req, next) => {

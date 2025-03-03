@@ -14,7 +14,7 @@ service SetupService {
     @cds.persistence.skip: true
     entity CdsRcPars {
         cpi      : String;
-        webshell : String;
+        iflow : String;
     }
 
     @odata.singleton

@@ -14,7 +14,7 @@ const ftp_port = 2021
 
 cds.on('bootstrap', app => {
 
-    const cpiCreds = cds.env.requires.webshell?.credentials
+    const cpiCreds = cds.env.requires.iflow?.credentials
     if (!cpiCreds || ! cpiCreds.url) return // no sense to set up all the magic
 
     const auth = new Buffer.from(cpiCreds.clientid + ':' + cpiCreds.clientsecret)
