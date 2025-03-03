@@ -80,11 +80,11 @@ module.exports = cds.service.impl(async function () {
         fs.writeFileSync(fileNames[pars], prepareData[pars](temp[pars]))
     })
 
-    this.on("checkCreateFolders",async (req, next) => {
+    this.on("checkCreateFolders", async (req, next) => {
         const { param } = req.data
         let dir = temp.envPars[param]
         if (!fs.existsSync(dir)) fs.mkdirSync(dir)
-        if ( param == 'FTP_DIR' && !fs.existsSync(dir = `${dir}/webshell}`)) fs.mkdirSync(dir)
+        if (param == 'FTP_DIR' && !fs.existsSync(dir = `${dir}/webshell}`)) fs.mkdirSync(dir)
     })
 
     const cpi = await cds.connect.to('cpi')
@@ -150,8 +150,8 @@ module.exports = cds.service.impl(async function () {
         if (warDirExists) return ''
 
         try {
-            return fs.readdirSync(downloadDir).find( f => f.endsWith('.war') )
-        } catch (e){
+            return fs.readdirSync(downloadDir).find(f => f.endsWith('.war'))
+        } catch (e) {
             // no war or dir itself
         }
     })
@@ -169,14 +169,14 @@ module.exports = cds.service.impl(async function () {
         try {
             await handleWarAsync(downloader, warName, downloadDir)
             return ''
-        } catch (e){
-            return warName
+        } catch (e) {
+            return '_' + warName
         }
     })
 
     this.on('setupKaraf', async (req) => {
 
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
             const karafSetupScript = `${process.cwd()}/srv/lib/util/setup.js`
             const st = spawn(process.execPath, [karafSetupScript], {
