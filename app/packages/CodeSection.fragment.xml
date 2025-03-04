@@ -2,11 +2,14 @@
 <Panel core:require="{handler: 'packages/CodeActions'}">
     <headerToolbar>
         <Toolbar>
+            <Button visible="{= ${path:'Type',targetType:'any'} === 'INTEGRATION_FLOW' }" 
+                enabled = "{= ${path:'Content',targetType:'any'} !== '' }" 
+                type="Emphasized" icon="sap-icon://tree" press="handler.showCamelContextOutline"/>
             <Title text="SOURCE" />
             <ToolbarSpacer/>
             <Button visible="{= ${path:'Type',targetType:'any'} === 'INTEGRATION_FLOW' }" 
-                type="Information" icon="sap-icon://save" press="handler.flushTmpFile"/>
-        </Toolbar >
+                type="Default" icon="sap-icon://save" press="handler.flushTmpFile"/>
+        </Toolbar>
     </headerToolbar>
     <code:CodeEditor editable="{ 
             parts: [
