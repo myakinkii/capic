@@ -9,7 +9,51 @@ const isJar = (info) => info.startsWith("mvn")
 const getJarName = (info) => info.split(":")[1].split("/").filter((s, i) => !!i).join("-")
 const isWar = (info) => info.startsWith("jar")
 const getWarName = (info) => info.split("!")[0].split("/")[7]
+const getJarNameFromWar = (info) => info.split("!")[1]
 const formatJarInfo = (n, info) => [n, ...info.split(":")[1].split("/")]
+
+const downloadJarsAsyncLoop = async (downloader, startId, JAR_DIR) => {
+
+    let downloadDir = JAR_DIR
+    if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir)
+
+    const karafCacheUrl = `${karafHome}/data/cache`
+    const getBundleInfo = async (n) => downloader.run(`${karafCacheUrl}/bundle${n}/bundle.info`)
+        .then(d => d.toString().split('\n')[1])
+        .catch(e => null)
+
+    const getJarStream = async (n) => downloader.run(`${karafCacheUrl}/bundle${n}/version0.0/bundle.jar`, true)
+    const downloadJar = (n, targetFile) => getJarStream(n).then(d => d.pipe(fs.createWriteStream(targetFile)))
+
+    const csv = []
+    let location, index = startId
+    do {
+        location = await getBundleInfo(index)
+        if (isJar(location)) {
+            await downloadJar(index, `${downloadDir}/${getJarName(location)}.jar`)
+            csv.push(formatJarInfo(index, location))
+        }
+        index++
+    } while (!isWar(location))
+
+    if (csv.length) fs.writeFileSync(`${downloadDir}/_bundles.csv`, csv.map(b => b.join(",")).join("\n"))
+
+    if (!fs.existsSync(downloadDir = `${downloadDir}/war`)) fs.mkdirSync(downloadDir)
+
+    index-- //for first jar in war
+    do {
+        location = await getBundleInfo(index)
+        // some jars are skipped from war because were installed from features
+        // org.apache.commons.lang3 and com.fasterxml.jackson.core.jackson-core were
+        if (location) {
+            if (!isWar(location)) break
+            await downloadJar(index, `${downloadDir}/${getJarNameFromWar(location)}`)
+        }
+        index++
+    } while (true)
+
+    return index
+}
 
 const handleJarsAsync = async (downloader, startId, JAR_DIR) => {
 
@@ -172,5 +216,6 @@ module.exports = {
     handleJarsAsync,
     handleWar,
     handleWarAsync,
+    downloadJarsAsyncLoop,
     doMagic
 }

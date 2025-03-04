@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { spawn } = require('child_process')
 const { rezipBundle } = require('./lib/BundleHandler')
-const { handleJarsAsync, handleWarAsync } = require('./lib/util/setupFuncs')
+const { handleJarsAsync, handleWarAsync, downloadJarsAsyncLoop } = require('./lib/util/setupFuncs')
 
 // we are in single user mode, so we can do this ))
 const temp = {
@@ -159,6 +159,8 @@ module.exports = cds.service.impl(async function () {
     const downloader = await cds.connect.to('download')
 
     this.on('setupDownload', async (req) => {
+
+        return downloadJarsAsyncLoop(downloader, +req.data.warName || 1, temp.envPars.JAR_DIR)
 
         const downloadDir = temp.envPars.JAR_DIR
         if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir)
