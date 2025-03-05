@@ -52,13 +52,16 @@ sap.ui.define([
                                 this.data("from", from) // like here to set custom data
                                 return "camel:route" + (id ? ' id="' + id + '"' : '')
                             }
-                            if (uri && uri == this.getParentNode().data("from")) {
-                                return "from: " + uri.split("?")[0]
+                            function uriPart(uri) { return uri.split("?")[0] }
+                            var parts = this.getItemNodeContext().context.getPath().match(/(camel:\w+)/g)
+                            var parent = this.getParentNode()
+                            if (!parent) return parts.pop() + ' ' + uriPart(uri)
+                            if (parent && uri && uri == parent.data("from")) {
+                                return "from: " + uriPart(uri)
                             }
                             if (uri) {
-                                return "to: " + uri.split("?")[0]
+                                return "to: " + uriPart(uri)
                             }
-                            var parts = this.getItemNodeContext().context.getPath().match(/(camel:\w+)/g)
                             return parts.pop() + (id ? ' id="' + id + '"' : '')
                         }
                     }
