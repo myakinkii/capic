@@ -89,15 +89,7 @@ module.exports = cds.service.impl(async function () {
 
     const cpi = await cds.connect.to('cpi')
 
-    const mapToArtifactDT = {
-        INTEGRATION_FLOW: 'IntegrationDesigntimeArtifacts',
-        SCRIPT_COLLECTION: 'ScriptCollectionDesigntimeArtifacts',
-        MESSAGE_MAPPING: 'MessageMappingDesigntimeArtifacts'
-    }
-
-    this.on('READ', 'RezipTypes', async (req, next) => {
-        return Object.keys(mapToArtifactDT).map(Id => ({ Id }))
-    })
+    this.on('READ', 'RezipTypes', async (req, next) => cpi.getSupportedRezipTypes().map(Id => ({ Id })))
 
     this.on('READ', 'RezipPackages', async (req, next) => {
         return fs.readdirSync(`${temp.envPars.CPI_EXPORT_PATH}`).filter(f => !f.startsWith('.')).map(Id => ({ Id }))
@@ -122,13 +114,13 @@ module.exports = cds.service.impl(async function () {
             await cpi.run(cds.create('IntegrationPackages').entries({ Id: pkgId, Name: pkgId, ShortText: pkgId }))
         }
 
-        const entity = mapToArtifactDT[objType]
+        const entity = cpi.getDTEntity(objType)
 
-        const artifact = await cpi.run(cds.create(mapToArtifactDT[objType]).entries({
+        const artifact = await cpi.run(cds.create(entity).entries({
             Id: bundleId, Name: bundleId, PackageId: pkgId
         }))
 
-        const dummyData = await cpi.run(`/${entity}(Id='${artifact.Id}',Version='${artifact.Version}')/$value`)
+        const dummyData = await cpi.send('download', { bundleId: artifact.Id, version: artifact.Version, objType })
 
         const srcDir = `${temp.envPars.CPI_EXPORT_PATH}/${srcPkgId}/${srcBundleId}`
         const rezip64 = rezipBundle(dummyData, srcDir)

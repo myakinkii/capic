@@ -183,6 +183,24 @@ sap.ui.define([
             })
         },
 
+        deployCPI:function(e){
+            var ctx = e.getSource().getBindingContext("pkg")
+            this.editFlow.invokeAction('/deployArtifactToCpi', {
+                model: this.getView().getModel(),
+                parameterValues: [
+                    { name: "bundleId", value: ctx.getProperty("Id") },
+                    { name: "version", value: ctx.getProperty("Version") },
+                    { name: "objType", value: ctx.getProperty("Type") }
+                ],
+                skipParameterDialog: true
+            }).then(function (res) {
+                MessageToast.show(res.value)
+            }).catch(function (err) {
+                console.log(err)
+                MessageToast.show('ERROR')
+            })
+        },
+
         deployKaraf: function (e) {
             var pkgOdataCtx = this.getView().getBindingContext()
             var ctx = e.getSource().getBindingContext("pkg")
@@ -287,7 +305,7 @@ sap.ui.define([
                 skipParameterDialog: true
             }).then(function (res) {
                 BusyIndicator.hide()
-                MessageBox.show(res.value)
+                MessageBox.show(res.value) // json stuff
             }).catch(function (err) {
                 BusyIndicator.hide()
                 console.log(err)

@@ -61,8 +61,9 @@ service CpiLocalService {
             action deployKarafFromPackage(pckgId : String not null, tryLocal : Boolean)             returns String;
         };
 
-    action getRuntimeDetails(artifactId : UUID not null)            returns String;
-    action testIflowEndpoint(endpoint : String, text : LargeString) returns LargeString;
+    action deployArtifactToCpi(bundleId : String, version : String, objType : String) returns String;
+    action getRuntimeDetails(artifactId : UUID not null)                              returns String;
+    action testIflowEndpoint(endpoint : String, text : LargeString)                   returns LargeString;
 
 }
 

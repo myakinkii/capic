@@ -32,6 +32,8 @@ module.exports = cds.service.impl(async function () {
         return syncBundleToPackageRepo(pckgId, bundleId, version, commitMsg, xmlString)
     })
 
+    this.on('deployArtifactToCpi', async (req) => cpi.send('deploy', req.data) )
+
     this.on('deployKarafFromPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
         const { pckgId, tryLocal } = req.data
