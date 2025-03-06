@@ -6,7 +6,7 @@ To run this you'll need nodejs and npm
 
 Also as we exec some shell commands (zip/unzip, file operations) you'll need to run on *nix system (or WSL for windows)
 
-You'll also need to have git and curl installed.
+You'll also need to have git installed.
 
 As a typical nodejs project, setup/run is trivial:
 ```
