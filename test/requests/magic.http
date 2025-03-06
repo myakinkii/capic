@@ -17,5 +17,6 @@ X-CSRF-Token: fetch
 POST {{cloudUrl}}/http/webshell
 Authorization: Basic {{auth}}
 X-CSRF-Token: {{csrf_token}}
+Content-Type: text/plain
 
 info
