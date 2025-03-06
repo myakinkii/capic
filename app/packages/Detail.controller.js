@@ -2,9 +2,9 @@ sap.ui.define([
     "sap/fe/core/PageController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
-    "sap/ui/model/Filter",
+    "sap/ui/model/Filter", "sap/m/TextArea",
     "sap/ui/core/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox"
-], function (PageController, JSONModel, Fragment, Filter, BusyIndicator, MessageToast, MessageBox) {
+], function (PageController, JSONModel, Fragment, Filter, TextArea, BusyIndicator, MessageToast, MessageBox) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -183,7 +183,7 @@ sap.ui.define([
             })
         },
 
-        deployCPI:function(e){
+        deployCPI: function (e) {
             var ctx = e.getSource().getBindingContext("pkg")
             this.editFlow.invokeAction('/deployArtifactToCpi', {
                 model: this.getView().getModel(),
@@ -230,11 +230,11 @@ sap.ui.define([
             e.getSource().getParent().getParent().getBinding("items").filter(new Filter(filters, true), 'Application')
         },
 
-        filterArtifacts:function(e){
+        filterArtifacts: function (e) {
             var selectedDtType = e.getParameter("value")
             var filters = []
             if (selectedDtType) {
-                var rtType = this.getView().getModel("ui").getProperty("/typeFilters/"+selectedDtType)
+                var rtType = this.getView().getModel("ui").getProperty("/typeFilters/" + selectedDtType)
                 filters.push(new Filter({ path: 'Type', operator: "EQ", value1: rtType.key }))
             }
             this.getView().byId("rtTable").getBinding("items").filter(filters, 'Control')
@@ -292,24 +292,46 @@ sap.ui.define([
             })
         },
 
-        testEndpoint: function(e){
+        getUserInput: function () {
+            return new Promise(function (resolve, reject) {
+                var textArea = new TextArea({
+                    width: '100%',
+                    rows: 5,
+                    growing: true,
+                    placeholder: 'Headers-Part: Like this\nContent-Type: application/json\n\nHere goes body\n...'
+                })
+                MessageBox.show(textArea, {
+                    icon: MessageBox.Icon.INFORMATION,
+                    title: "POST",
+                    actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                    onClose: function (act) {
+                        return act == MessageBox.Action.OK ? resolve(textArea.getValue()) : reject()
+                    }
+                })
+            })
+        },
+
+        testEndpoint: function (e) {
             var endpoint = e.getSource().getBindingContext("cpi").getProperty("endpointUrl")
-            var text = prompt() // yeah why not )
-            BusyIndicator.show(50)
-            this.editFlow.invokeAction('/testIflowEndpoint', {
-                model: this.getView().getModel(),
-                parameterValues: [
-                    { name: "endpoint", value: endpoint },
-                    { name: "text", value: text },
-                ],
-                skipParameterDialog: true
-            }).then(function (res) {
+            this.getUserInput().then(function (payloadAndHeaders) {
+                BusyIndicator.show(100)
+                return this.editFlow.invokeAction('/testIflowEndpoint', {
+                    model: this.getView().getModel(),
+                    parameterValues: [
+                        { name: "endpoint", value: endpoint },
+                        { name: "text", value: payloadAndHeaders },
+                    ],
+                    skipParameterDialog: true
+                })
+            }.bind(this)).then(function (res) {
                 BusyIndicator.hide()
-                MessageBox.show(res.value) // json stuff
+                MessageBox.show(typeof res.value == 'object' ? JSON.stringify(res.value) : res.value) // json or not
             }).catch(function (err) {
                 BusyIndicator.hide()
-                console.log(err)
-                MessageToast.show('ERROR')
+                if (err) {
+                    console.log(err)
+                    MessageToast.show('ERROR')
+                }
             })
         }
 

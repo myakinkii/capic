@@ -15,8 +15,8 @@ X-CSRF-Token: fetch
 ###
 POST {{cloudUrl}}{{SenderInitiatedScenario}}
 Authorization: Basic {{auth}}
-Content-Type: application/json
 X-CSRF-Token: {{csrf_token1}}
+Content-Type: application/json
 
 {
     "productIdentifier": "HT-1081"
