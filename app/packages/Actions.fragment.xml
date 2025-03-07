@@ -1,8 +1,14 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <ActionSheet placement="Auto">
+    <Menu>
+        <MenuItem text="{i18n>gotoOperations}" icon="sap-icon://chain-link" press="gotoOperations" />
+        <MenuItem text="{i18n>deployCPI}" icon="sap-icon://upload-to-cloud" press="deployCPI" />
+        <MenuItem startsSection="true" text="{i18n>syncGit}" icon="sap-icon://tree" press="syncGit" />
+        <MenuItem text="{i18n>deployKaraf}" icon="sap-icon://developer-settings" press="deployKaraf" />
+    </Menu>
+    <!-- <ActionSheet placement="Auto">
         <Button text="{i18n>gotoOperations}" icon="sap-icon://chain-link" press="gotoOperations" />
         <Button text="{i18n>deployCPI}" icon="sap-icon://upload-to-cloud" press="deployCPI" />
         <Button text="{i18n>syncGit}" icon="sap-icon://tree" press="syncGit" />
         <Button text="{i18n>deployKaraf}" icon="sap-icon://developer-settings" press="deployKaraf" />
-    </ActionSheet>
+    </ActionSheet> -->
 </core:FragmentDefinition>
