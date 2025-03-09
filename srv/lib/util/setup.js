@@ -50,6 +50,10 @@ const jarsFromWar = [
     'com.sap.esb.camel.core.endpoint.configurator.api',
     'com.sap.esb.camel.addons.camel.xmltocsv.converter',
     'org.apache.camel.camel-mail',
+    'com.sap.esb.camel.core.camel.eip.splitter',
+    'org.apache.camel.camel-ahc',
+    'org.apache.camel.camel-xslt-saxon',
+    'com.sap.esb.camel.core.camel.saxon.extensions',
     'com.sap.it.script.com.sap.it.script.fragment.camel.impl' // this guy is not resolved for some reason
 ]
 
