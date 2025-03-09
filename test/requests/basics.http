@@ -60,3 +60,122 @@ Content-Type: text/xml
         </Products>
     </soap:Body>
 </soap:Envelope>
+
+
+### Basics_XML_To_WSDL_Mapping
+@AccessHeaderAndPropertiesInMessageMapping = /http/custom/ModelingBasics/AccessHeaderProperties/MessageMapping
+
+### csrf
+# @name getToken2
+HEAD {{cloudUrl}}{{AccessHeaderAndPropertiesInMessageMapping}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token2 = {{getToken2.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{AccessHeaderAndPropertiesInMessageMapping}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token2}}
+Content-Type: application/xml
+OrderId: 9018345681
+
+<root><productIdentifier>HT-1080</productIdentifier><quantity>4</quantity></root>
+
+
+### Basics_XSLT_Mapping
+@AccessHeaderAndPropertiesInXSLTMapping = /http/custom/ModelingBasics/AccessHeaderProperties/XSLT
+
+### csrf
+# @name getToken3
+HEAD {{cloudUrl}}{{AccessHeaderAndPropertiesInXSLTMapping}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token3 = {{getToken3.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{AccessHeaderAndPropertiesInXSLTMapping}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token3}
+Content-Type: application/xml
+OrderId: 8216000002
+
+<root><productIdentifier>HT-1082</productIdentifier><quantity>2</quantity></root>
+
+
+### Basics_XPATH_And_Conditions
+@AccessHeaderAndPropertiesInXPATHandConditions = /http/custom/ModelingBasics/AccessHeaderProperties/XPATHandConditions
+
+### csrf
+# @name getToken4
+HEAD {{cloudUrl}}{{AccessHeaderAndPropertiesInXPATHandConditions}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token4 = {{getToken4.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{AccessHeaderAndPropertiesInXPATHandConditions}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token4}}
+Content-Type: application/xml
+Accept: application/json
+
+<root><category>Notebooks</category><maxprice>1000.00</maxprice></root>
+
+
+### Basics_XML_To_JSON_Mapping
+@MappingXMLToJSON = /http/custom/ModelingBasics/MappingXMLToJSON
+
+### csrf
+# @name getToken5
+HEAD {{cloudUrl}}{{MappingXMLToJSON}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token5 = {{getToken5.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{MappingXMLToJSON}}
+Authorization: Basic {{auth}}
+Content-Type: application/xml
+X-CSRF-Token: {{csrf_token5}}
+OrderId: 10001234
+SupplierId: 100000042
+
+<Products>
+    <Product>
+      <ProductId>HT-1081</ProductId>
+      <Name>Power Scan</Name>
+      <Category>Scanners</Category>
+      <Description>Flatbed scanner - 1200 dpi x 1200 dpi - 216 x 297 mm - Hi-Speed USB  - Bluetooth Ver. 1.2</Description>
+      <Weight>2.40</Weight>
+      <WeightUnit>KG</WeightUnit>
+      <DimensionHeight>0.07</DimensionHeight>
+      <DimensionWidth>0.31</DimensionWidth>
+      <DimensionDepth>0.43</DimensionDepth>
+      <DimensionUnit>m</DimensionUnit>
+      <Price>89.00</Price>      
+      <CurrencyCode>EUR</CurrencyCode>
+      <Quantity>2</Quantity>
+      <QuantityUnit>EA</QuantityUnit>
+    </Product>
+    <Product>
+      <ProductId>HT-1082</ProductId>
+      <Name>Jet Scan Professional</Name>
+      <Category>Scanners</Category>
+      <Description>Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - Hi-Speed USB  - Bluetooth Ver. 1.2</Description>
+      <Weight>3.20</Weight>
+      <WeightUnit>KG</WeightUnit>
+      <DimensionHeight>0.12</DimensionHeight>
+      <DimensionWidth>0.33</DimensionWidth>
+      <DimensionDepth>0.41</DimensionDepth>
+      <DimensionUnit>m</DimensionUnit>
+      <Price>169.00</Price>
+      <CurrencyCode>EUR</CurrencyCode>
+      <Quantity>4</Quantity>
+      <QuantityUnit>EA</QuantityUnit>
+    </Product>
+</Products>
+

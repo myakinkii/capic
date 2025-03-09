@@ -1,0 +1,73 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:Generator="com.sap.it.gnb.ifl.common.gen.pluggability.api.GeneratorHandler" xmlns:bsn="http://sapcd.com/bsnagt" xmlns:camel="http://camel.apache.org/schema/blueprint" xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cxfcore="http://cxf.apache.org/blueprint/core" xmlns:exsl="http://exslt.org/common" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:hci-ph="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:idocsoap="urn:sap-com:document:sap:idoc:soap:messages" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:ns="https://bsnschemas.netweaver.neo.com/bsnflow" xmlns:orange="http://xi.com/orange" xmlns:sap-cxf-generic-request="http://camel.apache.org/cxf/jaxws/dispatch" xmlns:sap-cxf-generic-request-reply="http://camel.apache.org/cxf/jaxws/provider" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:str="http://exslt.org/strings" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager" xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd           http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd           http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd           http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd           http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd           http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd           http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd           http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd">
+    <!--<reference id="cxfTracingFeatureFactory" interface="com.sap.it.op.agent.trace.cxf.CxfTracingFeatureFactory"/>-->
+    <!--<bean class="com.sap.esb.monitoring.cxf.runtime.feature.RuntimeFeature" id="cxf.feature.RuntimeFeature"/>-->
+    <!--<reference id="MessageProcessingLogSink" interface="com.sap.it.op.agent.api.MessageProcessingLogSink"/>-->
+    <!--<reference id="IntegrationOperationsErrorEventPublisher" interface="com.sap.it.op.ed.IntegrationOperationsErrorEventPublisher"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplInterceptor" id="itOpAgentMplInterceptor"/>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.MplEventNotifier" id="itOpAgentMplEventNotifier">-->
+    <!--    <property name="messageProcessingLogSink">-->
+    <!--        <ref component-id="MessageProcessingLogSink"/>-->
+    <!--    </property>-->
+    <!--</bean>-->
+    <!--<bean class="com.sap.it.op.agent.collector.camel.CustomShutdownStrategy" id="CustomShutdownStrategy">-->
+    <!--    <property name="timeout" value="60"/>-->
+    <!--    <property name="suppressLoggingOnTimeout" value="true"/>-->
+    <!--    <property name="shutdownNowOnTimeout" value="true"/>-->
+    <!--</bean>-->
+    <!--<reference id="secureStore" interface="com.sap.it.nm.security.SecureStore"/>-->
+    <!--<bean class="com.sap.esb.secure.parameter.impl.SecureParameterAccessFactoryImpl" id="secureParameterAccessFactory">-->
+    <!--    <property name="secureParameterStorage" ref="secureStore"/>-->
+    <!--</bean>-->
+    <!--<reference id="clusterLockManager" interface="com.sap.it.nm.concurrent.ClusterLockManager"/>-->
+    <!--<reference id="authenticationHeaderProvider" interface="com.sap.it.nm.security.AuthenticationHeaderProvider"/>-->
+    <bean class="com.sap.it.iflow.saxonee.SaxonEEConsumerFactory" factory-method="getEnterpriseXPathFactoryInstance" id="saxonEEXpathFactory"/>
+    <bean class="java.util.HashMap" id="userdefinedNamespaces"/>
+    <camel:camelContext id="Basics_XML_To_JSON_Mapping" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
+        <camel:globalOptions>
+            <camel:globalOption key="CamelLogDebugBodyMaxChars" value="-1"/>
+            <camel:globalOption key="CamelMaximumEndpointCacheSize" value="50"/>
+        </camel:globalOptions>
+        <camel:streamCaching id="Basics_XML_To_JSON_Mapping_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
+        <camel:route id="Process_1">
+            <camel:from uri="ftp://cpi@localhost:2021/Basics_XML_To_JSON_Mapping/in?fileName=DATA_IN&amp;password=cpi&amp;passiveMode=true&amp;delete=true&amp;binary=true&amp;delay=10000&amp;autoCreate=false"/>
+            <camel:log message="Context name ${camelId}"/>
+            <!--<camel:from id="MessageFlow_22_202425516866914" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/custom/ModelingBasics/MappingXMLToJSON&amp;senderAuthType=RoleBased&amp;xsrfProtection=true&amp;returnExceptionToSender=false&amp;userRole=ESBMessaging.send"/>-->
+            <!--<camel:to uri="sap-pp-util://sender"/>-->
+            <!--<camel:onException id="MessageFlow_22_202425520472389">-->
+            <!--    <camel:exception>-->
+            <!--        com.sap.esb.size.limiter.SizeLimitExceededException-->
+            <!--    </camel:exception>-->
+            <!--    <camel:handled>-->
+            <!--        <camel:constant>-->
+            <!--            false-->
+            <!--        </camel:constant>-->
+            <!--    </camel:handled>-->
+            <!--</camel:onException>-->
+            <!--<camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>-->
+            <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|OrderId|SupplierId|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>
+            <camel:setHeader id="CallActivity_27_202425522328219" name="MessageId">
+                <camel:simple>
+                    ${in.header.SapMessageId}
+                </camel:simple>
+            </camel:setHeader>
+            <camel:toD uri="sap-map-pi:product_xml_json_mapping/product_xml_json_mapping"/>
+            <camel:setHeader id="CallActivity_13_202425523191059" name="context">
+                <camel:simple>
+                    ${camelId}
+                </camel:simple>
+            </camel:setHeader>
+            <camel:setHeader name="Content-Type">
+                <camel:constant>
+                    application/json
+                </camel:constant>
+            </camel:setHeader>
+            <camel:setProperty id="EndEvent_2_202425528385239" name="SAP_MarkMessageAsFailed">
+                <camel:constant>
+                    false
+                </camel:constant>
+            </camel:setProperty>
+            <camel:to uri="direct-vm:/Common_Generic_Receiver"/>
+            <!--<camel:to id="MessageFlow_23_202425528839312" uri="sap-processdirect:foo?address=/custom/GenericReceiverDataStore"/>-->
+        </camel:route>
+    </camel:camelContext>
+</blueprint>
