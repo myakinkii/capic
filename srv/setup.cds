@@ -38,6 +38,11 @@ service SetupService {
         key Id : String;
     }
 
+    @cds.persistence.skip: true
+    entity RezipBundles {
+        key Id : String;
+    }
+
     action checkCreateFolders(param : String);
     action persist(pars : String);
     action rezip(task : Rezip);

@@ -11,7 +11,8 @@
                     <core:Item key="{Id}" text="{Id}" />
                 </Select>
                 <Label text="{i18n>bundleId}" />
-                <Input value="{srcBundleId}"  change="copyBundle" />
+                <Input value="{srcBundleId}" change="copyBundle"
+                    showValueHelp="true" valueHelpRequest="handleBundleValueHelp"/>
                 <core:Title text="To" />
                 <Label text="{i18n>createPkgFlag}" />
                 <CheckBox selected="{createPkgFlag}" />

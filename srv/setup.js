@@ -95,16 +95,24 @@ module.exports = cds.service.impl(async function () {
         return fs.readdirSync(`${temp.envPars.CPI_EXPORT_PATH}`).filter(f => !f.startsWith('.')).map(Id => ({ Id }))
     })
 
-    this.on('READ', 'Rezip', async (req, next) => ({
+    const rezipObj = {
         objType: 'INTEGRATION_FLOW',
         createPkgFlag: true,
         pkgId: '',
         bundleId: '',
         srcPkgId: '',
         srcBundleId: '',
-    }))
+    }
 
-    this.on('UPDATE', 'Rezip', async (req, next) => req.data)
+    this.on('READ', 'Rezip', async (req, next) => rezipObj)
+
+    this.on('UPDATE', 'Rezip', async (req, next) => Object.assign(rezipObj, req.data))
+
+    this.on('READ', 'RezipBundles', async (req, next) => {
+        const pkg = rezipObj.srcPkgId
+        if (!pkg) return []
+        return fs.readdirSync(`${temp.envPars.CPI_EXPORT_PATH}/${pkg}`).filter(f => !f.startsWith('.')).map(Id => ({ Id }))
+    })
 
     this.on('rezip', async (req, next) => {
 

@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/fe/core/PageController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
+    "sap/m/SelectDialog", "sap/m/StandardListItem",
     "sap/ui/core/BusyIndicator", "sap/m/MessageToast"
-], function (PageController, JSONModel, Fragment, BusyIndicator, MessageToast) {
+], function (PageController, JSONModel, Fragment, SelectDialog, StandardListItem, BusyIndicator, MessageToast) {
     "use strict";
 
     return PageController.extend("setup.Main", {
@@ -34,6 +35,27 @@ sap.ui.define([
             this.rezipDialogPromise.then(dlg => dlg.open())
         },
 
+        handleBundleValueHelp: function (e) {
+            var input = e.getSource()
+            var selectDlg = new SelectDialog({
+                title: "{/Rezip/srcPkgId}",
+                growing: false,
+                confirm: function(e){
+                    var id = e.getParameter("selectedItem").getTitle()
+                    input.setValue(id)
+                    input.fireChange({ value: id })
+                }
+            })
+            var innerDlg = selectDlg.getAggregation("_dialog") // hacky-hacky
+            innerDlg.getAggregation("subHeader").setVisible(false)
+            selectDlg.setModel(this.getView().getModel())
+            selectDlg.bindAggregation("items", {
+                path: "/RezipBundles",
+                template: new StandardListItem({ title: "{Id}" })
+            })
+            selectDlg.open()
+        },
+
         copyPackage: function (e) {
             var ctx = e.getSource().getBindingContext()
             ctx.setProperty("pkgId", e.getParameter("selectedItem").getKey())
@@ -60,7 +82,7 @@ sap.ui.define([
             })
         },
 
-        checkCreateFolders:function(e){
+        checkCreateFolders: function (e) {
             var param = e.getSource().data("param")
             this.editFlow.invokeAction('/checkCreateFolders', {
                 model: this.getView().getModel(),
@@ -84,16 +106,16 @@ sap.ui.define([
                 dlg = d
                 return this.editFlow.invokeAction('/checkWarRetry', { model: this.getView().getModel() })
             }.bind(this)).then(function (res) {
-                dlg.getModel("dlg").setProperty("/downloadTarget", ('value' in res) ? res.value: '*')
+                dlg.getModel("dlg").setProperty("/downloadTarget", ('value' in res) ? res.value : '*')
                 dlg.open()
             })
         },
 
-        karafDownloadJars:function(e){
+        karafDownloadJars: function (e) {
             var mdl = e.getSource().getModel("dlg")
             var warName = mdl.getProperty('/downloadTarget')
             if (warName) warName = warName.slice(1) // kinda to remove undescore or clear '*'
-            
+
             BusyIndicator.show(50)
             this.editFlow.invokeAction('/setupDownload', {
                 model: this.getView().getModel(),
@@ -108,7 +130,7 @@ sap.ui.define([
             })
         },
 
-        karafInstall:function(){
+        karafInstall: function () {
             BusyIndicator.show(50)
             this.editFlow.invokeAction('/setupKaraf', {
                 model: this.getView().getModel()
