@@ -1,0 +1,188 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:Generator="com.sap.it.gnb.ifl.common.gen.pluggability.api.GeneratorHandler" xmlns:bsn="http://sapcd.com/bsnagt" xmlns:camel="http://camel.apache.org/schema/blueprint" xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cxfcore="http://cxf.apache.org/blueprint/core" xmlns:exsl="http://exslt.org/common" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:hci-ph="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:idocsoap="urn:sap-com:document:sap:idoc:soap:messages" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:ns="https://bsnschemas.netweaver.neo.com/bsnflow" xmlns:orange="http://xi.com/orange" xmlns:sap-cxf-generic-request="http://camel.apache.org/cxf/jaxws/dispatch" xmlns:sap-cxf-generic-request-reply="http://camel.apache.org/cxf/jaxws/provider" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:str="http://exslt.org/strings" xmlns:wsa="http://cxf.apache.org/ws/addressing" xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager" xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd           http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd           http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd           http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd           http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd           http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd           http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd           http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd">
+    
+    <reference id="cxfTracingFeatureFactory" interface="com.sap.it.op.agent.trace.cxf.CxfTracingFeatureFactory"/>
+    
+    <bean class="com.sap.esb.monitoring.cxf.runtime.feature.RuntimeFeature" id="cxf.feature.RuntimeFeature"/>
+    
+    <reference id="MessageProcessingLogSink" interface="com.sap.it.op.agent.api.MessageProcessingLogSink"/>
+    
+    <reference id="IntegrationOperationsErrorEventPublisher" interface="com.sap.it.op.ed.IntegrationOperationsErrorEventPublisher"/>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.MplInterceptor" id="itOpAgentMplInterceptor"/>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.MplEventNotifier" id="itOpAgentMplEventNotifier">
+        
+        <property name="messageProcessingLogSink">
+            
+            <ref component-id="MessageProcessingLogSink"/>
+            
+        </property>
+        
+    </bean>
+    
+    <bean class="com.sap.it.op.agent.collector.camel.CustomShutdownStrategy" id="CustomShutdownStrategy">
+        
+        <property name="timeout" value="60"/>
+        
+        <property name="suppressLoggingOnTimeout" value="true"/>
+        
+        <property name="shutdownNowOnTimeout" value="true"/>
+        
+    </bean>
+    
+    <bean class="net.sf.saxon.xpath.XPathFactoryImpl" id="saxonFactory"/>
+    
+    <reference filter="(keystore=default)" id="accessor" interface="com.sap.esb.security.KeyCertificateAccessor"/>
+    
+    <bean factory-method="createConfig" factory-ref="clientConfigurer" id="clientConfig_Webshop_HTTP">
+        
+        <argument value="ANONYMOUS"/>
+        
+        <argument value=""/>
+        
+        <argument value="DEFAULT"/>
+        
+    </bean>
+    
+    <bean factory-method="getBinding" factory-ref="clientConfigurer" id="binding_Webshop_HTTP"/>
+    
+    <reference id="secureStore" interface="com.sap.it.nm.security.SecureStore"/>
+    
+    <bean class="com.sap.esb.secure.parameter.impl.SecureParameterAccessFactoryImpl" id="secureParameterAccessFactory">
+        
+        <property name="secureParameterStorage" ref="secureStore"/>
+        
+    </bean>
+    
+    <reference id="clusterLockManager" interface="com.sap.it.nm.concurrent.ClusterLockManager"/>
+    
+    <reference id="authenticationHeaderProvider" interface="com.sap.it.nm.security.AuthenticationHeaderProvider"/>
+    
+    <reference id="clientConfigurer" interface="com.sap.esb.camel.http.ahc.configurer.AHCConfigFactory"/>
+    
+    <bean class="com.sap.it.iflow.saxonee.SaxonEEConsumerFactory" factory-method="getEnterpriseXPathFactoryInstance" id="saxonEEXpathFactory"/>
+    
+    <bean class="com.sap.gateway.ip.core.customdev.processor.IGWScriptProcessor" id="scriptprocessor"/>
+    
+    <bean class="java.util.HashMap" id="xmlNsToPrefix_CallActivity_47">
+        
+        <argument>
+            
+            <map key-type="java.lang.String" value-type="java.lang.String"/>
+            
+        </argument>
+        
+    </bean>
+    
+    <bean class="java.util.HashMap" id="userdefinedNamespaces"/>
+    
+    <camel:camelContext id="Basics_XPATH_And_Conditions" inflightRepositoryBrowseEnabled="true" streamCache="true" useBreadcrumb="true">
+        <camel:globalOptions>
+            <camel:globalOption key="CamelLogDebugBodyMaxChars" value="-1"/>
+            <camel:globalOption key="CamelMaximumEndpointCacheSize" value="50"/>
+        </camel:globalOptions>
+        <camel:streamCaching id="Basics_XPATH_And_Conditions_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
+        <camel:route id="Process_66">
+            <camel:from uri="direct:Process_66"/>
+            <camel:choice id="ExclusiveGateway_74_347616844217989">
+                <camel:when>
+                    <camel:simple>${header.X-Use-Adapter} == 'ahc'</camel:simple>
+                    <camel:to id="MessageFlow_83_347616845424403" uri="sap-util://storeHeaders?headers=CamelHttpUri,CamelHttpQuery,CamelHttpMethod"/>
+                    <camel:setHeader name="CamelHttpMethod">
+                        <camel:constant>GET</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="SAPCamelAllowedHTTPRequestHeaders">
+                        <camel:simple/>
+                    </camel:setHeader>
+                    <camel:setHeader name="SAPCamelAllowedHTTPResponseHeaders">
+                        <camel:simple>*</camel:simple>
+                    </camel:setHeader>
+                    <camel:setHeader name="SAPUseContentLengthForByteArray">
+                        <camel:constant>true</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="SAPHttpReceiverAdapterVersion">
+                        <camel:constant>1.16</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="SAPEnableMPLAttachments">
+                        <camel:constant>true</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="CamelHttpQuery">
+                        <camel:simple>$format=json&amp;$select=ProductId,Category,CategoryName,CurrencyCode,DimensionDepth,DimensionHeight,DimensionUnit,DimensionWidth,LongDescription,Name,PictureUrl,Price,QuantityUnit,ShortDescription,SupplierId,Weight,WeightUnit&amp;$filter=Category eq '${exchangeProperty.category}'</camel:simple>
+                    </camel:setHeader>
+                    <camel:to uri="ahc:https://refapp-espm-ui-cf.cfapps.eu10.hana.ondemand.com/espm-cloud-web/espm.svc/Products?clientConfig=#clientConfig_Webshop_HTTP&amp;binding=#binding_Webshop_HTTP&amp;clientConfig.requestTimeout=60000&amp;clientConfig.pooledConnectionIdleTimeout=300000&amp;clientConfig.readTimeout=60000&amp;clientConfig.connectTimeout=10000"/>
+                    <camel:removeHeader name="SAPCamelAllowedHTTPRequestHeaders"/>
+                    <camel:removeHeader name="SAPCamelAllowedHTTPResponseHeaders"/>
+                    <camel:removeHeader name="SAPUseContentLengthForByteArray"/>
+                    <camel:removeHeader name="SAPHttpReceiverAdapterVersion"/>
+                    <camel:removeHeader name="CamelHttpUri"/>
+                    <camel:removeHeader name="CamelHttpQuery"/>
+                    <camel:removeHeader name="CamelHttpMethod"/>
+                    <camel:to uri="sap-util://restoreHeaders?headers=CamelHttpUri,CamelHttpQuery,CamelHttpMethod"/>
+                    <camel:setHeader id="CallActivity_71_347616847817717" name="scriptFile">
+                        <camel:constant>ConvertOdataV2Product.groovy</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="functionName">
+                        <camel:constant>transformToXml</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="scriptBundleId">
+                        <camel:constant>basics_scripts</camel:constant>
+                    </camel:setHeader>
+                    <camel:setHeader name="scriptFileType">
+                        <camel:constant>groovy</camel:constant>
+                    </camel:setHeader>
+                    <camel:bean method="process" ref="scriptprocessor"/>
+                </camel:when>
+                <camel:otherwise>
+                    <camel:to id="MessageFlow_84_347616851785779" uri="odata:GET_FEED?serviceUri=https://refapp-espm-ui-cf.cfapps.eu10.hana.ondemand.com/espm-cloud-web/espm.svc/&amp;resourcePath=RAW(Products)&amp;authenticationType=None&amp;retrieveAllPages=true&amp;oDataMethod=GET_FEED&amp;contentType=application/atom+xml&amp;componentContentType=xml&amp;receiveTimeOut=60000&amp;proxyType=default&amp;SystemQueryOption=RAW($select=ProductId,Category,CategoryName,CurrencyCode,DimensionDepth,DimensionHeight,DimensionUnit,DimensionWidth,LongDescription,Name,PictureUrl,Price,QuantityUnit,ShortDescription,SupplierId,Weight,WeightUnit&amp;amp;$filter=Category eq '${exchangeProperty.category}')&amp;retryOnFailure=false&amp;allowRequestHeaders=false&amp;setErrorResponseBody=true&amp;isKeyAutoGenerated=true&amp;allowResponseHeaders=false&amp;isCSRFEnabled=true&amp;serviceType=HCIOData&amp;allowHttpSuccessPassThrough=true&amp;adapterVersion=1.25.0&amp;validateSystemQueryOption=true&amp;enableTLSSessionReuse=true&amp;enableMPLAttachments=true"/>
+                </camel:otherwise>
+            </camel:choice>
+        </camel:route>
+        <camel:route id="Process_1">
+            <camel:from id="MessageFlow_4_347616854599106" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/custom/ModelingBasics/AccessHeaderProperties/XPATHandConditions&amp;senderAuthType=RoleBased&amp;xsrfProtection=true&amp;returnExceptionToSender=false&amp;userRole=ESBMessaging.send"/>
+            <camel:to uri="sap-pp-util://sender"/>
+            <camel:onException id="MessageFlow_4_347616857455847">
+                <camel:exception>com.sap.esb.size.limiter.SizeLimitExceededException</camel:exception>
+                <camel:handled>
+                    <camel:constant>false</camel:constant>
+                </camel:handled>
+            </camel:onException>
+            <camel:to uri="sap-size-limit://limit?body=41943040&amp;attachments="/>
+            <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|Accept|context|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>
+            <camel:setHeader id="CallActivity_6_347616859239849" name="context">
+                <camel:simple>${camelId}</camel:simple>
+            </camel:setHeader>
+            <camel:setProperty name="maxprice">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="java.lang.Number">//maxprice</camel:xpath>
+            </camel:setProperty>
+            <camel:setProperty name="category">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="java.lang.String">//category</camel:xpath>
+            </camel:setProperty>
+            <camel:to id="CallActivity_85_347616864541531" uri="direct:Process_66"/>
+            <camel:setBody id="CallActivity_38_347616865098638">
+                <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="org.w3c.dom.NodeList">//Products/Product[./Price &lt; $maxprice]</camel:xpath>
+            </camel:setBody>
+            <camel:setBody id="CallActivity_49_347616868606142">
+                <camel:simple>&lt;Products&gt;
+${in.body}
+&lt;/Products&gt;</camel:simple>
+            </camel:setBody>
+            <camel:choice id="ExclusiveGateway_41_347616871630436">
+                <camel:when>
+                    <camel:simple>${header.Accept} == 'application/json'</camel:simple>
+                    <camel:to id="CallActivity_47_347616873310801" uri="dataformat:sap-xmljson:marshal?jsonEncoding=&amp;ignoreNamespaces=false&amp;jsonNamespaceSeparator=:&amp;xmlNsToPrefix=#xmlNsToPrefix_CallActivity_47"/>
+                    <camel:setProperty id="EndEvent_2_347616876214015" name="SAP_MarkMessageAsFailed">
+                        <camel:constant>false</camel:constant>
+                    </camel:setProperty>
+                    <camel:to id="MessageFlow_5_347616876596129" uri="sap-processdirect:foo?address=/custom/GenericReceiverDataStore"/>
+                </camel:when>
+                <camel:otherwise>
+                    <camel:setProperty id="EndEvent_2_347616878231529" name="SAP_MarkMessageAsFailed">
+                        <camel:constant>false</camel:constant>
+                    </camel:setProperty>
+                    <camel:to id="MessageFlow_5_347616878464083" uri="sap-processdirect:foo?address=/custom/GenericReceiverDataStore"/>
+                </camel:otherwise>
+            </camel:choice>
+        </camel:route>
+    </camel:camelContext>
+    
+</blueprint>
