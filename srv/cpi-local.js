@@ -121,7 +121,7 @@ module.exports = cds.service.impl(async function () {
                 return prev
             }, {})
         }
-        return iflow.run({ endpoint, body, headers })
+        return iflow.run({ endpoint, body, headers }).catch( e => e.message )
     })
     
 });
