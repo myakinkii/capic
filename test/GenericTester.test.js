@@ -1,12 +1,12 @@
 const cds = require('@sap/cds')
 const fs = require('fs')
 
-jest.setTimeout(10*60*1000) // 10 mins
+jest.setTimeout(10 * 60 * 1000) // 10 mins
 
-const context = process.argv[3]
+const context = process.env.CTX
 if (!context) process.exit()
 
-describe('Automatic test for '+context, () => {
+describe('Automatic test for ' + context, () => {
 
     const test = cds.test(__dirname + '/..')
 
@@ -14,7 +14,7 @@ describe('Automatic test for '+context, () => {
         return new Promise(function (resolve) {
             async function waitAndResolve() {
                 const { data } = await test.get('/odata/v4/ftp-local/FtpOut')
-                if ( data.value.length == files ) resolve(data.value)
+                if (data.value.length == files) resolve(data.value)
                 else setTimeout(waitAndResolve, 1000)
             }
             waitAndResolve()
@@ -39,10 +39,11 @@ describe('Automatic test for '+context, () => {
         const inFiles = files.filter(f => f.endsWith('-IN')).sort()
         const outFiles = files.filter(f => f.endsWith('-OUT')).sort()
 
+        test.expect(inFiles.length > 0).to.eq(true)
         test.expect(inFiles.length).to.eq(outFiles.length)
 
-        let i=0, f, res, input, output, expected
-        do {
+        let i = 0, f, res, input, output, expected
+        while (i < inFiles.length) {
             input = fs.readFileSync(`${inOutDir}/${inFiles[i]}`).toString()
             await test.patch('/odata/v4/ftp-local/FtpIn', { content: input })
             res = await waitForKaraf(1)
@@ -51,8 +52,8 @@ describe('Automatic test for '+context, () => {
             test.expect(output).to.eq(expected)
             await test.delete(`/odata/v4/ftp-local/FtpOut('${res[0].fileName}')`)
             i++
-        } while (i< inFiles.length)
-        test.expect(i).to.eq(files.length/2)
+        }
+        test.expect(i).to.eq(files.length / 2)
     })
 
 })

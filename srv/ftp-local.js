@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { exec } = require('child_process')
 const moment = require('moment')
 
 const { getDeployedToKarafBundles } = require('./lib/BundleHandler')
@@ -80,4 +81,20 @@ module.exports = cds.service.impl(async function () {
         fs.renameSync(ctxdPath`/out/${fileName}`, inOutName + '-OUT')
         return inOutName
     })
+
+    this.on('runGenericTester', async (req, next) => {
+        if (!ftpIn.context) return 'NO_CONTEXT_SELECTED'
+        return new Promise((resolve, reject) => {
+            const testRunner = exec(`npx jest ${process.cwd()}/test/GenericTester.test.js`, { 
+                env: Object.assign(process.env, { CTX: ftpIn.context}),
+                shell: true,
+                stdio: 'pipe'
+            })
+
+            let results
+            testRunner.stderr.on('data', (data) => results += data.toString())
+            testRunner.on('exit', (code) => resolve(results))
+        })
+    })
+
 })

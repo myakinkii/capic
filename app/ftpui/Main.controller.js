@@ -1,4 +1,4 @@
-sap.ui.define(["sap/fe/core/PageController"], function (PageController) {
+sap.ui.define(["sap/fe/core/PageController", "sap/ui/core/BusyIndicator"], function (PageController, BusyIndicator) {
     "use strict";
 
     return PageController.extend("ftp_local.Main", {
@@ -34,6 +34,19 @@ sap.ui.define(["sap/fe/core/PageController"], function (PageController) {
                 model: this.getView().getModel(),
                 parameterValues: [{ name: "fileName", value: fileName }],
                 skipParameterDialog: true
+            })
+        },
+        
+        runGenericTester:function(e){
+            var panel = e.getSource().getParent().getParent()
+            var fisrtChild = panel.getContent()[0]
+            BusyIndicator.show(50)
+            this.editFlow.invokeAction('/runGenericTester', {
+                model: e.getSource().getBindingContext().getModel()
+            }).then(function(res){
+                BusyIndicator.hide()
+                panel.setExpanded(true)
+                fisrtChild.setText(res.value)
             })
         }
 

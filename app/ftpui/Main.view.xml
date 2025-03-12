@@ -47,6 +47,16 @@
             </headerToolbar>
             <macros:Table id="macroTable" metaPath="/FtpOut/@com.sap.vocabularies.UI.v1.LineItem" personalization="false" enableExport="false" enablePaste="false" />
         </Panel>
+        <Panel class="sapUiSmallMarginTop" expandable="true" expanded="false">
+            <headerToolbar>
+                <Toolbar>
+                    <Title text="TEST RUNNER" />
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://play" press="runGenericTester"/>
+                </Toolbar>
+            </headerToolbar>
+            <Text/>
+        </Panel>
         </l:sideContent>
     </l:DynamicSideContent>        
     </content>

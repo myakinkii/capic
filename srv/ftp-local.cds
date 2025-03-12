@@ -19,6 +19,7 @@ service FtpLocalService {
 
     action unlinkInFile(fileName : String);
     action checkCreateFolders();
+    action runGenericTester() returns String;
 
     @cds.persistence.skip: true
     entity FtpOut {
