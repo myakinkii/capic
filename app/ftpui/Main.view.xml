@@ -42,7 +42,7 @@
                     <!-- <ToggleButton text="{i18n>toggleEditMode}" selected="{ui>/isEditable}" press="onSelectEdit" /> -->
                     <Link text="refresh" press="forceRefresh" />
                     <ToolbarSpacer/>
-                    <Link href="/ftp/{context}/out/" text="{i18n>navToOut}" icon="sap-icon://folder" press="openFtp"/>
+                    <Link href="/ftp/{context}/in_out/" text="{i18n>navToInOut}" icon="sap-icon://folder" press="openFtp"/>
                 </Toolbar>
             </headerToolbar>
             <macros:Table id="macroTable" metaPath="/FtpOut/@com.sap.vocabularies.UI.v1.LineItem" personalization="false" enableExport="false" enablePaste="false" />

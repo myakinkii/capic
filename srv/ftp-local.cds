@@ -24,6 +24,9 @@ service FtpLocalService {
     entity FtpOut {
         key fileName : String;
             url      : String;
+    } actions {
+        @(Common.SideEffects: {TargetEntities: ['/FtpLocalService.EntityContainer/FtpOut']})
+        action linkInOut(fileId : String) returns String;
     }
 }
 
@@ -34,9 +37,17 @@ annotate FtpLocalService.FtpOut with @(
     Capabilities.SearchRestrictions: {Searchable: false}
 );
 
-annotate FtpLocalService.FtpOut with @UI: {LineItem: [{
-    ![@HTML5.CssDefaults]: {width: 'auto'},
-    Value                : fileName,
-    Url                  : url,
-    $Type                : 'UI.DataFieldWithUrl'
-}]};
+annotate FtpLocalService.FtpOut with @UI: {LineItem: [
+    {
+        ![@HTML5.CssDefaults]: {width: 'auto'},
+        Value                : fileName,
+        Url                  : url,
+        $Type                : 'UI.DataFieldWithUrl'
+    },
+    {
+        $Type : 'UI.DataFieldForAction',
+        Action: 'FtpLocalService.linkInOut',
+        Inline: true,
+        Label : '{i18n>linkInOut}'
+    }
+]};
