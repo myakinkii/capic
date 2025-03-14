@@ -24,7 +24,8 @@ const jarsFromCache = [
     'org.apache.servicemix.specs.saaj-api',
     'woodstox-core', 
     'stax2-api',
-    'commons-lang3'
+    'commons-lang3',
+    'jackson-core'
 ]
 
 const jarsFromWar = [
