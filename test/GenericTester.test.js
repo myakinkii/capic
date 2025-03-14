@@ -42,15 +42,40 @@ describe('Automatic test for ' + context, () => {
         test.expect(inFiles.length > 0).to.eq(true)
         test.expect(inFiles.length).to.eq(outFiles.length)
 
-        let i = 0, f, res, input, output, expected
-        while (i < inFiles.length) {
-            input = fs.readFileSync(`${inOutDir}/${inFiles[i]}`).toString()
+        const operations = await cds.connect.to('operations')
+        const endpoint = await operations.getFirstEntryEndpoint(context)
+
+        const iflow = await cds.connect.to('iflow')
+        const jsonish = (text) => { try { return !!JSON.parse(text) } catch (e) { return false } }
+
+        const doTestRemote = async (input, expected) => {
+            test.expect(!!endpoint).to.eq(true)
+            const contentType = jsonish(input) ? 'application/json' : 'application/xml'
+            const output = await iflow.run({
+                endpoint,
+                body: input,
+                headers: { 'Content-Type': contentType }
+            }).catch(e => e.message)
+            return output == expected
+        }
+
+        const doTestLocal = async (input, expected) => {
             await test.patch('/odata/v4/ftp-local/FtpIn', { content: input })
-            res = await waitForKaraf(1)
+            const res = await waitForKaraf(1)
             output = fs.readFileSync(`${ftpDir}/out/${res[0].fileName}`).toString()
-            expected = fs.readFileSync(`${inOutDir}/${outFiles[i]}`).toString()
-            test.expect(output).to.eq(expected)
             await test.delete(`/odata/v4/ftp-local/FtpOut('${res[0].fileName}')`)
+            return output == expected
+        }
+
+        const doTest = process.env.REMOTE ? doTestRemote : doTestLocal
+
+        let i = 0, passed
+        while (i < inFiles.length) {
+            passed = await doTest(
+                fs.readFileSync(`${inOutDir}/${inFiles[i]}`).toString(),
+                fs.readFileSync(`${inOutDir}/${outFiles[i]}`).toString()
+            )
+            test.expect(passed).to.eq(true)
             i++
         }
         test.expect(i).to.eq(files.length / 2)

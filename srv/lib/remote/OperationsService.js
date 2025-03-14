@@ -1,3 +1,4 @@
+const { getBundleInfos, findBundleInfo } = require('../BundleHandler')
 
 const OP_COMMANDS = {
     IntegrationComponentsList: 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand',
@@ -6,6 +7,21 @@ const OP_COMMANDS = {
 }
 
 module.exports = class OperationsService extends require('./BaseService') {
+
+    async getArtifactInfo(bundleId){
+        return this.run({ cmd: 'IntegrationComponentsList' }).then(list => findBundleInfo(list, bundleId))
+    }
+
+    async getFirstEntryEndpoint(bundleId){
+        const artifact = await this.getArtifactInfo(bundleId)
+        if (!artifact) return // not deployed
+        const rtData = await this.run({ 
+            cmd: 'IntegrationComponentDetail', 
+            params: { artifactId: artifact.id._text }
+        })
+        const firstEntry = rtData.endpointInformation && rtData.endpointInformation.find(i => i.endpointInstances.find(e => e.endpointCategory == 'ENTRY_POINT'))
+        return firstEntry?.endpointInstances[0].endpointUrl
+    }
 
     getCommand(cmd) { return OP_COMMANDS[cmd] }
 
