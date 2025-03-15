@@ -1,5 +1,6 @@
 const cds = require('@sap/cds')
 const fs = require('fs')
+const xmlFormat = require('xml-formatter')
 
 jest.setTimeout(10 * 60 * 1000) // 10 mins
 
@@ -18,12 +19,20 @@ describe('Automatic test for ' + context, () => {
         inOutDir = `${ftpDir}/in_out`
 
         iflow = await cds.connect.to('iflow')
-        
+
         const operations = await cds.connect.to('operations')
         endpoint = await operations.getFirstEntryEndpoint(context)
     })
 
     const jsonish = (text) => { try { return !!JSON.parse(text) } catch (e) { return false } }
+
+    const checkEqualXml = (output, expected) => {
+        try {
+            return xmlFormat(output) == xmlFormat(expected)
+        } catch (e) {
+            return false
+        }
+    }
 
     const doTestRemote = async (input, expected) => {
         const contentType = jsonish(input) ? 'application/json' : 'application/xml'
@@ -32,7 +41,7 @@ describe('Automatic test for ' + context, () => {
             body: input,
             headers: { 'Content-Type': contentType }
         }).catch(e => e.message)
-        return output == expected
+        return checkEqualXml(output, expected) || output == expected
     }
 
     const waitForKaraf = async (files) => {
@@ -51,7 +60,7 @@ describe('Automatic test for ' + context, () => {
         const res = await waitForKaraf(1)
         output = fs.readFileSync(`${ftpDir}/out/${res[0].fileName}`).toString()
         await test.delete(`/odata/v4/ftp-local/FtpOut('${res[0].fileName}')`)
-        return output == expected
+        return checkEqualXml(output, expected) || output == expected
     }
 
     it('should loop through in_out and compare results', async () => {
