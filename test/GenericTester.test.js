@@ -10,15 +10,17 @@ describe('Automatic test for ' + context, () => {
 
     const test = cds.test(__dirname + '/..')
 
-    const ftpDir = `${process.env.FTP_DIR}/${context}`
-    const inOutDir = `${ftpDir}/in_out`
-
-    let endpoint, iflow
+    let ftpDir, inOutDir, iflow, endpoint
 
     beforeAll(async () => {
+
+        ftpDir = `${process.env.FTP_DIR}/${context}` // need cds to load env first
+        inOutDir = `${ftpDir}/in_out`
+
+        iflow = await cds.connect.to('iflow')
+        
         const operations = await cds.connect.to('operations')
         endpoint = await operations.getFirstEntryEndpoint(context)
-        iflow = await cds.connect.to('iflow')
     })
 
     const jsonish = (text) => { try { return !!JSON.parse(text) } catch (e) { return false } }
