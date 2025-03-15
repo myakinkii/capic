@@ -2,9 +2,8 @@ const {
     syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf, 
     getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml
 } = require('./lib/BundleHandler')
+
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
-const IntegrationComponentsListCommand = 'com.sap.it.op.tmn.commands.dashboard.webui.IntegrationComponentsListCommand'
-const DownloadContentCommand = 'com.sap.it.nm.commands.deploy.DownloadContentCommand'
 
 module.exports = cds.service.impl(async function () {
 

@@ -9,6 +9,8 @@ gen/
 node_modules/
 target/
 
+test/reports
+
 #private stuff
 .cdsrc.json
 .env
