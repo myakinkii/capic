@@ -83,10 +83,11 @@ module.exports = cds.service.impl(async function () {
     })
 
     this.on('runGenericTester', async (req, next) => {
+        const { remote } = req.data
         if (!ftpIn.context) return 'NO_CONTEXT_SELECTED'
         return new Promise((resolve, reject) => {
-            const testRunner = exec(`npx jest ${process.cwd()}/test/GenericTester.test.js`, { 
-                env: Object.assign(process.env, { CTX: ftpIn.context}),
+            const testRunner = exec(`npx jest ${process.cwd()}/test/GenericTester.test.js`, {
+                env: Object.assign(process.env, { CTX: ftpIn.context, REMOTE: remote || '' }),
                 shell: true,
                 stdio: 'pipe'
             })

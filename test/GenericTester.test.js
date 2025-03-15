@@ -42,6 +42,8 @@ describe('Automatic test for ' + context, () => {
         test.expect(inFiles.length > 0).to.eq(true)
         test.expect(inFiles.length).to.eq(outFiles.length)
 
+        process.stderr.write(`\nFOUND ${inFiles.length} IN_OUT PAIRS\n`)
+
         const operations = await cds.connect.to('operations')
         const endpoint = await operations.getFirstEntryEndpoint(context)
 
@@ -68,6 +70,7 @@ describe('Automatic test for ' + context, () => {
         }
 
         const doTest = process.env.REMOTE ? doTestRemote : doTestLocal
+        process.stderr.write(`TEST = ${ process.env.REMOTE ? endpoint : 'FTP' }\n\n`)
 
         let i = 0, passed
         while (i < inFiles.length) {
@@ -75,10 +78,12 @@ describe('Automatic test for ' + context, () => {
                 fs.readFileSync(`${inOutDir}/${inFiles[i]}`).toString(),
                 fs.readFileSync(`${inOutDir}/${outFiles[i]}`).toString()
             )
+            process.stderr.write(`${inFiles[i]} - ${passed ? 'PASS' : 'FAIL' }\n`)
             test.expect(passed).to.eq(true)
             i++
         }
         test.expect(i).to.eq(files.length / 2)
+        process.stderr.write('\n')
     })
 
 })

@@ -40,9 +40,12 @@ sap.ui.define(["sap/fe/core/PageController", "sap/ui/core/BusyIndicator"], funct
         runGenericTester:function(e){
             var panel = e.getSource().getParent().getParent()
             var fisrtChild = panel.getContent()[0]
+            var remote = panel.getHeaderToolbar().getContent()[3].getState() // yes, I dont bother using neither id or model
             BusyIndicator.show(50)
             this.editFlow.invokeAction('/runGenericTester', {
-                model: e.getSource().getBindingContext().getModel()
+                model: e.getSource().getBindingContext().getModel(),
+                parameterValues: [{ name: "remote", value: remote }],
+                skipParameterDialog: true
             }).then(function(res){
                 BusyIndicator.hide()
                 panel.setExpanded(true)

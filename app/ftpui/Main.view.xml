@@ -53,6 +53,7 @@
                     <Title text="TEST RUNNER" />
                     <ToolbarSpacer/>
                     <Button icon="sap-icon://play" press="runGenericTester"/>
+                    <Switch customTextOn="CPI" customTextOff="FTP"/>
                 </Toolbar>
             </headerToolbar>
             <Text/>
