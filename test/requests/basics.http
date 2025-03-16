@@ -139,8 +139,8 @@ X-CSRF-Token: fetch
 ###
 POST {{cloudUrl}}{{MappingXMLToJSON}}
 Authorization: Basic {{auth}}
-Content-Type: application/xml
 X-CSRF-Token: {{csrf_token5}}
+Content-Type: application/xml
 OrderId: 10001234
 SupplierId: 100000042
 
