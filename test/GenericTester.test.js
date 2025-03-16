@@ -34,6 +34,15 @@ describe('Automatic test for ' + context, () => {
         }
     }
 
+    const checkEqualJson = (output, expected) => {
+        try {
+            const sp = (s) => JSON.stringify(JSON.parse(s))
+            return ( typeof output == 'object' ? JSON.stringify(output) : sp(output) ) == sp(expected)
+        } catch (e) {
+            return false
+        }
+    }
+
     const doTestRemote = async (input, expected) => {
         const contentType = jsonish(input) ? 'application/json' : 'application/xml'
         const output = await iflow.run({
@@ -41,7 +50,7 @@ describe('Automatic test for ' + context, () => {
             body: input,
             headers: { 'Content-Type': contentType }
         }).catch(e => e.message)
-        return checkEqualXml(output, expected) || output == expected
+        return checkEqualXml(output, expected) || checkEqualJson(output, expected) || output == expected
     }
 
     const waitForKaraf = async (files) => {
