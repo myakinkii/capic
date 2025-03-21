@@ -39,6 +39,9 @@
         "model": "srv/external/cpi",
         "impl": "srv/lib/remote/ApiService.js"
       },
+      "mpl": {
+        "impl": "srv/lib/remote/MPLService.js"
+      },
       "iflow": {
         "impl": "srv/lib/remote/IflowService.js"
       },

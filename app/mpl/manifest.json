@@ -1,0 +1,137 @@
+{
+    "_version": "1.8.0",
+    "sap.app": {
+        "id": "mpl",
+        "type": "application",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "dataSources": {
+            "mainService": {
+                "uri": "/odata/v4/mpl-local/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth": true,
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "contentDensities": {
+        "compact": true,
+        "cozy": true
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.96.0",
+            "libs": {
+                "sap.ui.core": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "mpl.i18n.i18n",
+                    "_bundleUrl": "i18n/i18n.properties"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true,
+                    "groupProperties": {
+                        "default": {
+                            "submit": "Auto"
+                        }
+                    }
+                }
+            }
+        },
+        "routing": {
+            "routes": [
+                {
+                    "name": "MainRoute",
+                    "target": "customPage",
+                    "pattern": ":?query:"
+                },
+                {
+                    "name": "DetailsRoute",
+                    "target": "DetailsTarget",
+                    "pattern": "MessageProcessingLogs({key}):?query:"
+                },
+                {
+                    "name": "RunsRoute",
+                    "target": "RunsTarget",
+                    "pattern": "MessageProcessingLogs({key})/Runs({key2}):?query:"
+                }
+            ],
+            "targets": {
+                "customPage": {
+                    "type": "Component",
+                    "id": "Main",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "mpl.Main",
+                            "entitySet": "MessageProcessingLogs",
+                            "navigation": {
+                                "MessageProcessingLogs": {
+                                    "detail": {
+                                        "route": "DetailsRoute"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "DetailsTarget": {
+                    "type": "Component",
+                    "id": "MessageProcessingLogsDetailsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "MessageProcessingLogs",
+                            "navigation": {
+                                "Runs": {
+                                    "detail": {
+                                        "route": "RunsRoute"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "RunsTarget": {
+                    "type": "Component",
+                    "id": "RunsTarget",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "entitySet": "MessageProcessingLogs/Runs"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,62 @@
+<mvc:View
+    height="100%"
+    controllerName="mpl.Main"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns:macros="sap.fe.macros"
+    xmlns:core="sap.ui.core">
+    <Page>
+        <Table id="MPLTable" growing="true" items="{/MessageProcessingLogs}">
+        <headerToolbar>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Input width="20rem" editable="false" value="{= ${ui>/filters/PackageId} || ${ui>/filters/Id} }" />
+                <DynamicDateRange id="rangePicker" 
+                    showClearIcon="true" width="20rem"
+                    change="filterLog" enableGroupHeaders="false"
+                    standardOptions="DATETIMERANGE"/>
+                <ToolbarSpacer/>
+            </Toolbar>        
+        </headerToolbar>
+            <columns>
+                <Column>
+                    <Label text="{i18n>MessageGuid}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>Status}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>IntegrationArtifact}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>LogStart}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>LogEnd}"/>
+                </Column>
+            </columns>
+            <items>
+                <ColumnListItem type="Navigation" press="navtoDetail" vAlign="Middle">
+                    <cells>
+                        <Text text="{MessageGuid} {CorrelationId}"/>
+                        <Text text="{Status}"/>
+                        <Text text="{IntegrationArtifact/PackageId} / {IntegrationArtifact/Id}"/>
+                        <Text text="{
+                                path: 'LogStart', 
+                                type: 'sap.ui.model.odata.type.DateTimeOffset', 
+                                constraints: { V4: true, precision: 3 }
+                            }"/>
+                        <Text text="{ parts:[{
+                                path: 'LogStart',
+                                type: 'sap.ui.model.type.String'
+                            }, {
+                                path: 'LogEnd',
+                                type: 'sap.ui.model.type.String'
+                            }], formatter:'.getProcessingDuration'}" />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </Page>
+</mvc:View>

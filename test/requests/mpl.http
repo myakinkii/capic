@@ -1,0 +1,86 @@
+@authUrl = {{$dotenv CPI_API_TOKEN_URL}}
+@cloudUrl = {{$dotenv CPI_API_URL}}
+@clientID = {{$dotenv CPI_API_CLIENT}}
+@clientSecret = {{$dotenv CPI_API_SECRET}}
+
+### get oauth
+# @name getOauthToken
+POST {{authUrl}}/oauth/token
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{clientID}}
+&client_secret={{clientSecret}}
+
+
+### get $metadata
+@oauth_token = {{getOauthToken.response.body.access_token}}
+GET {{cloudUrl}}/api/v1/$metadata
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL by package
+@oauth_token = {{getOauthToken.response.body.access_token}}
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs?$format=json&$orderby=LogStart desc&$filter=IntegrationArtifact/PackageId eq 'MAGIC'
+Authorization: Bearer {{oauth_token}}
+
+
+### could get last message (but it seems to be sorted by bloody guid and ignore orderby)
+# @name getLastMessage
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs?$format=json&$top=1&$orderby=LogStart desc
+Authorization: Bearer {{oauth_token}}
+
+###
+@messageGuid = {{getLastMessage.response.body.d.results[0].MessageGuid}}
+
+
+### get MPL by guid (IntegrationArtifact expanded by default)
+@oauth_token = {{getOauthToken.response.body.access_token}}
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL CustomHeaderProperties
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/CustomHeaderProperties?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL AdapterAttributes
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/AdapterAttributes?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL Attachments
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/Attachments?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL ErrorInformation
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/ErrorInformation/$value
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL MessageStoreEntries ($expand does not work ofc)
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/MessageStoreEntries?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL Runs
+# @name getMessageRun
+GET {{cloudUrl}}/api/v1/MessageProcessingLogs('{{messageGuid}}')/Runs?$format=json
+Authorization: Bearer {{oauth_token}}
+
+###
+@messageRunId = {{getMessageRun.response.body.d.results[0].Id}}
+
+### get MPL Steps + RunStepProperties
+# @name getMessageRun
+GET {{cloudUrl}}/api/v1/MessageProcessingLogRuns('{{messageRunId}}')/RunSteps?$format=json&$expand=RunStepProperties
+Authorization: Bearer {{oauth_token}}
+
+
+### get MPL TraceMessages
+# @name getMessageRun
+GET {{cloudUrl}}/api/v1/MessageProcessingLogRunSteps(RunId='{{messageRunId}}',ChildCount=2)/TraceMessages?$format=json
+Authorization: Bearer {{oauth_token}}

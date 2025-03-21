@@ -59,16 +59,16 @@
                             "isGroupLocked": false,
                             "tiles": [
                                 {
-                                    "id": "_browse_package",
-                                    "title": "Packages",
+                                    "id": "browse_mpl",
+                                    "title": "MPL Entries",
                                     "size": "1x1",
                                     "tileType": "sap.ushell.ui.tile.StaticTile",
                                     "properties": {
                                         "chipId": "catalogTile_10",
-                                        "title": "Packages",
-                                        "subtitle": "Integration Packages",
+                                        "title": "Logs",
+                                        "subtitle": "MPL Entries",
                                         "icon": "sap-icon://Fiori2/F0001",
-                                        "targetURL": "#package-browse"
+                                        "targetURL": "#mpl-browse"
                                     }
                                 },
                                 {
@@ -209,6 +209,21 @@
                                 "additionalInformation": "SAPUI5.Component=packages",
                                 "url": "./packages",
                                 "_url": "$fiori-preview/CpiLocalService/IntegrationPackages/app"
+                            }
+                        },
+                        "browse_mpl": {
+                            "semanticObject": "mpl",
+                            "action": "browse",
+                            "title": "Rutime Objects",
+                            "signature": {
+                                "parameters": {},
+                                "additionalParameters": "allowed"
+                            },
+                            "resolutionResult": {
+                                "applicationType": "SAPUI5",
+                                "additionalInformation": "SAPUI5.Component=mpl",
+                                "url": "./mpl",
+                                "_url": "$fiori-preview/MPLLocalService/MessageProcessingLogs/app"
                             }
                         },
                         "browse_runtime": {
