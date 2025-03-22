@@ -11,9 +11,9 @@
         <headerToolbar>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Input width="20rem" editable="false" value="{= ${ui>/filters/PackageId} || ${ui>/filters/Id} }" />
+                <Input width="15rem" editable="false" value="{= ${ui>/filters/PackageId} || ${ui>/filters/Id} }" />
                 <DynamicDateRange id="rangePicker" 
-                    showClearIcon="true" width="20rem"
+                    showClearIcon="true" width="15rem"
                     change="filterLog" enableGroupHeaders="false"
                     standardOptions="DATETIMERANGE"/>
                 <ToolbarSpacer/>

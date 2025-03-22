@@ -6,6 +6,30 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core">
 <Page binding="{mpl>/Run}" title="{mpl>Id}">
+    <customHeader>
+        <Toolbar>
+        <Title text="{mpl>Id}"/>
+        <ToolbarSpacer/>
+            <!-- <OverflowToolbarButton
+                type="Transparent"
+                icon="sap-icon://full-screen"
+                press=".handleFullScreen"
+                tooltip="Enter Full Screen Mode"
+                visible="{= ${ui>/actionButtonsInfo/endColumn/fullScreen} !== null }"/>
+            <OverflowToolbarButton
+                type="Transparent"
+                icon="sap-icon://exit-full-screen"
+                press=".handleExitFullScreen"
+                tooltip="Exit Full Screen Mode"
+                visible="{= ${ui>/actionButtonsInfo/endColumn/exitFullScreen} !== null }"/> -->
+            <OverflowToolbarButton
+                type="Transparent"
+                icon="sap-icon://decline"
+                press=".handleClose"
+                tooltip="Close column"
+                visible="{= ${ui>/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
+        </Toolbar>
+    </customHeader>
         <f:Form editable="false" formContainers="{
                 path: 'mpl>RunSteps', 
                 sorter: { path: 'ChildCount', desc: false }

@@ -20,12 +20,23 @@ sap.ui.define([
             this.getView().setModel(new JSONModel({}), "ui")
         },
 
+        handleClose: function (e) {
+            var uiMdl = this.getView().getModel("ui")
+            var nextLayout = uiMdl.getProperty("/actionButtonsInfo/endColumn/closeColumn")
+            var logId = e.getSource().getBindingContext("mpl").getProperty("LogId")
+            this.routing.navigateToRoute("DetailsRoute", { key: `'${logId}'`, "?query": { layout: nextLayout } })
+        },
+
         onRouteMatched: function (e) {
+
+            var uiMdl = this.getView().getModel("ui")
+            this.getAppComponent().getHelper().then(function (helper) {
+                uiMdl.setData(helper.getCurrentUIState())
+            })
+
             var pars = e.getParameter("arguments")
-            var serviceUrl = this.getView().getModel().getServiceUrl()
-            var runUrl = `/MessageProcessingLogs(${pars.key})/Runs(${pars.key2})`
             BusyIndicator.show(50)
-            this.fetchModelDataFor(serviceUrl, runUrl).then(function (res) {
+            this.fetchModelDataFor(pars.key, pars.key2).then(function (res) {
                 this.getView().getModel("mpl").setData(res)
                 BusyIndicator.hide()
             }.bind(this)).catch(function (err) {
@@ -34,15 +45,19 @@ sap.ui.define([
             })
         },
 
-        fetchModelDataFor: function (serviceUrl, runUrl) {
+        fetchModelDataFor: function (mplId, runId) {
+            var serviceUrl = this.getView().getModel().getServiceUrl()
+            var mplUrl = `/MessageProcessingLogs(${mplId})`
+            var runUrl = `${mplUrl}/Runs(${runId})`
             return Promise.all([
+                promisedFetch(serviceUrl + mplUrl),
                 promisedFetch(serviceUrl + runUrl),
                 promisedFetch(serviceUrl + runUrl + '/RunSteps')
-            ]).then(function ([run, runSteps]) {
-                runSteps.value.forEach( st => {
-                    st.RunStepProperties.results.forEach( p => {
+            ]).then(function ([mpl, run, runSteps]) {
+                runSteps.value.forEach(st => {
+                    st.RunStepProperties.results.forEach(p => {
                         var activities = p.Value.match(/{Activity=([^}]+)}/g)
-                        if(activities) p.Value = activities.join('\n')
+                        if (activities) p.Value = activities.join('\n')
                     })
                     if (st.Error) st.RunStepProperties.results.push({
                         Name: 'Error',
@@ -50,6 +65,7 @@ sap.ui.define([
                     })
                 })
                 run["RunSteps"] = runSteps.value
+                run["LogId"] = mpl.MessageGuid // maybe later we will use something else
                 return { Run: run }
             })
         }

@@ -67,21 +67,43 @@
                 }
             }
         },
+        "rootView": {
+            "viewName": "sap.fe.core.rootView.Fcl",
+            "type": "XML",
+            "async": true,
+            "id": "appRootView"
+        },
         "routing": {
+            "config": {
+                "routerClass": "sap.f.routing.Router",
+                "flexibleColumnLayout": {
+                    "defaultTwoColumnLayoutType": "TwoColumnsBeginExpanded",
+                    "defaultThreeColumnLayoutType": "ThreeColumnsEndExpanded"
+                }
+            },
             "routes": [
                 {
                     "name": "MainRoute",
-                    "target": "customPage",
+                    "target": [
+                        "customPage"
+                    ],
                     "pattern": ":?query:"
                 },
                 {
                     "name": "DetailsRoute",
-                    "target": "DetailsTarget",
+                    "target": [
+                        "customPage",
+                        "DetailsTarget"
+                    ],
                     "pattern": "MessageProcessingLogs({key}):?query:"
                 },
                 {
                     "name": "RunsRoute",
-                    "target": "RunsTarget",
+                    "target": [
+                        "customPage",
+                        "DetailsTarget",
+                        "RunsTarget"
+                    ],
                     "pattern": "MessageProcessingLogs({key})/Runs({key2}):?query:"
                 }
             ],
@@ -90,6 +112,8 @@
                     "type": "Component",
                     "id": "Main",
                     "name": "sap.fe.core.fpm",
+                    "controlAggregation": "beginColumnPages",
+                    "contextPattern": "",
                     "options": {
                         "settings": {
                             "viewName": "mpl.Main",
@@ -108,6 +132,8 @@
                     "type": "Component",
                     "id": "MessageProcessingLogsDetailsTarget",
                     "name": "sap.fe.templates.ObjectPage",
+                    "controlAggregation": "midColumnPages",
+                    "contextPattern": "/MessageProcessingLogs({key})",
                     "options": {
                         "settings": {
                             "entitySet": "MessageProcessingLogs",
@@ -125,6 +151,8 @@
                     "type": "Component",
                     "id": "RunsTarget",
                     "name": "sap.fe.core.fpm",
+                    "controlAggregation": "endColumnPages",
+                    "contextPattern": "/MessageProcessingLogs({key})/Runs({key2})",
                     "options": {
                         "settings": {
                             "viewName": "mpl.RunDetails",
