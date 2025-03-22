@@ -4,6 +4,15 @@ module.exports = class MPLService extends require('./BaseService') {
 
     async init() {
 
+        this.on('download', async (req) => {
+            const { data: query } = req
+            const reqOptions = getReqOptions(req, query, this) // we stole it from actual remote service
+            await this.prepareAxiosRequest(reqOptions, '/api/v1', 'cpi')
+            reqOptions.url+='/$value'
+            reqOptions.responseType='arraybuffer'
+            return this.runAxiosRequest(reqOptions).then( r => r.data )
+        })
+
         this.on('*', async (req) => {
             const { query } = req
             // remove some stuff that if not supported by cpi odata v2 api

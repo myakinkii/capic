@@ -40,10 +40,10 @@
             <f:formContainers>
                 <f:FormContainer expandable="true" expanded="true" 
                     title="{mpl>ChildCount} {mpl>Status} {mpl>Activity}"
-                    formElements="{mpl>RunStepProperties/results}">
-                    <f:FormElement label="{mpl>Name}">
+                    formElements="{ path: 'mpl>RunStepProperties/results', factory:'.createFormElement' }">
+                    <!-- <f:FormElement label="{mpl>Name}">
                         <Text text="{mpl>Value}"/>
-                    </f:FormElement>
+                    </f:FormElement> -->
                 </f:FormContainer>
             </f:formContainers>
         </f:Form>

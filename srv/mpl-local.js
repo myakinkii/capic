@@ -12,7 +12,7 @@ module.exports = cds.service.impl(async function () {
         const singleObj = req.query.SELECT.one
         if (!singleObj) ({ offset, rows } = req.query.SELECT.limit)
 
-        if (odataFilter){ // gonna make custom query because of odata v2 datetime
+        if (odataFilter) { // gonna make custom query because of odata v2 datetime
 
             const filters = []
             const filterArtifact = /IntegrationArtifact\/(\w+) eq '(\w+)'/g.exec(odataFilter)
@@ -26,7 +26,7 @@ module.exports = cds.service.impl(async function () {
                 filters.push(`LogStart ge datetime'${from}'`)
                 filters.push(`LogStart le datetime'${to}'`)
             }
-            
+
             let q = `MessageProcessingLogs?$filter=${filters.join(' and ')}`
 
             if (offset) q += `&$skip=${offset.val}`
@@ -40,11 +40,11 @@ module.exports = cds.service.impl(async function () {
         if (!result) throw new Error('NOT_FOUND')
 
         const getDate = (jsonDate) => new Date(parseInt(jsonDate.substr(6)))
-        
-        Object.values( singleObj ? [result] : result).forEach(r => {
+
+        Object.values(singleObj ? [result] : result).forEach(r => {
 
             r.IntegrationArtifact.FakeId = r.MessageGuid // for fake mixin
-            
+
             // odata v2 json date back to normal one
             r.LogStart = getDate(r.LogStart)
             r.LogEnd = getDate(r.LogEnd)
@@ -53,7 +53,7 @@ module.exports = cds.service.impl(async function () {
             // original one is wrong
         })
 
-        if (!singleObj && result.length < rows.val) result.sort( (l1, l2) => l2.LogStart - l1.LogStart )
+        if (!singleObj && !offset.val && result.length < rows.val) result.sort((l1, l2) => l2.LogStart - l1.LogStart)
 
         return result
     })
@@ -73,6 +73,12 @@ module.exports = cds.service.impl(async function () {
             return mpl.run(`MessageProcessingLogRuns('${Id}')/RunSteps?$format=json&$expand=RunStepProperties`)
         }
         return [] // direct read not implemented
+    })
+
+    this.on('READ', 'MessageProcessingLogAttachments', async (req, next) => {
+        if (!req.query.SELECT.one) return []
+        const [{ Id }] = req.params
+        return mpl.send('download', SELECT.from('MessageProcessingLogAttachments',{Id}))
     })
 
 });

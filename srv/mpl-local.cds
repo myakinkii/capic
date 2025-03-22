@@ -30,6 +30,9 @@ service MPLLocalService {
 
     @readonly
     entity MessageProcessingLogRunSteps as projection on external.MessageProcessingLogRunSteps
+    
+    @readonly
+    entity MessageProcessingLogAttachments as projection on external.MessageProcessingLogAttachments
 }
 
 annotate MPLLocalService.MessageProcessingLogs with @(Capabilities.SearchRestrictions: {Searchable: false});

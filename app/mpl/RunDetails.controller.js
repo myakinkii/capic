@@ -1,10 +1,8 @@
 sap.ui.define([
     "sap/fe/core/PageController",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment",
-    "sap/ui/model/Filter", "sap/m/TextArea",
-    "sap/ui/core/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox"
-], function (PageController, JSONModel, Fragment, Filter, TextArea, BusyIndicator, MessageToast, MessageBox) {
+    "sap/ui/layout/form/FormElement", "sap/m/Text", "sap/m/Link"
+], function (PageController, JSONModel, FormElement, Text, Link) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -55,19 +53,52 @@ sap.ui.define([
                 promisedFetch(serviceUrl + runUrl + '/RunSteps')
             ]).then(function ([mpl, run, runSteps]) {
                 runSteps.value.forEach(st => {
+
+                    var newProps = []
                     st.RunStepProperties.results.forEach(p => {
-                        var activities = p.Value.match(/{Activity=([^}]+)}/g)
+
+                        var activities = p.Value.match(/{Activity=[^}]+}/g)
                         if (activities) p.Value = activities.join('\n')
+
+                        if (p.Name == 'Attachments') {
+                            var name, url
+                            p.Value.split(",").map(a => a.split("=")[1]).forEach((part, i) => {
+                                if (i % 2 == 0) {
+                                    name = part
+                                } else {
+                                    url = part.replaceAll('}','').replaceAll(']','') // ugly, but don't wanna do regex
+                                    newProps.push({
+                                        Name: 'Attachment',
+                                        Value: name,
+                                        Url: `MessageProcessingLogAttachments('${url}')/blob`
+                                    })
+                                }
+                            })
+                            return
+                        }
+
+                        newProps.push(p)
                     })
-                    if (st.Error) st.RunStepProperties.results.push({
+
+                    if (st.Error) newProps.push({
                         Name: 'Error',
                         Value: st.Error
                     })
+
+                    st.RunStepProperties.results = newProps
                 })
                 run["RunSteps"] = runSteps.value
                 run["LogId"] = mpl.MessageGuid // maybe later we will use something else
                 return { Run: run }
             })
+        },
+
+        createFormElement: function (sId, ctx) {
+            var serviceUrl = this.getView().getModel().getServiceUrl()
+            var obj = ctx.getObject()
+            var element = new Text({ text: '{mpl>Value}' })
+            if (obj.Url) element = new Link(({ text: obj.Value, href: serviceUrl + obj.Url }))
+            return new FormElement({ label: '{mpl>Name}', fields: [element] })
         }
 
     })
