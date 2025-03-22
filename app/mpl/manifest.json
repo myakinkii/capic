@@ -124,9 +124,10 @@
                 "RunsTarget": {
                     "type": "Component",
                     "id": "RunsTarget",
-                    "name": "sap.fe.templates.ObjectPage",
+                    "name": "sap.fe.core.fpm",
                     "options": {
                         "settings": {
+                            "viewName": "mpl.RunDetails",
                             "entitySet": "MessageProcessingLogs/Runs"
                         }
                     }
