@@ -117,6 +117,16 @@
                         "settings": {
                             "entitySet": "IntegrationPackages/FakeDesigntimeArtifacts",
                             "content": {
+                                "header": {
+                                    "actions": {
+                                        "CustomActionGotoLogs": {
+                                            "press": "packages.CodeActions.gotoLogs",
+                                            "enabled": true,
+                                            "visible": true,
+                                            "text": "{i18n>CustomActionGotoLogs}"
+                                        }
+                                    }
+                                },
                                 "body": {
                                     "sections": {
                                         "CodeSectionQualifier": {

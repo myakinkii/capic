@@ -18,11 +18,19 @@ sap.ui.define([
     outlinePopover.setModel(xmlModel, "xml")
 
     return {
+        gotoLogs:function(ctx){
+            sap.ushell.Container.getService('CrossApplicationNavigation').toExternal({
+                target: { semanticObject: 'mpl', action: 'browse' },
+                params: { Id: ctx.getProperty('Id') }
+            })
+        },
+
         flushTmpFile: function (e) {
             this.editFlow.invokeAction('/flushTmpFile', {
                 model: e.getSource().getBindingContext().getModel()
             })
         },
+
         formatEditable: function (fileData, fileType) {
             if (fileType && fileData) { // a little hack as dataReceived event did not fire..
                 xmlModel.setNameSpace("http://www.osgi.org/xmlns/blueprint/v1.0.0")

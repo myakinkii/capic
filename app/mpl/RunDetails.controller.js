@@ -35,12 +35,12 @@ sap.ui.define([
             })
 
             var pars = e.getParameter("arguments")
-            BusyIndicator.show(50)
+            // BusyIndicator.show(50)
             this.fetchModelDataFor(pars.key, pars.key2).then(function (res) {
                 this.getView().getModel("mpl").setData(res)
-                BusyIndicator.hide()
+                // BusyIndicator.hide()
             }.bind(this)).catch(function (err) {
-                BusyIndicator.hide()
+                // BusyIndicator.hide()
                 console.log(err)
             })
         },

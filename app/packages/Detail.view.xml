@@ -20,7 +20,12 @@
                     <core:Item key="{ui>key}" text="{ui>val}" />
                 </ComboBox>
                 <SearchField width="20rem" liveChange="searchArtifacts"/>
-                <Button icon="sap-icon://chain-link" press="gotoPackage"/>
+                <MenuButton icon="sap-icon://chain-link" defaultAction="gotoPackage" 
+                    buttonMode="Split" useDefaultActionOnly="true">
+                    <Menu>
+                        <MenuItem icon="sap-icon://history" press="gotoLogs" />
+                    </Menu>
+                </MenuButton>
             </Toolbar>
         </headerToolbar>
         <columns>

@@ -116,6 +116,13 @@ sap.ui.define([
             sap.m.URLHelper.redirect(url, true)
         },
 
+        gotoLogs: function (e) {
+            sap.ushell.Container.getService('CrossApplicationNavigation').toExternal({
+                target: { semanticObject: 'mpl', action: 'browse' },
+                params: { PackageId: e.getSource().getBindingContext().getProperty('Id') }
+            })
+        },
+
         gotoMonitoring: function (e) {
             var pkgUrl = e.getSource().getBindingContext("pkg").getProperty("PackageURL")
             var url = pkgUrl.split('shell')[0] + 'shell/monitoring/Artifacts'
