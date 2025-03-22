@@ -37,6 +37,8 @@ module.exports = cds.service.impl(async function () {
             result = await mpl.run(req.query)
         }
 
+        if (!result) throw new Error('NOT_FOUND')
+
         const getDate = (jsonDate) => new Date(parseInt(jsonDate.substr(6)))
         
         Object.values( singleObj ? [result] : result).forEach(r => {
