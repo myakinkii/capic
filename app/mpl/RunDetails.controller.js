@@ -47,6 +47,33 @@ sap.ui.define([
             var serviceUrl = this.getView().getModel().getServiceUrl()
             var mplUrl = `/MessageProcessingLogs(${mplId})`
             var runUrl = `${mplUrl}/Runs(${runId})`
+
+            var startStopAct = (a) => {
+                try {
+                    var parts = /Activity=(.+), StartTime=(.+), StopTime=(.+)/g.exec(a)
+                    var start = new Date(parts[2])
+                    var stop = new Date(parts[3])
+                    return {
+                        Name: `Camel Activity (${stop-start}ms)`,
+                        Value: parts[1],
+                    }
+                } catch(e){
+                    return null
+                }
+            }
+            var startAct = (a) => {
+                try {
+                    var parts = /Activity=(.+), StartTime=(.+)/g.exec(a)
+                    var start = new Date(parts[2])
+                    return {
+                        Name: `MPL Activity (${start.toISOString()})`,
+                        Value: parts[1]
+                    }
+                } catch(e){
+                    return null
+                }
+            }
+
             return Promise.all([
                 promisedFetch(serviceUrl + mplUrl),
                 promisedFetch(serviceUrl + runUrl),
@@ -57,25 +84,11 @@ sap.ui.define([
                     var newProps = []
                     st.RunStepProperties.results.forEach(p => {
 
-                        var activities = p.Value.match(/{Activity=[^}]+}/g)
+                        var activities = p.Value.match(/{Activity=[^}]+}/g) // but simple expressions make it hard...
                         if (activities) {
-                            activities.forEach( a => {
-                                var parts = /{Activity=(.+), StartTime=(.+), StopTime=(.+)}/g.exec(a)
-                                if (parts){
-                                    var start = new Date(parts[2])
-                                    var stop = new Date(parts[3])
-                                    newProps.push({
-                                        Name: `Camel Activity (${stop-start}ms)`,
-                                        Value: parts[1],
-                                    })
-                                } else {
-                                    parts = /{Activity=(.+), StartTime=(.+)}/g.exec(a)
-                                    var start = new Date(parts[2])
-                                    newProps.push({
-                                        Name: `MPL Activity (${start.toISOString()})`,
-                                        Value: parts[1]
-                                    })
-                                }
+                            p.Value.slice(1, -1).split("}, ").forEach( a => { // remove square brackets and split
+                                var clean = a.slice(1, a.endsWith('}') ? -1 : undefined)
+                                newProps.push( startStopAct(clean) || startAct(clean) )
                             })
                             return
                         }
