@@ -17,6 +17,7 @@
                     change="filterLog" enableGroupHeaders="false"
                     standardOptions="DATETIMERANGE"/>
                 <ToolbarSpacer/>
+                <Button icon="sap-icon://refresh" press="refreshLog" />
             </Toolbar>        
         </headerToolbar>
             <columns>

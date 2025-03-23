@@ -28,6 +28,10 @@ sap.ui.define([
             this.routing.navigate(oContext);
         },
 
+        refreshLog:function(){
+            this.getView().byId("MPLTable").getBinding("items").refresh()
+        },
+
         filterLog: function (e) {
             var uiMdl = this.getView().getModel("ui")
             var value = e.getParameter("value")
