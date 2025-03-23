@@ -21,7 +21,7 @@
         </customHeader>
         <uxap:ObjectPageHeader
             objectTitle="{Status} [{LogLevel}]" 
-            objectSubtitle="{IntegrationFlowName}">
+            objectSubtitle="{ parts: [{path:'LogStart',targetType:'any'}, {path:'LogEnd',targetType:'any'}], formatter:'.formatLogRunTime'} ">
             <uxap:actions>
                 <uxap:ObjectPageHeaderActionButton icon="sap-icon://edit-outside" press="setLogLevel"/>
             </uxap:actions>
@@ -29,9 +29,9 @@
         <f:SimpleForm>
             <f:content>
                 <Label text="{i18n>MonitoringWebLink}" />
-                <Link text="{MonitoringWebLink}" href="{MonitoringWebLink}" target="_blank"/>
+                <Link text="{IntegrationFlowName}" href="{MonitoringWebLink}" target="_blank"/>
                 <Label text="{i18n>AlternateWebLink}" />
-                <Link text="{MonitoringWebLink}"  href="{AlternateWebLink}" target="_blank"/>
+                <Link text="{MessageGuid}"  href="{AlternateWebLink}" target="_blank"/>
             </f:content>
         </f:SimpleForm>
         <Panel>
@@ -49,6 +49,17 @@
                     </ColumnListItem>
                 </items>
             </Table>
-        </Panel>    
+        </Panel>
+        <MessageStrip
+            visible="{= !!${mpl>/Error} }"
+            text="{mpl>/Error}"
+            type="Error"
+            showIcon="false"
+            showCloseButton="false"
+            class="sapUiMediumMargin">
+            <link>
+                <!-- <Link text="{i18n>AlternateWebLink}" href="{AlternateWebLink}" target="_blank"/> -->
+            </link>
+        </MessageStrip>
     </Page>
 </mvc:View>

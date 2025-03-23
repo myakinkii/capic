@@ -81,6 +81,13 @@ module.exports = cds.service.impl(async function () {
 
     // READABLE ONLY VIA NAV PROPERTY
     this.on('READ', 'MessageStoreEntries', async (req, next) => mpl.run(req.query))
+
+    this.on('READ', 'MessageProcessingLogErrorInformations', async (req, next) => {
+        // const errorInfo = await mpl.run(req.query)
+        const errorValue =  await mpl.send('download', req.query) // Buffer
+        return {Value : errorValue.toString()}
+    })
+
     this.on('READ', 'MessageProcessingLogRuns', async (req, next) => {
         if (req.params.length == 2) { // detail-detail
             const [{ MessageGuid: Id }, { Id: RunId }] = req.params

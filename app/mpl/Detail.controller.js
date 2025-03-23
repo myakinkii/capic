@@ -30,7 +30,7 @@ sap.ui.define([
             })
 
             var pars = e.getParameter("arguments")
-            this.getView().bindElement({path: `/MessageProcessingLogs(${pars.key})` })
+            this.getView().bindElement({ path: `/MessageProcessingLogs(${pars.key})` })
 
             this.fetchModelDataFor(pars.key).then(function (res) {
                 this.getView().getModel("mpl").setData(res)
@@ -41,26 +41,33 @@ sap.ui.define([
             })
         },
 
+        formatLogRunTime:function(d1, d2){
+            if (!d1 || !d2) return ''
+            var start = new Date(d1)
+            var end = new Date(d2)
+            return `${start.toLocaleString()} (${end - start}ms)`
+        },
 
         fetchModelDataFor: function (mplId, runId) {
             var serviceUrl = this.getView().getModel().getServiceUrl()
             var mplUrl = `/MessageProcessingLogs(${mplId})`
             var runsUrl = `${mplUrl}/Runs`
             return Promise.all([
+                promisedFetch(serviceUrl + mplUrl + '/ErrorInformation'),
                 promisedFetch(serviceUrl + runsUrl)
-            ]).then(function ([runs]) {
-                return {Runs: runs.value}
+            ]).then(function ([errorInfo, runs]) {
+                return { Error: errorInfo.Value, Runs: runs.value }
             })
         },
 
-        navtoRunDetails:function(e){
+        navtoRunDetails: function (e) {
             var runId = e.getSource().getBindingContext("mpl").getProperty("Id")
             var msgGuid = this.getView().getBindingContext().getProperty("MessageGuid")
             var nextLayout = 'ThreeColumnsEndExpanded'
-            this.getOwnerComponent().getRouter().navTo("RunStepsRoute", { 
-                key: `'${msgGuid}'`, 
+            this.getOwnerComponent().getRouter().navTo("RunStepsRoute", {
+                key: `'${msgGuid}'`,
                 key2: `'${runId}'`,
-                "?query": { layout: nextLayout } 
+                "?query": { layout: nextLayout }
             })
         }
     })
