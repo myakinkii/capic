@@ -23,7 +23,16 @@
             objectTitle="{Status} [{LogLevel}]" 
             objectSubtitle="{ parts: [{path:'LogStart',targetType:'any'}, {path:'LogEnd',targetType:'any'}], formatter:'.formatLogRunTime'} ">
             <uxap:actions>
-                <uxap:ObjectPageHeaderActionButton icon="sap-icon://edit-outside" press="setLogLevel"/>
+                <MenuButton icon="sap-icon://edit" type="Attention" 
+                    buttonMode="Split" useDefaultActionOnly="true"
+                    text="TRACE" defaultAction="setLogLevel">
+                    <Menu>
+                        <MenuItem text="DEBUG" press="setLogLevel" />
+                        <MenuItem text="ERROR" press="setLogLevel" />
+                        <MenuItem text="INFO" press="setLogLevel" />
+                        <MenuItem text="NONE" press="setLogLevel" />
+                    </Menu>
+                </MenuButton>
             </uxap:actions>
         </uxap:ObjectPageHeader>
         <f:SimpleForm>

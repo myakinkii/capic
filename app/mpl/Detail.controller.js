@@ -1,7 +1,8 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel"
-], function (PageController, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageToast"
+], function (PageController, JSONModel, MessageToast) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -68,6 +69,24 @@ sap.ui.define([
                 key: `'${msgGuid}'`,
                 key2: `'${runId}'`,
                 "?query": { layout: nextLayout }
+            })
+        },
+
+        setLogLevel:function(e){
+
+            var src = e.getSource()
+            var ctx = src.getBindingContext()
+            var action = src.getModel().bindContext("MPLLocalService.setLogLevel(...)", ctx )
+
+            var bundleId = ctx.getObject().IntegrationArtifact.Id
+            var logLevel = e.getSource().getText()
+
+            action.setParameter("bundleId", bundleId).setParameter("logLevel", logLevel)
+            action.execute().then(function(){
+                MessageToast.show('OK')
+            }).catch(function(err){
+                // console.log(err)
+                MessageToast.show(err.message)
             })
         }
     })
