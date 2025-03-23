@@ -22,7 +22,11 @@ service MPLLocalService {
         }
         into {
             *,
-            IntegrationArtifact
+            IntegrationArtifact,
+            '' as MonitoringWebLink : String
+        }
+        actions {
+            action setLogLevel(bundleId : String, logLevel : String)
         }
 
     @readonly
@@ -62,6 +66,12 @@ annotate MPLLocalService.MessageProcessingLogs with @UI: {
         {Value: LogStart},
         {Value: LogEnd},
     ],
+    Identification : [{
+        $Type : 'UI.DataFieldForAction',
+        Action: 'MPLLocalService.setLogLevel',
+        Inline: false,
+        Label : '{i18n>setLogLevel}'
+    }],
     HeaderInfo     : {
         TypeName      : '{i18n>Mpl}',
         TypeNamePlural: '{i18n>MPL}',
@@ -72,12 +82,24 @@ annotate MPLLocalService.MessageProcessingLogs with @UI: {
         $Type : 'UI.ReferenceFacet',
         Target: '@UI.FieldGroup#Log',
     }],
-    FieldGroup #Log: {Data: [{
-        Label: '{i18n>AlternateWebLink}',
-        Value: AlternateWebLink,
-        Url  : AlternateWebLink,
-        $Type: 'UI.DataFieldWithUrl'
-    }]},
+    FieldGroup #Log: {Data: [
+        {
+            Label: '{i18n>LogLevel}',
+            Value: LogLevel
+        },
+        {
+            Label: '{i18n>MonitoringWebLink}',
+            Value: MonitoringWebLink,
+            Url  : MonitoringWebLink,
+            $Type: 'UI.DataFieldWithUrl'
+        },
+        {
+            Label: '{i18n>MessageGuidWebLink}',
+            Value: AlternateWebLink,
+            Url  : AlternateWebLink,
+            $Type: 'UI.DataFieldWithUrl'
+        }
+    ]},
     Facets         : [{
         $Type : 'UI.ReferenceFacet',
         Target: 'Runs/@UI.LineItem'

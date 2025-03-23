@@ -3,6 +3,7 @@ const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
 module.exports = cds.service.impl(async function () {
 
     const mpl = await cds.connect.to('mpl')
+    const operations = await cds.connect.to('operations')
 
     this.on('READ', 'MessageProcessingLogs', async (req, next) => {
 
@@ -51,11 +52,18 @@ module.exports = cds.service.impl(async function () {
 
             r.AlternateWebLink = `${CPI_TENANT_URL}/shell/monitoring/Messages/{"identifier":"${r.MessageGuid}"}`
             // original one is wrong
+
+            r.MonitoringWebLink = `${CPI_TENANT_URL}/shell/monitoring/Artifacts/{"artifactId":"${r.IntegrationArtifact.Id}"}`
         })
 
         if (!singleObj && !offset.val && result.length < rows.val) result.sort((l1, l2) => l2.LogStart - l1.LogStart)
 
         return result
+    })
+
+    this.on('setLogLevel',  async (req) => {
+        const { bundleId, logLevel } = req.data
+        return operations.setLogLevel(bundleId, logLevel)
     })
 
     // READABLE ONLY VIA NAV PROPERTY
