@@ -30,7 +30,8 @@ sap.ui.define([
         },
 
         refreshLog: function () {
-            this.getView().byId("MPLTable").getBinding("items").refresh()
+            // this.getView().byId("MPLTable").getBinding("items").refresh()
+            this.applyFilters()
         },
 
         filterLog: function (e) {
