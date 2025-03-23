@@ -58,7 +58,27 @@ sap.ui.define([
                     st.RunStepProperties.results.forEach(p => {
 
                         var activities = p.Value.match(/{Activity=[^}]+}/g)
-                        if (activities) p.Value = activities.join('\n')
+                        if (activities) {
+                            activities.forEach( a => {
+                                var parts = /{Activity=(.+), StartTime=(.+), StopTime=(.+)}/g.exec(a)
+                                if (parts){
+                                    var start = new Date(parts[2])
+                                    var stop = new Date(parts[3])
+                                    newProps.push({
+                                        Name: `Camel Activity (${stop-start}ms)`,
+                                        Value: parts[1],
+                                    })
+                                } else {
+                                    parts = /{Activity=(.+), StartTime=(.+)}/g.exec(a)
+                                    var start = new Date(parts[2])
+                                    newProps.push({
+                                        Name: `MPL Activity (${start.toISOString()})`,
+                                        Value: parts[1]
+                                    })
+                                }
+                            })
+                            return
+                        }
 
                         if (p.Name == 'TraceIds') {
                             try{
