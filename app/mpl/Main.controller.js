@@ -1,12 +1,13 @@
 sap.ui.define([
-    "sap/fe/core/PageController", "sap/ui/model/json/JSONModel", "sap/ui/model/Filter"
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/Filter"
 ], function (PageController, JSONModel, Filter) {
     "use strict";
 
     return PageController.extend("mpl.Main", {
 
         onInit: function () {
-            PageController.prototype.onInit.apply(this)
             this.getView().setModel(new JSONModel({
                 artifactFilter: {
                     PackageId: null,
@@ -25,13 +26,16 @@ sap.ui.define([
         },
 
         navtoDetail: function (e) {
-            var oContext = e.getSource().getBindingContext();
-            this.routing.navigate(oContext);
+            var oContext = e.getSource().getBindingContext()
+            var nextLayout = 'TwoColumnsBeginExpanded'
+            this.getOwnerComponent().getRouter().navTo("DetailRoute", { 
+                key: `'${oContext.getProperty("MessageGuid")}'`, 
+                "?query": { layout: nextLayout } 
+            })
         },
 
         refreshLog: function () {
-            // this.getView().byId("MPLTable").getBinding("items").refresh()
-            this.applyFilters()
+            this.getView().byId("MPLTable").getBinding("items").refresh()
         },
 
         filterLog: function (e) {
@@ -50,8 +54,11 @@ sap.ui.define([
 
         searchById: function (e) {
             var q = e.getParameter("query")
-            var filters = q ? [new Filter('MessageGuid', 'EQ', q)] : []
-            this.getView().byId("MPLTable").getBinding("items").filter(new Filter(filters, true))
+            if (q){
+                this.getView().byId("MPLTable").getBinding("items").filter(new Filter('MessageGuid', 'EQ', q))
+            } else {
+                this.applyFilters()
+            }
         },
 
         applyFilters: function () {
@@ -77,7 +84,7 @@ sap.ui.define([
             var opts = ['DATE', 'TODAY', 'YESTERDAY', 'LASTMINUTES', 'LASTHOURS', 'LASTDAYS', 'DATERANGE']
             opts.forEach(o => rangePicker.addStandardOption(o))
 
-            var compData = this.getAppComponent().getComponentData()
+            var compData = this.getOwnerComponent().getComponentData()
             var pars = compData.startupParameters
             if (pars) {
                 var uiMdl = this.getView().getModel("ui")

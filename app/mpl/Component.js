@@ -1,8 +1,8 @@
-// sap.ui.define(["sap/ui/core/UIComponent"], function (Component) {
 sap.ui.define([
-    "sap/fe/core/AppComponent",
+    "sap/ui/core/UIComponent",
+    "sap/ui/model/json/JSONModel",
     'sap/f/FlexibleColumnLayoutSemanticHelper'
-], function (Component, FlexibleColumnLayoutSemanticHelper) {
+], function (Component, JSONModel, FlexibleColumnLayoutSemanticHelper) {
     "use strict";
     return Component.extend("mpl.Component", {
         metadata: {
@@ -12,6 +12,9 @@ sap.ui.define([
         init: function () {
             Component.prototype.init.apply(this, arguments)
             this.rootLoadedPromise = this.rootControlLoaded()
+
+            this.setModel(new JSONModel({}), "fcl")
+
             var router = this.getRouter()
             router.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
             router.initialize()
@@ -38,11 +41,11 @@ sap.ui.define([
         },
 
         onBeforeRouteMatched: function (e) {
-            var uiMdl = this.getModel("ui")
+            var fclMdl = this.getModel("fcl")
             var query = e.getParameter("arguments")["?query"]
 
             this.getNewLayoutFor(query?.layout).then(function (newLayout) {
-                uiMdl.setProperty("/layout", newLayout)
+                fclMdl.setProperty("/layout", newLayout)
             })
         }
 

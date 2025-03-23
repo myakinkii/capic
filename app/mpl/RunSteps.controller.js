@@ -1,5 +1,5 @@
 sap.ui.define([
-    "sap/fe/core/PageController",
+    "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/ui/layout/form/FormElement", "sap/m/Text", "sap/m/Link"
 ], function (PageController, JSONModel, FormElement, Text, Link) {
@@ -9,26 +9,28 @@ sap.ui.define([
         return fetch(url).then(res => res.ok ? res.json() : Promise.reject(res.status)).then(resolve).catch(reject)
     })
 
-    return PageController.extend("packages.Detail", {
+    return PageController.extend("mpl.RunSteps", {
 
         onInit: function () {
-            PageController.prototype.onInit.apply(this)
-            this.getAppComponent().getRouter().getRoute("RunsRoute").attachMatched(this.onRouteMatched, this) // like in good old days )
+            this.getOwnerComponent().getRouter().getRoute("RunStepsRoute").attachPatternMatched(this.onRouteMatched, this)
             this.getView().setModel(new JSONModel(), "mpl")
             this.getView().setModel(new JSONModel({}), "ui")
         },
 
         handleClose: function (e) {
-            var uiMdl = this.getView().getModel("ui")
-            var nextLayout = uiMdl.getProperty("/actionButtonsInfo/endColumn/closeColumn")
+            var fclMdl = this.getView().getModel("fcl")
+            var nextLayout = fclMdl.getProperty("/actionButtonsInfo/endColumn/closeColumn")
             var ctx = e.getSource().getBindingContext("mpl").getObject()
-            this.routing.navigateToRoute("DetailsRoute", { key: `'${ctx.MPL.MessageGuid}'`, "?query": { layout: nextLayout } })
+            this.getOwnerComponent().getRouter().navTo("DetailRoute", {
+                key: `'${ctx.MPL.MessageGuid}'`,
+                "?query": { layout: nextLayout }
+            })
         },
 
         onRouteMatched: function (e) {
 
             var uiMdl = this.getView().getModel("ui")
-            this.getAppComponent().getHelper().then(function (helper) {
+            this.getOwnerComponent().getHelper().then(function (helper) {
                 uiMdl.setData(helper.getCurrentUIState())
             })
 
