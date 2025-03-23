@@ -14,7 +14,7 @@ service MPLLocalService {
     }
 
     @readonly
-    entity MessageProcessingLogs        as
+    entity MessageProcessingLogs           as
         select from external.MessageProcessingLogs
         mixin {
             IntegrationArtifact : Association to one IntegrationArtifact
@@ -26,13 +26,22 @@ service MPLLocalService {
         }
 
     @readonly
-    entity MessageProcessingLogRuns     as projection on external.MessageProcessingLogRuns
+    entity MessageProcessingLogRuns        as projection on external.MessageProcessingLogRuns
 
     @readonly
-    entity MessageProcessingLogRunSteps as projection on external.MessageProcessingLogRunSteps
-    
+    entity MessageProcessingLogRunSteps    as projection on external.MessageProcessingLogRunSteps
+
     @readonly
     entity MessageProcessingLogAttachments as projection on external.MessageProcessingLogAttachments
+
+    @readonly
+    entity TraceMessages                   as projection on external.TraceMessages
+
+    @readonly
+    entity TraceMessageProperties          as projection on external.TraceMessageProperties
+
+    @readonly
+    entity TraceMessageExchangeProperties  as projection on external.TraceMessageExchangeProperties
 }
 
 annotate MPLLocalService.MessageProcessingLogs with @(Capabilities.SearchRestrictions: {Searchable: false});

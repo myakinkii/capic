@@ -78,7 +78,36 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', 'MessageProcessingLogAttachments', async (req, next) => {
         if (!req.query.SELECT.one) return []
         const [{ Id }] = req.params
-        return mpl.send('download', SELECT.from('MessageProcessingLogAttachments',{Id}))
+        return mpl.send('download', SELECT.from('MessageProcessingLogAttachments', { Id }))
+    })
+
+    this.on('READ', 'TraceMessages', async (req, next) => {
+        if (!req.query.SELECT.one) return []
+        const [{ TraceId }] = req.params
+        try {
+            const body = await mpl.send('download', SELECT.from('TraceMessages', { TraceId: parseInt(TraceId) }))
+            return body
+        } catch (e) {
+            return new Buffer.from('TRACE_EXPIRED')
+        }
+    })
+
+    this.on('READ', 'TraceMessageProperties', async (req, next) => {
+        req.query.SELECT.limit = undefined
+        req.query.SELECT.skip = undefined
+        const props = await mpl.run(req.query)
+        if (!props) return ['TRACE_EXPIRED']
+        return props.map(({ Name, Value }) => ({ [Name]: Value })) // cleaner
+        // return props.map( ({Name, Value}) => ({Name, Value})) // but maybe later for ui still need this one
+    })
+    
+    this.on('READ', 'TraceMessageExchangeProperties', async (req, next) => {
+        req.query.SELECT.limit = undefined
+        req.query.SELECT.skip = undefined
+        const props = await mpl.run(req.query)
+        if (!props) return ['TRACE_EXPIRED']
+        return props.map(({ Name, Value }) => ({ [Name]: Value })) // cleaner
+        // return props.map( ({Name, Value}) => ({Name, Value})) // but maybe later for ui still need this one
     })
 
 });

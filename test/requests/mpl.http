@@ -80,7 +80,25 @@ GET {{cloudUrl}}/api/v1/MessageProcessingLogRuns('{{messageRunId}}')/RunSteps?$f
 Authorization: Bearer {{oauth_token}}
 
 
-### get MPL TraceMessages
+### get MPL TraceMessages (expand from RunSteps did not work)
 # @name getMessageRun
-GET {{cloudUrl}}/api/v1/MessageProcessingLogRunSteps(RunId='{{messageRunId}}',ChildCount=2)/TraceMessages?$format=json
+GET {{cloudUrl}}/api/v1/MessageProcessingLogRunSteps(RunId='{{messageRunId}}',ChildCount=3)/TraceMessages?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### Trace Ids are just Integer64
+@traceId = 50
+
+### get Trace Body
+GET {{cloudUrl}}/api/v1/TraceMessages({{traceId}})/$value
+Authorization: Bearer {{oauth_token}}
+
+
+### get Trace Headers (expand did not work)
+GET {{cloudUrl}}/api/v1/TraceMessages({{traceId}})/Properties?$format=json
+Authorization: Bearer {{oauth_token}}
+
+
+### get Trace Properties (expand did not work)
+GET {{cloudUrl}}/api/v1/TraceMessages({{traceId}})/ExchangeProperties?$format=json
 Authorization: Bearer {{oauth_token}}

@@ -60,6 +60,21 @@ sap.ui.define([
                         var activities = p.Value.match(/{Activity=[^}]+}/g)
                         if (activities) p.Value = activities.join('\n')
 
+                        if (p.Name == 'TraceIds') {
+                            try{
+                                JSON.parse(p.Value).forEach( id => {
+                                    newProps.push({
+                                        Name: 'TraceId',
+                                        Value: id,
+                                        Url: `TraceMessages(${id})`
+                                    })
+                                })
+                            } catch (e){
+                                // somehow those were not array of ids
+                            }
+                            return
+                        }
+
                         if (p.Name == 'Attachments') {
                             var name, url
                             p.Value.split(",").map(a => a.split("=")[1]).forEach((part, i) => {
@@ -96,9 +111,19 @@ sap.ui.define([
         createFormElement: function (sId, ctx) {
             var serviceUrl = this.getView().getModel().getServiceUrl()
             var obj = ctx.getObject()
-            var element = new Text({ text: '{mpl>Value}' })
-            if (obj.Url) element = new Link(({ text: obj.Value, href: serviceUrl + obj.Url }))
-            return new FormElement({ label: '{mpl>Name}', fields: [element] })
+            var fields = []
+            if (obj.Name == 'TraceId') {
+                fields.push(
+                    new Link({ text: 'Body', href: serviceUrl + obj.Url + '/blob' }),
+                    new Link({ text: 'Headers', href: serviceUrl + obj.Url + '/Properties', target:'_blank'}),
+                    new Link({ text: 'Properties', href: serviceUrl + obj.Url + '/ExchangeProperties', target:'_blank'})
+                )
+            } else if (obj.Url) {
+                fields.push(new Link({ text: obj.Value, href: serviceUrl + obj.Url }))
+            } else {
+                fields.push(new Text({ text: '{mpl>Value}' }))
+            }
+            return new FormElement({ label: '{mpl>Name}', fields: fields })
         }
 
     })
