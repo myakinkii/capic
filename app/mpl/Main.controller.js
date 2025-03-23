@@ -8,14 +8,15 @@ sap.ui.define([
         onInit: function () {
             PageController.prototype.onInit.apply(this)
             this.getView().setModel(new JSONModel({
-                filters: { // calculated properties enriched by enrichData
+                artifactFilter: {
                     PackageId: null,
                     Id: null,
                 },
                 dateFilter: {
                     from: null,
                     to: null
-                }
+                },
+                statusFilter: null
             }), "ui")
         },
 
@@ -28,7 +29,7 @@ sap.ui.define([
             this.routing.navigate(oContext);
         },
 
-        refreshLog:function(){
+        refreshLog: function () {
             this.getView().byId("MPLTable").getBinding("items").refresh()
         },
 
@@ -46,31 +47,40 @@ sap.ui.define([
             this.applyFilters()
         },
 
+        searchById: function (e) {
+            var q = e.getParameter("query")
+            var filters = q ? [new Filter('MessageGuid', 'EQ', q)] : []
+            this.getView().byId("MPLTable").getBinding("items").filter(new Filter(filters, true))
+        },
+
         applyFilters: function () {
-            var uiMdl = this.getView().getModel("ui")
+            var filterData = this.getView().getModel("ui").getData()
             var filters = []
 
-            var df = uiMdl.getProperty("/dateFilter")
+            var df = filterData.dateFilter
             if (df.from && df.to) filters.push(new Filter('LogStart', 'BT', df.from, df.to))
 
-            var arf = uiMdl.getProperty("/filters")
-            Object.entries(arf).forEach( ([key, value]) => {
-                if (value) filters.push(new Filter('IntegrationArtifact/' + key, "EQ",  value))
+            var arf = filterData.artifactFilter
+            Object.entries(arf).forEach(([key, value]) => {
+                if (value) filters.push(new Filter('IntegrationArtifact/' + key, "EQ", value))
             })
+
+            var status = filterData.statusFilter
+            if (status) filters.push(new Filter('Status', 'EQ', status))
 
             this.getView().byId("MPLTable").getBinding("items").filter(new Filter(filters, true))
         },
 
         onAfterRendering: function () {
             var rangePicker = this.getView().byId('rangePicker')
-            var opts = [ 'DATE', 'TODAY', 'YESTERDAY', 'LASTMINUTES', 'LASTHOURS', 'LASTDAYS', 'DATERANGE' ]
+            var opts = ['DATE', 'TODAY', 'YESTERDAY', 'LASTMINUTES', 'LASTHOURS', 'LASTDAYS', 'DATERANGE']
             opts.forEach(o => rangePicker.addStandardOption(o))
 
             var compData = this.getAppComponent().getComponentData()
             var pars = compData.startupParameters
             if (pars) {
                 var uiMdl = this.getView().getModel("ui")
-                uiMdl.setProperty("/filters", Object.entries(pars).reduce( (prev, cur) => {
+                uiMdl.setProperty("/artifactFilter", Object.entries(pars).reduce((prev, cur) => {
                     var [key, [value]] = cur
                     prev[key] = value
                     return prev

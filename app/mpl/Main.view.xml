@@ -9,16 +9,25 @@
     <Page>
         <Table id="MPLTable" growing="true" items="{/MessageProcessingLogs}">
         <headerToolbar>
-            <Toolbar>
+            <OverflowToolbar>
                 <ToolbarSpacer/>
-                <Input width="15rem" editable="false" value="{= ${ui>/filters/PackageId} || ${ui>/filters/Id} }" />
+                <Input width="20rem" editable="false" value="{= ${ui>/artifactFilter/PackageId} || ${ui>/artifactFilter/Id} }" />
+                <ToolbarSpacer/>
                 <DynamicDateRange id="rangePicker" 
                     showClearIcon="true" width="15rem"
                     change="filterLog" enableGroupHeaders="false"
                     standardOptions="DATETIMERANGE"/>
+                <ComboBox showClearIcon="true" selectedKey="{ui>/statusFilter}" selectionChange="applyFilters">
+                    <core:Item key="COMPLETED" text="COMPLETED"/>
+                    <core:Item key="DISCARDED" text="DISCARDED"/>
+                    <core:Item key="ESCALATED" text="ESCALATED"/>
+                    <core:Item key="FAILED" text="FAILED"/>
+                </ComboBox>
+                <ToolbarSpacer/>
+                <SearchField width="20rem" placeholder="MessageGuid or CorrelationId" search="searchById" />
                 <ToolbarSpacer/>
                 <Button icon="sap-icon://refresh" press="refreshLog" />
-            </Toolbar>        
+            </OverflowToolbar>        
         </headerToolbar>
             <columns>
                 <Column>

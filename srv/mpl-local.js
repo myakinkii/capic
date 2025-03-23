@@ -16,16 +16,29 @@ module.exports = cds.service.impl(async function () {
         if (odataFilter) { // gonna make custom query because of odata v2 datetime
 
             const filters = []
-            const filterArtifact = /IntegrationArtifact\/(\w+) eq '(\w+)'/g.exec(odataFilter)
-            if (filterArtifact) {
-                const [_, key, value] = filterArtifact
-                filters.push(`IntegrationArtifact/${key} eq '${value}'`)
-            }
-            const filterDate = /LogStart ge (.+)Z and LogStart le (.+)Z/g.exec(odataFilter)
-            if (filterDate) {
-                const [_, from, to] = filterDate
-                filters.push(`LogStart ge datetime'${from}'`)
-                filters.push(`LogStart le datetime'${to}'`)
+
+            const searchId = /MessageGuid eq '([\w-_]+)'/g.exec(odataFilter)
+            if (searchId) {
+                const search = ['ApplicationMessageId', 'CorrelationId', 'MessageGuid'].map(f => {
+                    return `${f} eq '${searchId[1]}'`
+                }).join(' or ')
+                filters.push(search)
+            } else {
+                const filterArtifact = /IntegrationArtifact\/(\w+) eq '(\w+)'/g.exec(odataFilter)
+                if (filterArtifact) {
+                    const [_, key, value] = filterArtifact
+                    filters.push(`IntegrationArtifact/${key} eq '${value}'`)
+                }
+                const filterDate = /LogStart ge (.+)Z and LogStart le (.+)Z/g.exec(odataFilter)
+                if (filterDate) {
+                    const [_, from, to] = filterDate
+                    filters.push(`LogStart ge datetime'${from}'`)
+                    filters.push(`LogStart le datetime'${to}'`)
+                }
+
+                const filterStatus = /Status eq '([A-Z]+)'/g.exec(odataFilter)
+                if (filterStatus) filters.push(`Status eq '${filterStatus[1]}'`)
+
             }
 
             let q = `MessageProcessingLogs?$filter=${filters.join(' and ')}`
@@ -56,12 +69,12 @@ module.exports = cds.service.impl(async function () {
             r.MonitoringWebLink = `${CPI_TENANT_URL}/shell/monitoring/Artifacts/{"artifactId":"${r.IntegrationArtifact.Id}"}`
         })
 
-        if (!singleObj && !offset.val && result.length < rows.val) result.sort((l1, l2) => l2.LogStart - l1.LogStart)
+        if (!singleObj && !offset?.val && result.length < rows.val) result.sort((l1, l2) => l2.LogStart - l1.LogStart)
 
         return result
     })
 
-    this.on('setLogLevel',  async (req) => {
+    this.on('setLogLevel', async (req) => {
         const { bundleId, logLevel } = req.data
         return operations.setLogLevel(bundleId, logLevel)
     })
@@ -108,7 +121,7 @@ module.exports = cds.service.impl(async function () {
         return props.map(({ Name, Value }) => ({ [Name]: Value })) // cleaner
         // return props.map( ({Name, Value}) => ({Name, Value})) // but maybe later for ui still need this one
     })
-    
+
     this.on('READ', 'TraceMessageExchangeProperties', async (req, next) => {
         req.query.SELECT.limit = undefined
         req.query.SELECT.skip = undefined
