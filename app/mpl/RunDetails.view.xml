@@ -6,6 +6,13 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core">
 <Page binding="{mpl>/Run}">
+    <subHeader>
+        <Bar> 
+            <contentLeft>
+                <Text text="{mpl>MPL/MessageGuid} / {mpl>MPL/CorrelationId}"/>
+            </contentLeft>
+        </Bar>
+    </subHeader>
     <customHeader>
         <Toolbar>
         <Title text="[{mpl>LogLevel}] {mpl>Id} - {mpl>OverallState}"/>

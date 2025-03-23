@@ -21,8 +21,8 @@ sap.ui.define([
         handleClose: function (e) {
             var uiMdl = this.getView().getModel("ui")
             var nextLayout = uiMdl.getProperty("/actionButtonsInfo/endColumn/closeColumn")
-            var logId = e.getSource().getBindingContext("mpl").getProperty("LogId")
-            this.routing.navigateToRoute("DetailsRoute", { key: `'${logId}'`, "?query": { layout: nextLayout } })
+            var ctx = e.getSource().getBindingContext("mpl").getObject()
+            this.routing.navigateToRoute("DetailsRoute", { key: `'${ctx.MPL.MessageGuid}'`, "?query": { layout: nextLayout } })
         },
 
         onRouteMatched: function (e) {
@@ -136,7 +136,7 @@ sap.ui.define([
                     st.RunStepProperties.results = newProps
                 })
                 run["RunSteps"] = runSteps.value
-                run["LogId"] = mpl.MessageGuid // maybe later we will use something else
+                run["MPL"] = mpl
                 return { Run: run }
             })
         },
