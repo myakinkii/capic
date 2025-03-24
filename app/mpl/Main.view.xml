@@ -24,18 +24,12 @@
                     <core:Item key="FAILED" text="FAILED"/>
                 </ComboBox>
                 <ToolbarSpacer/>
-                <SearchField width="20rem" placeholder="MessageGuid or CorrelationId" search="searchById" />
+                <SearchField id="msgSearch" width="20rem" placeholder="MessageGuid or CorrelationId" search="searchById" />
                 <ToolbarSpacer/>
                 <Button icon="sap-icon://refresh" press="refreshLog" />
             </OverflowToolbar>        
         </headerToolbar>
             <columns>
-                <Column>
-                    <Label text="{i18n>MessageGuid}"/>
-                </Column>
-                <Column>
-                    <Label text="{i18n>Status}"/>
-                </Column>
                 <Column>
                     <Label text="{i18n>IntegrationArtifact}"/>
                 </Column>
@@ -43,15 +37,19 @@
                     <Label text="{i18n>LogStart}"/>
                 </Column>
                 <Column>
-                    <Label text="{i18n>LogEnd}"/>
+                    <Label text="{i18n>Duration}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>Status}"/>
+                </Column>
+                <Column>
+                    <Label text="{i18n>MessageGuid}"/>
                 </Column>
             </columns>
             <items>
                 <ColumnListItem type="Navigation" press="navtoDetail" vAlign="Middle">
                     <cells>
-                        <Text text="{MessageGuid} {CorrelationId}"/>
-                        <Text text="{Status}"/>
-                        <Text text="{IntegrationArtifact/PackageId} / {IntegrationArtifact/Id}"/>
+                        <ObjectIdentifier text="{IntegrationArtifact/PackageId}" title="{IntegrationArtifact/Id}"/>
                         <Text text="{
                                 path: 'LogStart', 
                                 type: 'sap.ui.model.odata.type.DateTimeOffset', 
@@ -64,6 +62,10 @@
                                 path: 'LogEnd',
                                 type: 'sap.ui.model.type.String'
                             }], formatter:'.getProcessingDuration'}" />
+                        <ObjectStatus text="{Status}" inverted="true"
+                            state="{ path: 'Status', formatter: '.formatMessageState' }" />
+                        <ObjectIdentifier text="{MessageGuid}" title="{CorrelationId}"
+                            titleActive="true" titlePress="searchByCorrId" />
                     </cells>
                 </ColumnListItem>
             </items>

@@ -5,6 +5,13 @@ sap.ui.define([
 ], function (PageController, JSONModel, Filter) {
     "use strict";
 
+    var StatusMap = {
+        COMPLETED: 'Success',
+        DISCARDED: 'None',
+        ESCALATED: 'Warning',
+        FAILED: 'Error'
+    }
+
     return PageController.extend("mpl.Main", {
 
         onInit: function () {
@@ -34,6 +41,10 @@ sap.ui.define([
             })
         },
 
+        formatMessageState:function(status){
+            return StatusMap[status] || 'None'
+        },
+
         refreshLog: function () {
             this.getView().byId("MPLTable").getBinding("items").refresh()
         },
@@ -50,6 +61,13 @@ sap.ui.define([
                 uiMdl.setProperty("/dateFilter", { from: null, to: null })
             }
             this.applyFilters()
+        },
+
+        searchByCorrId:function(e){
+            var corrId = e.getSource().getTitle()
+            var searchField = this.getView().byId("msgSearch")
+            searchField.setValue(corrId)
+            searchField.fireSearch({query: corrId})
         },
 
         searchById: function (e) {
