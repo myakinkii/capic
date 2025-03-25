@@ -41,16 +41,16 @@
             </OverflowToolbar>        
         </headerToolbar>
             <columns>
-                <Column>
+                <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="WithoutHeader">
                     <Label text="{i18n>IntegrationArtifact}"/>
                 </Column>
-                <Column>
+                <Column demandPopin="true" minScreenWidth="Tablet">
                     <Label text="{i18n>LogStart}"/>
                 </Column>
-                <Column>
+                <Column demandPopin="true" minScreenWidth="Tablet">
                     <Label text="{i18n>Duration}"/>
                 </Column>
-                <Column>
+                <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="Inline">
                     <Label text="{i18n>Status}"/>
                 </Column>
                 <Column>
