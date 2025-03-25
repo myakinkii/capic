@@ -29,7 +29,7 @@ module.exports = cds.service.impl(async function () {
                     const [_, key, value] = filterArtifact
                     filters.push(`IntegrationArtifact/${key} eq '${value}'`)
                 }
-                const filterDate = /LogStart ge (.+)Z and LogStart le (.+)Z/g.exec(odataFilter)
+                const filterDate = /LogStart ge (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3})Z and LogStart le (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3})Z/g.exec(odataFilter)
                 if (filterDate) {
                     const [_, from, to] = filterDate
                     filters.push(`LogStart ge datetime'${from}'`)
