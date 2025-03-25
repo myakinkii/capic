@@ -7,6 +7,16 @@
     xmlns:macros="sap.fe.macros"
     xmlns:core="sap.ui.core">
     <Page>
+        <MessageStrip id="activeFilterStrip"
+            showCloseButton="true"
+            text="{ parts:[
+                {path:'ui>/idFilter'},
+                {path:'ui>/artifactFilter/PackageId'},
+                {path:'ui>/artifactFilter/Id'},
+                {path:'ui>/statusFilter'},
+                {path:'ui>/dateFilter/from'},
+                {path:'ui>/dateFilter/to'}
+            ], formatter:'.formatActiveFilter' }"/>
         <Table id="MPLTable" growing="true" items="{/MessageProcessingLogs}">
         <headerToolbar>
             <OverflowToolbar>
@@ -66,7 +76,7 @@
                         <ObjectStatus text="{Status}" inverted="true"
                             state="{ path: 'Status', formatter: '.formatMessageState' }" />
                         <ObjectIdentifier text="{MessageGuid}" title="{CorrelationId}"
-                            titleActive="true" titlePress="searchByCorrId" />
+                            titleActive="true" titlePress="pressSearchByCorrId" />
                     </cells>
                 </ColumnListItem>
             </items>

@@ -22,6 +22,7 @@ sap.ui.define([
                     Id: null,
                 },
                 dateFilter: {
+                    value: {},
                     from: null,
                     to: null
                 },
@@ -47,24 +48,29 @@ sap.ui.define([
         },
 
         refreshLog: function () {
-            this.getView().byId("MPLTable").getBinding("items").refresh()
+            this.applyFilters()
+            // this.getView().byId("MPLTable").getBinding("items").refresh()
+        },
+
+        recalcDateFilterValues:function(){
+            var uiMdl = this.getView().getModel("ui")
+            var value = uiMdl.getProperty("/dateFilter/value")
+            if (value.operator) {
+                var [from, to] = this.getView().byId("rangePicker").toDates(value)
+                var d1 = (new Date(from.getTime())).toISOString()
+                var d2 = (new Date(to.getTime())).toISOString()
+                uiMdl.setProperty("/dateFilter", { from: d1, to: d2, value })
+            } else {
+                uiMdl.setProperty("/dateFilter", { from: null, to: null, value: {} })
+            }
         },
 
         filterLog: function (e) {
-            var uiMdl = this.getView().getModel("ui")
-            var value = e.getParameter("value")
-            if (value) {
-                var [from, to] = e.getSource().toDates(value)
-                var d1 = (new Date(from.getTime())).toISOString()
-                var d2 = (new Date(to.getTime())).toISOString()
-                uiMdl.setProperty("/dateFilter", { from: d1, to: d2 })
-            } else {
-                uiMdl.setProperty("/dateFilter", { from: null, to: null })
-            }
+            this.getView().getModel("ui").setProperty("/dateFilter/value", e.getParameter("value") || {} )
             this.applyFilters()
         },
 
-        searchByCorrId:function(e){
+        pressSearchByCorrId:function(e){
             var corrId = e.getSource().getTitle()
             var searchField = this.getView().byId("msgSearch")
             searchField.setValue(corrId)
@@ -72,16 +78,37 @@ sap.ui.define([
         },
 
         searchById: function (e) {
-            var q = e.getParameter("query")
-            if (q){
-                this.getView().byId("MPLTable").getBinding("items").filter(new Filter('MessageGuid', 'EQ', q))
-            } else {
-                this.applyFilters()
-            }
+            this.getView().getModel("ui").setProperty("/idFilter", e.getParameter("query"))
+            this.applyFilters()
+        },
+
+        showActiveFilterStrip: function(){
+            this.getView().byId("activeFilterStrip").setVisible(true)
+        },
+
+        formatActiveFilter:function(msg, pkg, bundle, status, from, to){
+            if (msg) return `MessageGuid OR CorrelationId OR ApplicationMessageId = '${msg}'`
+            var pars = []
+            if (pkg) pars.push(`IntegrationArtifact/PackageId = '${pkg}'`)
+            if (bundle) pars.push(`IntegrationArtifact/Id = '${bundle}'`)
+            if (status) pars.push(`Status = '${status}'`)
+            if (from) pars.push(`LogStart >= '${from}'`)
+            if (to) pars.push(`LogStart <= '${to}'`)
+            return pars.join(' AND ')
         },
 
         applyFilters: function () {
+            this.recalcDateFilterValues()
+            this.showActiveFilterStrip()
+
             var filterData = this.getView().getModel("ui").getData()
+            var items = this.getView().byId("MPLTable").getBinding("items")
+
+            if (filterData.idFilter){
+                items.filter(new Filter('MessageGuid', 'EQ', filterData.idFilter))
+                return
+            }
+            
             var filters = []
 
             var df = filterData.dateFilter
@@ -95,7 +122,7 @@ sap.ui.define([
             var status = filterData.statusFilter
             if (status) filters.push(new Filter('Status', 'EQ', status))
 
-            this.getView().byId("MPLTable").getBinding("items").filter(new Filter(filters, true))
+            items.filter(new Filter(filters, true))
         },
 
         onAfterRendering: function () {
