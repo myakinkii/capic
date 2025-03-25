@@ -17,7 +17,7 @@
                 {path:'ui>/dateFilter/from'},
                 {path:'ui>/dateFilter/to'}
             ], formatter:'.formatActiveFilter' }"/>
-        <Table id="MPLTable" growing="true" items="{/MessageProcessingLogs}">
+        <Table id="MPLTable" fixedLayout="false" growing="true" items="{/MessageProcessingLogs}">
         <headerToolbar>
             <OverflowToolbar>
                 <ToolbarSpacer/>
@@ -41,13 +41,13 @@
             </OverflowToolbar>        
         </headerToolbar>
             <columns>
-                <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="WithoutHeader">
+                <Column demandPopin="true" minScreenWidth="Tablet" popinDisplay="WithoutHeader">
                     <Label text="{i18n>IntegrationArtifact}"/>
                 </Column>
-                <Column demandPopin="true" minScreenWidth="Tablet">
+                <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="Inline">
                     <Label text="{i18n>LogStart}"/>
                 </Column>
-                <Column demandPopin="true" minScreenWidth="Tablet">
+                <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="Inline">
                     <Label text="{i18n>Duration}"/>
                 </Column>
                 <Column demandPopin="true" minScreenWidth="Desktop" popinDisplay="Inline">
