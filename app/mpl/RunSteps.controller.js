@@ -1,8 +1,10 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/layout/form/FormElement", "sap/m/Text", "sap/m/Link"
-], function (PageController, JSONModel, FormElement, Text, Link) {
+    "sap/ui/layout/form/FormElement",
+    "sap/ui/base/ManagedObject",
+    "sap/m/Text", "sap/m/Link", "sap/m/ObjectStatus"
+], function (PageController, JSONModel, FormElement, ManagedObject, Text, Link, ObjectStatus) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
@@ -153,6 +155,10 @@ sap.ui.define([
                     new Link({ text: 'Headers', href: serviceUrl + obj.Url + '/Properties', target:'_blank'}),
                     new Link({ text: 'Properties', href: serviceUrl + obj.Url + '/ExchangeProperties', target:'_blank'})
                 )
+            } else if (obj.Name == 'Error') {
+                var objstat = new ObjectStatus({ text: ManagedObject.escapeSettingsValue(obj.Value), state: 'Error', active: false })
+                objstat.addStyleClass("sapMObjectStatusLongText");
+                fields.push(objstat)
             } else if (obj.Url) {
                 fields.push(new Link({ text: obj.Value, href: serviceUrl + obj.Url }))
             } else {
