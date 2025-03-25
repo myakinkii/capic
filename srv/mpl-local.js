@@ -24,7 +24,7 @@ module.exports = cds.service.impl(async function () {
                 }).join(' or ')
                 filters.push(search)
             } else {
-                const filterArtifact = /IntegrationArtifact\/(\w+) eq '(\w+)'/g.exec(odataFilter)
+                const filterArtifact = /IntegrationArtifact\/(\w+) eq '([\w-_\.]+)'/g.exec(odataFilter)
                 if (filterArtifact) {
                     const [_, key, value] = filterArtifact
                     filters.push(`IntegrationArtifact/${key} eq '${value}'`)
