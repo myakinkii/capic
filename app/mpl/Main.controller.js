@@ -6,6 +6,7 @@ sap.ui.define([
     "use strict";
 
     var StatusMap = {
+        PROCESSING: 'Information',
         COMPLETED: 'Success',
         DISCARDED: 'None',
         ESCALATED: 'Warning',

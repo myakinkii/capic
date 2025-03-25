@@ -18,6 +18,7 @@
                     change="filterLog" enableGroupHeaders="false"
                     standardOptions="DATETIMERANGE"/>
                 <ComboBox showClearIcon="true" selectedKey="{ui>/statusFilter}" selectionChange="applyFilters">
+                    <core:Item key="PROCESSING" text="PROCESSING"/>
                     <core:Item key="COMPLETED" text="COMPLETED"/>
                     <core:Item key="DISCARDED" text="DISCARDED"/>
                     <core:Item key="ESCALATED" text="ESCALATED"/>
