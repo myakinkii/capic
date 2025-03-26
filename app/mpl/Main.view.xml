@@ -17,7 +17,7 @@
                 {path:'ui>/dateFilter/from'},
                 {path:'ui>/dateFilter/to'}
             ], formatter:'.formatActiveFilter' }"/>
-        <Table id="MPLTable" fixedLayout="false" growing="true" items="{/MessageProcessingLogs}">
+        <Table id="MPLTable" fixedLayout="false" growing="true" growingThreshold="50" items="{/MessageProcessingLogs}">
         <headerToolbar>
             <OverflowToolbar>
                 <ToolbarSpacer/>
