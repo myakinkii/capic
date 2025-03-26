@@ -21,6 +21,8 @@
         <headerToolbar>
             <OverflowToolbar>
                 <ToolbarSpacer/>
+                <Button icon="sap-icon://clear-filter" press="clearArtifactFilter" 
+                    visible="{= !!${ui>/artifactFilter/PackageId} || !!${ui>/artifactFilter/Id} }"/>
                 <Input width="20rem" editable="false" value="{= ${ui>/artifactFilter/PackageId} || ${ui>/artifactFilter/Id} }" />
                 <ToolbarSpacer/>
                 <DynamicDateRange id="rangePicker" 
@@ -54,13 +56,19 @@
                     <Label text="{i18n>Status}"/>
                 </Column>
                 <Column>
-                    <Label text="{i18n>MessageGuid}"/>
+                    <Label text="{i18n>CorrelationId} / {i18n>MessageGuid}"/>
                 </Column>
             </columns>
             <items>
                 <ColumnListItem type="Navigation" press="navtoDetail" vAlign="Middle">
                     <cells>
-                        <ObjectIdentifier text="{IntegrationArtifact/PackageId}" title="{IntegrationArtifact/Id}"/>
+                        <!-- <ObjectIdentifier text="{IntegrationArtifact/PackageId}" title="{IntegrationArtifact/Id}"/> -->
+                        <!-- <l:VerticalLayout class="sapUiContentPadding"> -->
+                        <VBox>
+                            <Link text="{IntegrationArtifact/Id}" press="selectFilterBundle" wrapping="true" _emphasized="true"/>
+                            <Link text="{IntegrationArtifact/PackageId}" press="selectFilterPackage" _class="sapUiSmallMarginTop" subtle="true"/>
+                        </VBox>
+                        <!-- </l:VerticalLayout> -->
                         <Text text="{
                                 path: 'LogStart', 
                                 type: 'sap.ui.model.odata.type.DateTimeOffset', 

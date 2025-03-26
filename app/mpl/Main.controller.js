@@ -77,6 +77,23 @@ sap.ui.define([
             searchField.fireSearch({query: corrId})
         },
 
+        setArtifactFilter:function(pkgId, bundleId){
+            this.getView().getModel("ui").setProperty("/artifactFilter", { PackageId: pkgId, Id: bundleId })
+            this.applyFilters()
+        },
+
+        selectFilterBundle:function(e){
+            this.setArtifactFilter(null, e.getSource().getText())
+        },
+
+        selectFilterPackage:function(e){
+            this.setArtifactFilter(e.getSource().getText(), null)
+        },
+
+        clearArtifactFilter:function(){
+            this.setArtifactFilter(null, null)
+        },
+
         searchById: function (e) {
             this.getView().getModel("ui").setProperty("/idFilter", e.getParameter("query"))
             this.applyFilters()
