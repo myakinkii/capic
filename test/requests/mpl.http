@@ -100,3 +100,16 @@ Authorization: Bearer {{oauth_token}}
 ### get Trace Properties (expand did not work)
 GET {{cloudUrl}}/api/v1/TraceMessages({{traceId}})/ExchangeProperties?$format=json
 Authorization: Bearer {{oauth_token}}
+
+
+### get Trace Logs ($orderby not implemented of course)
+# @name getTraceLogs
+GET {{cloudUrl}}/api/v1/LogFiles?$format=json&$filter=LogFileType eq'TRACE'
+Authorization: Bearer {{oauth_token}}
+
+###
+@firstLogUrl = {{getTraceLogs.response.body.d.results[0].__metadata.uri}}
+
+### download some random Trace Log (application/gzip)
+GET {{firstLogUrl}}/$value
+Authorization: Bearer {{oauth_token}}
