@@ -55,6 +55,7 @@ const jarsFromWar = [
     'org.apache.camel.camel-ahc',
     'org.apache.camel.camel-xslt-saxon',
     'com.sap.esb.camel.core.camel.saxon.extensions',
+    'com.sap.esb.camel.addons.camel.aggregation.strategies',
     'com.sap.it.script.com.sap.it.script.fragment.camel.impl' // this guy is not resolved for some reason
 ]
 
