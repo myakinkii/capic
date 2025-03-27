@@ -16,7 +16,7 @@ module.exports = cds.service.impl(async function () {
 
     const getArtifactIds = () => operations.run({ cmd: 'IntegrationComponentsList' })
         .then(list => getBundleInfos(list)
-            .reduce((prev, { name: { _text: n }, id: { _text: id } }) => Object.assign(prev, { [n]: id }), {}))
+            .reduce((prev, { symbolicName: { _text: n }, id: { _text: id } }) => Object.assign(prev, { [n]: id }), {}))
 
     this.on('syncGitToPackage', async (req) => {
         const [{ Id: bundleId }] = req.params

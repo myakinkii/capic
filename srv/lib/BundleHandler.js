@@ -23,7 +23,7 @@ const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
 
 const findBundleInfo = (integrationComponentsList, Id) => {
     const infos = getBundleInfos(integrationComponentsList)
-    return infos.find(info => info.name._text == Id)
+    return infos.find(info => info.symbolicName._text == Id)
 }
 
 const getBundleInfos = (integrationComponentsList) => {
