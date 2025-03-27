@@ -123,6 +123,7 @@ sap.ui.define([
 
             if (filterData.idFilter){
                 items.filter(new Filter('MessageGuid', 'EQ', filterData.idFilter))
+                items.refresh()
                 return
             }
             
@@ -140,6 +141,7 @@ sap.ui.define([
             if (status) filters.push(new Filter('Status', 'EQ', status))
 
             items.filter(new Filter(filters, true))
+            items.refresh()
         },
 
         onAfterRendering: function () {

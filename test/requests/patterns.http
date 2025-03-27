@@ -1,0 +1,83 @@
+@cloudUrl = {{$dotenv CPI_IFLOW_URL}}
+@auth = {{$dotenv CPI_IFLOW_CLIENT}}:{{$dotenv CPI_IFLOW_SECRET}}
+
+### Patters_Content_Enricher
+@ContentEnricher = /http/custom/Patterns/ContentEnricher
+
+### csrf
+# @name getToken1
+HEAD {{cloudUrl}}{{ContentEnricher}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: fetch
+
+@csrf_token1 = {{getToken1.response.headers.x-csrf-token}}
+
+###
+POST {{cloudUrl}}{{ContentEnricher}}
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token1}}
+Content-Type: application/xml
+
+<?xml version="1.0"?>
+<ns0:PurchaseOrder
+	xmlns:ns0="http://demo.sap.com/eip/content-enricher" PurchaseOrderNumber="99401" OrderDate="2019-05-06">
+	<Address Type="Shipping">
+		<Name>Ellen Adams</Name>
+		<Street>123 Maple Street</Street>
+		<City>Mill Valley</City>
+		<State>CA</State>
+		<Zip>10999</Zip>
+		<Country>USA</Country>
+	</Address>
+	<Address Type="Billing">
+		<Name>Tai Yee</Name>
+		<Street>8 Oak Avenue</Street>
+		<City>Old Town</City>
+		<State>PA</State>
+		<Zip>95819</Zip>
+		<Country>USA</Country>
+	</Address>
+	<DeliveryNotes>Please leave packages in shed by driveway.</DeliveryNotes>
+	<Items>
+		<Item ItemNumber="10">
+			<ProductId>HT-1000</ProductId>
+			<ProductName>Notebook Basic 15</ProductName>
+			<Category>Notebooks</Category>
+			<Quantity>1</Quantity>
+			<CurrencyCode>EUR</CurrencyCode>
+			<Price>956.00</Price>
+		</Item>
+		<Item ItemNumber="20">
+			<ProductId>HT-1001</ProductId>
+			<ProductName>Notebook Basic 17</ProductName>
+			<Category>Notebooks</Category>
+			<Quantity>1</Quantity>
+			<CurrencyCode>EUR</CurrencyCode>
+			<Price>1249.00</Price>
+		</Item>
+		<Item ItemNumber="30">
+			<ProductId>HT-1000</ProductId>
+			<ProductName>Notebook Basic 15</ProductName>
+			<Category>Notebooks</Category>
+			<Quantity>1</Quantity>
+			<CurrencyCode>EUR</CurrencyCode>
+			<Price>956.00</Price>
+		</Item>
+		<Item ItemNumber="40">
+			<ProductId>HT-1030</ProductId>
+			<ProductName>Ergo Screen</ProductName>
+			<Category>Flat screens</Category>
+			<Quantity>2</Quantity>
+			<CurrencyCode>EUR</CurrencyCode>
+			<Price>460.00</Price>
+		</Item>
+		<Item ItemNumber="50">
+			<ProductId>HT-1101</ProductId>
+			<ProductName>Smart Design</ProductName>
+			<Category>Software</Category>
+			<Quantity>10</Quantity>
+			<CurrencyCode>EUR</CurrencyCode>
+			<Price>799.00</Price>
+		</Item>
+	</Items>
+</ns0:PurchaseOrder>
