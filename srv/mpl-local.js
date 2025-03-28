@@ -36,8 +36,8 @@ module.exports = cds.service.impl(async function () {
                     filters.push(`LogStart le datetime'${to}'`)
                 }
 
-                const filterStatus = /Status eq '([A-Z]+)'/g.exec(odataFilter)
-                if (filterStatus) filters.push(`Status eq '${filterStatus[1]}'`)
+                const filterStatus = /Status (eq|ne) '([A-Z]+)'/g.exec(odataFilter)
+                if (filterStatus) filters.push(`Status ${filterStatus[1]} '${filterStatus[2]}'`)
 
             }
 
@@ -84,8 +84,8 @@ module.exports = cds.service.impl(async function () {
 
     this.on('READ', 'MessageProcessingLogErrorInformations', async (req, next) => {
         // const errorInfo = await mpl.run(req.query)
-        const errorValue =  await mpl.send('download', req.query) // Buffer
-        return {Value : errorValue.toString()}
+        const errorValue = await mpl.send('download', req.query) // Buffer
+        return { Value: errorValue.toString() }
     })
 
     this.on('READ', 'MessageProcessingLogRuns', async (req, next) => {

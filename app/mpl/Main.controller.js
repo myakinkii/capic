@@ -26,7 +26,10 @@ sap.ui.define([
                     from: null,
                     to: null
                 },
-                statusFilter: null
+                statusFilter: {
+                    value: null,
+                    equals: true
+                }
             }), "ui")
         },
 
@@ -103,12 +106,14 @@ sap.ui.define([
             this.getView().byId("activeFilterStrip").setVisible(true)
         },
 
-        formatActiveFilter:function(msg, pkg, bundle, status, from, to){
+        formatActiveFilter:function(msg, pkg, bundle, status, eq, from, to){
             if (msg) return `MessageGuid OR CorrelationId OR ApplicationMessageId = '${msg}'`
             var pars = []
             if (pkg) pars.push(`IntegrationArtifact/PackageId = '${pkg}'`)
             if (bundle) pars.push(`IntegrationArtifact/Id = '${bundle}'`)
-            if (status) pars.push(`Status = '${status}'`)
+            if (status) {
+                pars.push(`Status ${eq ? '=' : '!='} '${status}'`)
+            }
             if (from) pars.push(`LogStart >= '${from}'`)
             if (to) pars.push(`LogStart <= '${to}'`)
             return pars.join(' AND ')
@@ -137,8 +142,9 @@ sap.ui.define([
                 if (value) filters.push(new Filter('IntegrationArtifact/' + key, "EQ", value))
             })
 
-            var status = filterData.statusFilter
-            if (status) filters.push(new Filter('Status', 'EQ', status))
+            var status = filterData.statusFilter.value
+            var operator = filterData.statusFilter.equals ? 'EQ' : 'NE'
+            if (status) filters.push(new Filter('Status', operator, status))
 
             items.filter(new Filter(filters, true))
             items.refresh()

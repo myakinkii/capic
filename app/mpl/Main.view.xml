@@ -13,7 +13,8 @@
                 {path:'ui>/idFilter'},
                 {path:'ui>/artifactFilter/PackageId'},
                 {path:'ui>/artifactFilter/Id'},
-                {path:'ui>/statusFilter'},
+                {path:'ui>/statusFilter/value'},
+                {path:'ui>/statusFilter/equals'},
                 {path:'ui>/dateFilter/from'},
                 {path:'ui>/dateFilter/to'}
             ], formatter:'.formatActiveFilter' }"/>
@@ -29,13 +30,18 @@
                     showClearIcon="true" width="15rem"
                     change="filterLog" enableGroupHeaders="false"
                     standardOptions="DATETIMERANGE"/>
-                <ComboBox showClearIcon="true" selectedKey="{ui>/statusFilter}" selectionChange="applyFilters">
+                <ComboBox showClearIcon="true" selectedKey="{ui>/statusFilter/value}" selectionChange="applyFilters">
                     <core:Item key="PROCESSING" text="PROCESSING"/>
                     <core:Item key="COMPLETED" text="COMPLETED"/>
                     <core:Item key="DISCARDED" text="DISCARDED"/>
                     <core:Item key="ESCALATED" text="ESCALATED"/>
                     <core:Item key="FAILED" text="FAILED"/>
                 </ComboBox>
+                <Switch _type="AcceptReject"
+                    enabled="{= !!${ui>/statusFilter/value} }" 
+                    customTextOn="=" customTextOff="!=" 
+                    change="applyFilters"
+                    state="{ui>/statusFilter/equals}" />
                 <ToolbarSpacer/>
                 <SearchField id="msgSearch" width="20rem" placeholder="MessageGuid or CorrelationId" search="searchById" />
                 <ToolbarSpacer/>
