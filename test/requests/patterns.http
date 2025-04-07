@@ -81,3 +81,28 @@ Content-Type: application/xml
 		</Item>
 	</Items>
 </ns0:PurchaseOrder>
+
+
+### Patters_Content_Enricher_JSON
+POST {{cloudUrl}}/http/custom/Patterns/ContentEnricherJSON
+Authorization: Basic {{auth}}
+X-CSRF-Token: {{csrf_token1}}
+Content-Type: application/json
+
+{
+	"PurchaseOrderNumber":"99401",
+	"OrderDate":"2019-05-06",
+	"Items":[{
+		"ItemNumber":"10",
+		"ProductId":"HT-1000",
+		"Category":"Notebooks"
+	},{
+		"ItemNumber":"20",
+		"ProductId":"HT-1101",
+		"Category":"Software"
+	},{
+		"ItemNumber":"30",
+		"ProductId":"HH-1111",
+		"Category":"Dummy"
+	}]
+}
