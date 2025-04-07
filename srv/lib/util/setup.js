@@ -35,6 +35,7 @@ const jarsFromWar = [
     'com.sap.it.script.custom-development',
     'com.sap.it.script.script.artifact.osgi',
     'com.sap.it.script.com.sap.groovy.script.engine',
+    'com.sap.it.script.com.sap.rhino.engine',
     'org.quartz-scheduler.quartz',
     'org.apache.camel.camel-quartz',
     'org.apache.camel.camel-direct',
