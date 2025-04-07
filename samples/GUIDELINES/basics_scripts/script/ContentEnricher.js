@@ -3,7 +3,7 @@ importClass(java.util.HashMap);
 
 function enrichByCategory(message) {
     
-    var messsageLog = messageLogFactory.getMessageLog(message);
+    // var messsageLog = messageLogFactory.getMessageLog(message);
     
     var newBody = message.getBody(java.lang.String);
     var categories = JSON.parse(newBody);
