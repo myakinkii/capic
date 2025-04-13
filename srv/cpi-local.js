@@ -50,6 +50,7 @@ module.exports = cds.service.impl(async function () {
 
     // READABLE ONLY VIA PACKAGE NAV PROPERTY
     this.on('READ', 'IntegrationDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
+    this.on('READ', 'Configurations', async (req, next) => cpi.run(req.query))
     this.on('READ', 'ScriptCollectionDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'ValueMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))

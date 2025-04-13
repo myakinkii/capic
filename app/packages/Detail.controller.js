@@ -148,6 +148,20 @@ sap.ui.define([
             })
         },
 
+        getParams:function(e){
+            var pkgOdataCtx = this.getView().getBindingContext()
+            var ctx = e.getSource().getBindingContext("pkg")
+            var dt = ctx.getObject()
+            var url = `${pkgOdataCtx.getModel().getServiceUrl()}IntegrationDesigntimeArtifacts(Id='${dt.Id}',Version='${dt.Version}')/Configurations` 
+            sap.m.URLHelper.redirect(url, true)
+        },
+
+        setParams:function(){
+            // fetch props files for DEV/QA/PROD (dropdowns or smth) to display values and then "apply" it trough ui
+            //PUT /IntegrationDesigntimeArtifacts(Id='{Id}',Version='{Version}')/$links/Configurations('{ParameterKey}')
+            // {ParameterValue, DataType }
+        },
+
         gotoOperations: function (e) {
             var pkgOdataCtx = this.getView().getBindingContext()
             var ctx = e.getSource().getBindingContext("pkg")

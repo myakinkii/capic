@@ -40,6 +40,9 @@ service CpiLocalService {
     entity IntegrationDesigntimeArtifacts      as projection on external.IntegrationDesigntimeArtifacts;
 
     @readonly
+    entity Configurations                      as projection on external.Configurations
+
+    @readonly
     entity ScriptCollectionDesigntimeArtifacts as projection on external.ScriptCollectionDesigntimeArtifacts;
 
     @readonly
