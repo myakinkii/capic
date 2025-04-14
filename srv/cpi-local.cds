@@ -3,6 +3,30 @@ using {cpi as external} from '../srv/external/cpi';
 service CpiLocalService {
 
     @readonly
+    @cds.persistence.skip: true
+    entity CasResources {
+        key id         : String;
+            resourceID : UUID;
+            type       : String;
+            subType    : String;
+            title      : String;
+            version    : String;
+    };
+
+    @readonly
+    @cds.persistence.skip: true
+    entity CasActivities {
+        key activityId  : UUID;
+            processType : String;
+            startedAt   : DateTime;
+            endedAt     : DateTime;
+            state       : String;
+    };
+
+    action exportPackage(pkgId : String, resourceId : UUID)                           returns UUID;
+    action downloadMtar(pkgId : String, activityId : UUID);
+
+    @readonly
     entity IntegrationPackages                 as
         select from external.IntegrationPackages
         mixin {

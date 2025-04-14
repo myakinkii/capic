@@ -21,6 +21,11 @@ const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
     fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
+const saveMtar = (pckgId, buffer) => {
+    const fileName = `${CPI_EXPORT_PATH}/${pckgId}/export.mtar`
+    fs.writeFileSync(fileName, buffer)
+}
+
 const findBundleInfo = (integrationComponentsList, Id) => {
     const infos = getBundleInfos(integrationComponentsList)
     return infos.find(info => info.symbolicName._text == Id)
@@ -149,6 +154,7 @@ const rezipBundle = (data, srcDir) => {
 
 module.exports = {
     rezipBundle,
+    saveMtar,
     saveBundleXml,
     getBundleInfos,
     findBundleInfo,

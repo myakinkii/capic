@@ -53,6 +53,9 @@
       },
       "operations": {
         "impl": "srv/lib/remote/OperationsService.js"
+      },
+      "cas": {
+        "impl": "srv/lib/remote/ContentAgentService.js"
       }
     },
     "launchpad": {

@@ -1,0 +1,39 @@
+@localUrl = http://localhost:4004
+@pkgId = MAGIC
+
+### get resources
+GET {{localUrl}}/odata/v4/cpi-local/CasResources
+
+
+### get resourceId
+# @name resourceDetails
+GET {{localUrl}}/odata/v4/cpi-local/CasResources('{{pkgId}}')
+
+
+@resourceId = {{resourceDetails.response.body.resourceID}}
+
+### exportPackage
+# @name exportMtar
+POST {{localUrl}}/odata/v4/cpi-local/exportPackage
+Content-Type: application/json
+
+{
+    "pkgId": "{{pkgId}}",
+    "resourceId": "{{resourceId}}"
+}
+
+###
+@activityId = {{exportMtar.response.body.value}}
+
+### check status
+GET {{localUrl}}/odata/v4/cpi-local/CasActivities({{activityId}})
+
+
+### downloadMtar
+POST {{localUrl}}/odata/v4/cpi-local/downloadMtar
+Content-Type: application/json
+
+{
+    "pkgId": "{{pkgId}}",
+    "activityId": "{{activityId}}"
+}

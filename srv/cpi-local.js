@@ -1,6 +1,6 @@
 const {
     syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf,
-    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml
+    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar
 } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
@@ -10,6 +10,7 @@ module.exports = cds.service.impl(async function () {
     const cpi = await cds.connect.to('cpi')
     const operations = await cds.connect.to('operations')
     const iflow = await cds.connect.to('iflow')
+    const cas = await cds.connect.to('cas')
 
     const getSelf = async (id) => operations.run({ cmd: 'IntegrationComponentsList' })
         .then(list => findBundleInfo(list, id))
@@ -129,6 +130,32 @@ module.exports = cds.service.impl(async function () {
             }, {})
         }
         return iflow.run({ endpoint, body, headers }).catch(e => e.message)
+    })
+
+    // CAS mtar export stuff
+    this.on('READ', 'CasResources', async (req, next) => {
+        const resources = await cas.getResources()
+        if (!req.query.SELECT.one) return resources
+        const [{ id }] = req.params
+        return resources.find(r => r.id == id)
+    })
+
+    this.on('READ', 'CasActivities', async (req, next) => {
+        if (!req.query.SELECT.one) return []
+        const [{ activityId }] = req.params
+        return cas.getActivity(activityId)
+    })
+
+    this.on('exportPackage', async (req) => {
+        const { pkgId, resourceId } = req.data
+        const activityId = await cas.exportPackage(pkgId, resourceId)
+        return activityId
+    })
+
+    this.on('downloadMtar', async (req) => {
+        const { pkgId, activityId } = req.data
+        const buffer = await cas.downloadMtar(activityId)
+        saveMtar(pkgId, buffer)
     })
 
 });
