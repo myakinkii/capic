@@ -1,5 +1,5 @@
-const { 
-    syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf, 
+const {
+    syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf,
     getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml
 } = require('./lib/BundleHandler')
 
@@ -31,7 +31,7 @@ module.exports = cds.service.impl(async function () {
         return syncBundleToPackageRepo(pckgId, bundleId, version, commitMsg, xmlString)
     })
 
-    this.on('deployArtifactToCpi', async (req) => cpi.send('deploy', req.data) )
+    this.on('deployArtifactToCpi', async (req) => cpi.send('deploy', req.data))
 
     this.on('deployKarafFromPackage', async (req) => {
         const [{ Id: bundleId }] = req.params
@@ -50,13 +50,17 @@ module.exports = cds.service.impl(async function () {
 
     // READABLE ONLY VIA PACKAGE NAV PROPERTY
     this.on('READ', 'IntegrationDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
-    this.on('READ', 'Configurations', async (req, next) => {
-        const params = await cpi.run(req.query)
-        return params.map(({ ParameterKey, ParameterValue }) => ({ [ParameterKey]: ParameterValue })) // cleaner
-    })
     this.on('READ', 'ScriptCollectionDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'ValueMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
     this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
+
+    // IntegrationDesigntimeArtifacts params and resources (local files)
+    this.on('READ', 'Configurations', async (req, next) => cpi.run(req.query)
+        .then(res => res.map(({ ParameterKey, ParameterValue }) => ({ [ParameterKey]: ParameterValue })))
+    )
+    this.on('READ', 'Resources', async (req, next) => cpi.run(req.query)
+        .then(res => res.map(({ Name }) => Name))
+    )
 
     const mapToArtifactDT = {
         INTEGRATION_FLOW: 'integrationflows',
@@ -89,7 +93,7 @@ module.exports = cds.service.impl(async function () {
     })
 
     // here we return absolutely everything cuz we want to see our scripts or mappings
-    this.on('READ', 'DeployedArtifacts', async (req, next) => getDeployedToKarafBundles().map( f => ({Id: f.split('.')[0]}) ))
+    this.on('READ', 'DeployedArtifacts', async (req, next) => getDeployedToKarafBundles().map(f => ({ Id: f.split('.')[0] })))
 
     this.on('READ', 'IntegrationRuntimeArtifacts', async (req, next) => {
         if (req.params.length == 1) { // details
@@ -113,18 +117,18 @@ module.exports = cds.service.impl(async function () {
         let body, headers
         // body and headers are separated by empty line
         // BUT body can have empty lines too, but for now we dont care
-        const parts =  text.split('\n\n')
-        if (parts.length==1) {
+        const parts = text.split('\n\n')
+        if (parts.length == 1) {
             body = parts[0]
         } else {
             body = parts[1]
-            headers = parts[0].split('\n').reduce( (prev, cur) => {
-                const [ key, value ] = cur.split(': ')
+            headers = parts[0].split('\n').reduce((prev, cur) => {
+                const [key, value] = cur.split(': ')
                 prev[key] = value
                 return prev
             }, {})
         }
-        return iflow.run({ endpoint, body, headers }).catch( e => e.message )
+        return iflow.run({ endpoint, body, headers }).catch(e => e.message)
     })
-    
+
 });
