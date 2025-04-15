@@ -43,10 +43,10 @@ const getMtarProps = (propFiles, pkgId, bundleId) => {
 
 const getMtarPropFiles = (pkgId) => {
     if (!pkgId) return []
-    const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
     const propFiles = {}
-    artifacts.filter(a => a.isDirectory()).forEach(dir => {
-        try {
+    try {
+        const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
+        artifacts.filter(a => a.isDirectory()).forEach(dir => {
             fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`)
                 .filter(f => !f.endsWith('.propdef'))
                 .forEach(f => {
@@ -54,10 +54,10 @@ const getMtarPropFiles = (pkgId) => {
                     if (!propFiles[name]) propFiles[name] = 0
                     propFiles[name]++
                 })
-        } catch (e) {
-            // not an iflow
-        }
-    })
+        })
+    } catch (e) {
+        // not an iflow or no parent folder at all
+    }
     return Object.entries(propFiles).map(([file, qty]) => ({ file, qty }))
 }
 
