@@ -401,8 +401,9 @@ sap.ui.define([
             if (isIflow) {
                 containerRefs.push(container)
                 var version = ctx.getProperty("version") == 'Draft' ? 'Active' : ctx.getProperty("version") // yeah..
+                var id = ctx.getProperty("name").replaceAll(" ","_") // yeah those were indeed names...
                 container.bindAggregation("formElements", {
-                    path: `/IntegrationDesigntimeArtifacts(Id='${ctx.getProperty("name")}',Version='${version}')/Configurations`,
+                    path: `/IntegrationDesigntimeArtifacts(Id='${id}',Version='${version}')/Configurations`,
                     template: new FormElement({
                         label: "{ParameterKey}",
                         fields: [
