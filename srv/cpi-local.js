@@ -1,6 +1,6 @@
 const {
     syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf,
-    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar
+    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar, getMtarPropFiles, getMtarProps
 } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
@@ -56,9 +56,9 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', 'MessageMappingDesigntimeArtifacts', async (req, next) => cpi.run(req.query))
 
     // IntegrationDesigntimeArtifacts params and resources (local files)
-    this.on('READ', 'Configurations', async (req, next) => cpi.run(req.query)
-        .then(res => res.map(({ ParameterKey, ParameterValue }) => ({ [ParameterKey]: ParameterValue })))
-    )
+    // this.on('READ', 'Configurations', async (req, next) => cpi.run(req.query)
+    //     .then(res => res.map(({ ParameterKey, ParameterValue }) => ({ [ParameterKey]: ParameterValue })))
+    // ) // moved to mtar magic
     this.on('READ', 'Resources', async (req, next) => cpi.run(req.query)
         .then(res => res.map(({ Name }) => Name))
     )
@@ -132,11 +132,30 @@ module.exports = cds.service.impl(async function () {
         return iflow.run({ endpoint, body, headers }).catch(e => e.message)
     })
 
-    // CAS mtar export stuff
+    // CAS mtar export magic
+    const mtarDst = {
+        pkgId: null,
+        system: 'parameters'
+    }
+
+    this.on('READ', 'Configurations', async (req, next) => {
+        const [{ Id }] = req.params
+        const { pkgId, system } = mtarDst
+        const props = getMtarProps(system, pkgId, Id)
+        return cpi.run(req.query).then(res => res.map(({ ParameterKey, ParameterValue }) => {
+            return {
+                ParameterKey,
+                ParameterValue,
+                ParameterValueMtar: props[ParameterKey] || ''
+            }
+        }))
+    })
+
     this.on('READ', 'CasResources', async (req, next) => {
         const resources = await cas.getResources()
         if (!req.query.SELECT.one) return resources
         const [{ id }] = req.params
+        mtarDst.pkgId = id // a little bit dirty
         return resources.find(r => r.id == id)
     })
 
@@ -145,6 +164,10 @@ module.exports = cds.service.impl(async function () {
         const [{ activityId }] = req.params
         return cas.getActivity(activityId)
     })
+
+    this.on('READ', 'CasPropFiles', async (req, next) => getMtarPropFiles(mtarDst.pkgId)) // here old pkg can be used (
+    this.on('READ', 'CasMtarDestination', async (req, next) => mtarDst)
+    this.on('UPDATE', 'CasMtarDestination', async (req, next) => Object.assign(mtarDst, req.data))
 
     this.on('exportPackage', async (req) => {
         const { pkgId, resourceId } = req.data

@@ -2,14 +2,17 @@ sap.ui.define([
     "sap/fe/core/PageController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
-    "sap/ui/model/Filter", "sap/m/TextArea",
-    "sap/ui/core/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox"
-], function (PageController, JSONModel, Fragment, Filter, TextArea, BusyIndicator, MessageToast, MessageBox) {
+    "sap/ui/model/Filter", "sap/m/TextArea", "sap/m/Text", "sap/m/ObjectStatus",
+    "sap/ui/core/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox",
+    "/sap/ui/layout/form/FormContainer", "/sap/ui/layout/form/FormElement"
+], function (PageController, JSONModel, Fragment, Filter, TextArea, Text, ObjectStatus, BusyIndicator, MessageToast, MessageBox, FormContainer, FormElement) {
     "use strict";
 
     var promisedFetch = (url) => new Promise((resolve, reject) => {
         return fetch(url).then(res => res.ok ? res.json() : Promise.reject(res.status)).then(resolve).catch(reject)
     })
+
+    var containerRefs // dirty magic for now
 
     return PageController.extend("packages.Detail", {
 
@@ -41,6 +44,15 @@ sap.ui.define([
             this.runtimeDetailsPromise = Fragment.load({ name: "packages.RuntimeDetails", controller: this }).then(function (dlg) {
                 this.getView().addDependent(dlg)
                 dlg.setModel(new JSONModel(), "cpi")
+                dlg.getEndButton().attachPress(function () {
+                    dlg.close()
+                })
+                return dlg
+            }.bind(this))
+
+            this.transportPackagePromise = Fragment.load({ name: "packages.TransportPackage", controller: this }).then(function (dlg) {
+                this.getView().addDependent(dlg)
+                dlg.setModel(new JSONModel(), "cas")
                 dlg.getEndButton().attachPress(function () {
                     dlg.close()
                 })
@@ -148,15 +160,15 @@ sap.ui.define([
             })
         },
 
-        getParams:function(e){
+        getParams: function (e) {
             var pkgOdataCtx = this.getView().getBindingContext()
             var ctx = e.getSource().getBindingContext("pkg")
             var dt = ctx.getObject()
-            var url = `${pkgOdataCtx.getModel().getServiceUrl()}IntegrationDesigntimeArtifacts(Id='${dt.Id}',Version='${dt.Version}')/Configurations` 
+            var url = `${pkgOdataCtx.getModel().getServiceUrl()}IntegrationDesigntimeArtifacts(Id='${dt.Id}',Version='${dt.Version}')/Configurations`
             sap.m.URLHelper.redirect(url, true)
         },
 
-        setParams:function(){
+        setParams: function () {
             // fetch props files for DEV/QA/PROD (dropdowns or smth) to display values and then "apply" it trough ui
             //PUT /IntegrationDesigntimeArtifacts(Id='{Id}',Version='{Version}')/$links/Configurations('{ParameterKey}')
             // {ParameterValue, DataType }
@@ -354,7 +366,66 @@ sap.ui.define([
                     MessageToast.show('ERROR')
                 }
             })
-        }
+        },
 
+        transportPackage: function (e) {
+            var ctx = e.getSource().getBindingContext("pkg")
+            var dt = ctx.getObject()
+            var serviceUrl = this.getView().getModel().getServiceUrl()
+
+            var resolvedDlg
+            this.transportPackagePromise.then(function (dlg) {
+                resolvedDlg = dlg
+                BusyIndicator.show(50)
+                return promisedFetch(`${serviceUrl}/CasResources/${dt.Id}`)
+            }).then(function (res) {
+                BusyIndicator.hide()
+                containerRefs = []
+                resolvedDlg.getModel("cas").setData(res)
+                resolvedDlg.getCustomHeader().getContent()[2].getBinding("items").refresh() // very ugly.. to force refresh
+                resolvedDlg.bindElement("/CasMtarDestination")
+                resolvedDlg.open()
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                MessageToast.show('NO_CAS')
+            })
+        },
+
+        transportArtifactParamsFactory: function (sId, ctx) {
+            var isIflow = ctx.getProperty("type") == 'IFlow'
+            var container = new FormContainer({
+                expanded: true,
+                expandable: isIflow,
+                title: "[{cas>version}] {cas>name} - {cas>type}"
+            })
+            if (isIflow) {
+                containerRefs.push(container)
+                var version = ctx.getProperty("version") == 'Draft' ? 'Active' : ctx.getProperty("version") // yeah..
+                container.bindAggregation("formElements", {
+                    path: `/IntegrationDesigntimeArtifacts(Id='${ctx.getProperty("name")}',Version='${version}')/Configurations`,
+                    template: new FormElement({
+                        label: "{ParameterKey}",
+                        fields: [
+                            new Text({ text: "{ParameterValue}" }),
+                            (new ObjectStatus({
+                                text: "{ParameterValueMtar}",
+                                state: "{= ${ParameterValue} === ${ParameterValueMtar} ? 'Success' : 'Error' }"
+                            })).addStyleClass("sapMObjectStatusLongText")
+                        ]
+                    })
+                })
+            }
+            return container
+        },
+
+        applyMtarParams: function () {
+
+        },
+
+        refreshMtarParams: function (e) {
+            containerRefs.forEach(function (fc) {
+                fc.getBinding("formElements").refresh()
+            })
+        }
     })
 })

@@ -1,0 +1,41 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+    <Dialog contentWidth="50rem" showHeader="false">
+        <customHeader>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button icon="sap-icon://save" press="applyMtarParams"/>
+                <Select binding="{/CasMtarDestination}" selectedKey="{system}" items="{/CasPropFiles}">
+                    <core:Item key="{file}" text="{file} ({qty})" />
+                </Select>
+                <Button icon="sap-icon://refresh" press="refreshMtarParams"/>
+                <ToolbarSpacer/>
+            </Toolbar>
+        </customHeader>
+        <Panel headerText="[{cas>/version}] {cas>/name}">
+            <f:Form editable="true" 
+                    formContainers="{
+                        path: 'cas>/components',
+                        sorter: { path: 'type', group: true },
+                        factory: '.transportArtifactParamsFactory'
+                    }">
+                <f:layout>
+                    <!-- <f:ColumnLayout columnsM="1" columnsL="1" columnsXL="1" /> -->
+                    <f:ResponsiveGridLayout adjustLabelSpan="false"
+                        labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+                        emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
+                        columnsXL="1" columnsL="1" columnsM="1" />
+                </f:layout>
+                <!-- <f:FormContainer expandable="{= ${cas>type} === 'IFlow' }" expanded="true" 
+                        title="[{cas>version}] {cas>name} - {cas>type}" 
+                        formElements="{cas>Parameters}">
+                    <f:FormElement label="{cas>Name}">
+                        <Text text="{cas>Value}"/>
+                    </f:FormElement>
+                </f:FormContainer> -->
+            </f:Form>
+        </Panel>
+        <endButton>
+            <Button text="{i18n>btnClose}" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

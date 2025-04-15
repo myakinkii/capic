@@ -2,6 +2,20 @@ using {cpi as external} from '../srv/external/cpi';
 
 service CpiLocalService {
 
+    @odata.singleton
+    @cds.persistence.skip: true
+    entity CasMtarDestination {
+        system       : String;
+        CasPropFiles : Association to many CasPropFiles;
+    }
+
+    @readonly
+    @cds.persistence.skip: true
+    entity CasPropFiles {
+        key file : String;
+            qty  : Integer;
+    };
+
     @readonly
     @cds.persistence.skip: true
     entity CasResources {
@@ -64,7 +78,11 @@ service CpiLocalService {
     entity IntegrationDesigntimeArtifacts      as projection on external.IntegrationDesigntimeArtifacts;
 
     @readonly
-    entity Configurations                      as projection on external.Configurations;
+    entity Configurations                      as
+        projection on external.Configurations {
+            *,
+            '' as ParameterValueMtar : String
+        };
 
     @readonly
     entity Resources                           as projection on external.Resources;

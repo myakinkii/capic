@@ -26,6 +26,41 @@ const saveMtar = (pckgId, buffer) => {
     fs.writeFileSync(fileName, buffer)
 }
 
+
+const getMtarProps = (propFiles, pkgId, bundleId) => {
+    // { #, !, =, : } must be unescaped it seems (+ SPACE)
+    try {
+        const data = fs.readFileSync(`${CPI_EXPORT_PATH}/${pkgId}/${bundleId}/resources/${propFiles}.prop`, 'utf8')
+        return data.split("\n").filter(p => !!p && !p.startsWith("#")).reduce((prev, cur) => {
+            const [k, v] = cur.split("=")
+            prev[k] = v.replaceAll('\\:', ':') // figure out how unescape stuff properly
+            return prev
+        }, {})
+    } catch (e) {
+        return {} // most likely not found if wasn't synced to git yet.
+    }
+}
+
+const getMtarPropFiles = (pkgId) => {
+    if (!pkgId) return []
+    const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
+    const propFiles = {}
+    artifacts.filter(a => a.isDirectory()).forEach(dir => {
+        try {
+            fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`)
+                .filter(f => !f.endsWith('.propdef'))
+                .forEach(f => {
+                    const [name] = f.split(".")
+                    if (!propFiles[name]) propFiles[name] = 0
+                    propFiles[name]++
+                })
+        } catch (e) {
+            // not an iflow
+        }
+    })
+    return Object.entries(propFiles).map(([file, qty]) => ({ file, qty }))
+}
+
 const findBundleInfo = (integrationComponentsList, Id) => {
     const infos = getBundleInfos(integrationComponentsList)
     return infos.find(info => info.symbolicName._text == Id)
@@ -50,7 +85,7 @@ const getBundleXml = (pckgId, bundleId, objType) => {
 
 const getDeployedToKarafBundles = () => {
     if (!KARAF_PATH) return []
-    try { 
+    try {
         return fs.readdirSync(`${KARAF_PATH}/deploy`)
     } catch (e) {
         return []
@@ -154,6 +189,8 @@ const rezipBundle = (data, srcDir) => {
 
 module.exports = {
     rezipBundle,
+    getMtarProps,
+    getMtarPropFiles,
     saveMtar,
     saveBundleXml,
     getBundleInfos,

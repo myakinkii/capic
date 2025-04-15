@@ -26,6 +26,7 @@
                         <MenuItem icon="sap-icon://history" press="gotoLogs" />
                     </Menu>
                 </MenuButton>
+                <Button text="Transport" press="transportPackage" />
             </Toolbar>
         </headerToolbar>
         <columns>
