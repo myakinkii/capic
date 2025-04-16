@@ -377,7 +377,14 @@ sap.ui.define([
             this.transportPackagePromise.then(function (dlg) {
                 resolvedDlg = dlg
                 BusyIndicator.show(50)
-                return promisedFetch(`${serviceUrl}/CasResources/${dt.Id}`)
+                // return promisedFetch(`${serviceUrl}/CasResources/${dt.Id}`)
+                return { 
+                    version: dt.Version,
+                    name: dt.Id,
+                    components: dt.DesigntimeArtifacts.map(function(a){
+                        return { name: a.Id, version: a.Version, type: a.Type }
+                    })
+                }
             }).then(function (res) {
                 BusyIndicator.hide()
                 containerRefs = []
@@ -392,7 +399,7 @@ sap.ui.define([
         },
 
         transportArtifactParamsFactory: function (sId, ctx) {
-            var isIflow = ctx.getProperty("type") == 'IFlow'
+            var isIflow = ctx.getProperty("type") == 'INTEGRATION_FLOW'
             var container = new FormContainer({
                 expanded: true,
                 expandable: isIflow,
