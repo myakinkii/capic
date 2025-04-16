@@ -379,6 +379,7 @@ sap.ui.define([
                     version: dt.Version,
                     id: dt.Id,
                     resourceID: dt.ResourceId,
+                    system: null,
                     props: res.value,
                     components: dt.DesigntimeArtifacts.map(function (a) {
                         return { id: a.Id, version: a.Version, type: a.Type }
@@ -435,6 +436,32 @@ sap.ui.define([
             containerRefs.forEach(function (fc) {
                 fc.getBinding("formElements").refresh()
             })
+        },
+
+        changeMtarDst: function (e) {
+            e.getSource().getModel("cas").setProperty("/system", e.getSource().getSelectedKey())
+        },
+
+        generateMtar: function (e) {
+            var pkg = e.getSource().getModel("cas").getData()
+            BusyIndicator.show(50)
+            this.editFlow.invokeAction('/generateMtar', {
+                model: e.getSource().getModel(),
+                parameterValues: [
+                    { name: "pkgId", value: pkg.id },
+                    { name: "resourceId", value: pkg.resourceID },
+                    { name: "system", value: pkg.system },
+                ],
+                skipParameterDialog: true
+            }).then(function (res) {
+                BusyIndicator.hide()
+                MessageToast.show(res.value)
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                console.log(err)
+                // MessageToast.show('ERROR')
+            })
         }
+
     })
 })

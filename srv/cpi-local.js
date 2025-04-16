@@ -195,6 +195,30 @@ module.exports = cds.service.impl(async function () {
         }))
     })
 
+    this.on('generateMtar', async (req) => {
+        const { pkgId, system, resourceId } = req.data
+
+        const activityId = await cas.exportPackage(pkgId, resourceId)
+
+        const waitForMtar = async () => {
+            return new Promise(function (resolve, reject) {
+                async function waitAndResolve() {
+                    const res = await cas.getActivity(activityId)
+                    if (res.state == 'ERROR') reject(res)
+                    else if (res.state == 'FINISHED') resolve(res)
+                    else setTimeout(waitAndResolve, 300)
+                }
+                waitAndResolve()
+            })
+        }
+
+        await waitForMtar()
+
+        const buffer = await cas.downloadMtar(activityId)
+
+        return saveMtar(buffer, pkgId, system)
+    })
+
     this.on('exportPackage', async (req) => {
         const { pkgId, resourceId } = req.data
         const activityId = await cas.exportPackage(pkgId, resourceId)
@@ -204,7 +228,7 @@ module.exports = cds.service.impl(async function () {
     this.on('downloadMtar', async (req) => {
         const { pkgId, activityId } = req.data
         const buffer = await cas.downloadMtar(activityId)
-        saveMtar(pkgId, buffer)
+        saveMtar(buffer, pkgId)
     })
 
 });

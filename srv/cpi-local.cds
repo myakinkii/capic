@@ -16,6 +16,7 @@ service CpiLocalService {
 
     function getCasPropFiles(pkgId : String)                                            returns many CasPropFiles;
     action   applyMtarParams()                                                          returns String;
+    action   generateMtar(pkgId : String, system : String, resourceId: UUID)                                                             returns String;
 
     @readonly
     @cds.persistence.skip: true

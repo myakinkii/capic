@@ -22,9 +22,11 @@ const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
     fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
-const saveMtar = (pckgId, buffer) => {
-    const fileName = `${CPI_EXPORT_PATH}/${pckgId}/export.mtar`
-    fs.writeFileSync(fileName, buffer)
+const saveMtar = (buffer, pckgId, system) => {
+    let fileName = `${system || 'export'}.mtar`
+    if (fileName == 'parameters.mtar') fileName = 'export.mtar' // dunno why
+    fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${fileName}`, buffer)
+    return fileName
 }
 
 const getPropsFrom = (data) => {

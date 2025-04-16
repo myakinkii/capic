@@ -4,7 +4,8 @@
             <Toolbar>
                 <ToolbarSpacer/>
                 <Button icon="sap-icon://save" press="applyMtarParams"/>
-                <Select binding="{/CasMtarDestination}"  selectedKey="{system}" items="{cas>/props}">
+                <Select binding="{/CasMtarDestination}" items="{cas>/props}"
+                     selectedKey="{system}" change="changeMtarDst">
                     <core:Item key="{file}" text="{file} ({qty})" />
                     <core:Item key="{cas>file}" text="{cas>file} ({cas>qty})" />
                 </Select>
@@ -35,6 +36,9 @@
                 </f:FormContainer> -->
             </f:Form>
         </Panel>
+        <beginButton>
+            <Button text="{i18n>generateMtar}" press="generateMtar" />
+        </beginButton>
         <endButton>
             <Button text="{i18n>btnClose}" />
         </endButton>
