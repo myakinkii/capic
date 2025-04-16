@@ -402,7 +402,7 @@ sap.ui.define([
             var container = new FormContainer({
                 expanded: true,
                 expandable: isIflow,
-                title: "[{cas>version}] {cas>name} - {cas>type}"
+                title: "[{cas>version}] {cas>id} - {cas>type}"
             })
             if (isIflow) {
                 containerRefs.push(container)
