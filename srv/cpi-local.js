@@ -1,6 +1,7 @@
 const {
     syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf,
-    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar, getMtarPropFiles, getMtarProps
+    getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar,
+    getMtarPropFiles, getMtarProps, findPropsFor
 } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
@@ -169,9 +170,30 @@ module.exports = cds.service.impl(async function () {
         mtarDst.pkgId = pkgId
         return getMtarPropFiles(pkgId)
     })
-    
+
     this.on('READ', 'CasMtarDestination', async (req, next) => mtarDst)
     this.on('UPDATE', 'CasMtarDestination', async (req, next) => Object.assign(mtarDst, req.data))
+
+    this.on('applyMtarParams', async (req) => {
+        const { pkgId, system } = mtarDst
+        if (!pkgId || !system) return
+        const props = findPropsFor(pkgId, system) // but some iflows could be NOT deployed
+        return Promise.all(Object.entries(props).map(async ([iflow, props]) => {
+            const artifactUrl = `/IntegrationDesigntimeArtifacts(Id='${iflow}',Version='Active')`
+            const actualParams = await cpi.run(`${artifactUrl}/Configurations`).catch(() => { })
+            if (!actualParams) return Promise.resolve([])
+            return Promise.all(actualParams.results.filter(p => {
+                const haveKey = p.ParameterKey in props
+                const notEqual = p.ParameterValue !== props[p.ParameterKey]
+                return haveKey && notEqual && (p.ParameterValue = props[p.ParameterKey]) // update then
+            }).map(async ({ ParameterKey, ParameterValue, DataType }) => {
+                return cpi.send('updateParam', {
+                    url: `${artifactUrl}/$links/Configurations('${ParameterKey}')`,
+                    data: { ParameterValue, DataType }
+                })
+            }))
+        }))
+    })
 
     this.on('exportPackage', async (req) => {
         const { pkgId, resourceId } = req.data

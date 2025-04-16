@@ -27,19 +27,39 @@ const saveMtar = (pckgId, buffer) => {
     fs.writeFileSync(fileName, buffer)
 }
 
+const getPropsFrom = (data) => {
+    // { #, !, =, : } must be unescaped it seems (+ SPACE)
+    const props = new PropertiesParser(data)
+    return props.getKeys().reduce((prev, cur) => {
+        prev[cur] = props.getProperty(cur)
+        return prev
+    }, {})
+}
 
 const getMtarProps = (propFiles, pkgId, bundleId) => {
-    // { #, !, =, : } must be unescaped it seems (+ SPACE)
     try {
         const data = fs.readFileSync(`${CPI_EXPORT_PATH}/${pkgId}/${bundleId}/resources/${propFiles}.prop`, 'utf8')
-        const props = new PropertiesParser(data)
-        return props.getKeys().reduce((prev, cur) => {
-            prev[cur] = props.getProperty(cur)
-            return prev
-        },{})
+        return getPropsFrom(data)
     } catch (e) {
         return {} // most likely not found if wasn't synced to git yet.
     }
+}
+
+const findPropsFor = (pkgId, system) => {
+    const propsData = {}
+    const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
+    artifacts.filter(a => a.isDirectory()).forEach(dir => {
+        try {
+            fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`, { withFileTypes: true })
+                .filter(f => f.name == `${system}.prop`)
+                .forEach(f => {
+                    propsData[dir.name] = getPropsFrom(fs.readFileSync(`${f.parentPath}/${f.name}`, 'utf8'))
+                })
+        } catch (e) {
+            // not an iflow
+        }
+    })
+    return propsData
 }
 
 const getMtarPropFiles = (pkgId) => {
@@ -56,7 +76,7 @@ const getMtarPropFiles = (pkgId) => {
                         if (!propFiles[name]) propFiles[name] = 0
                         propFiles[name]++
                     })
-            } catch (e){
+            } catch (e) {
                 // not an iflow
             }
         })
@@ -195,6 +215,7 @@ const rezipBundle = (data, srcDir) => {
 module.exports = {
     rezipBundle,
     getMtarProps,
+    findPropsFor,
     getMtarPropFiles,
     saveMtar,
     saveBundleXml,

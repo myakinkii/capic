@@ -16,19 +16,26 @@ const mapToArtifactDeployAction = {
 
 module.exports = class ApiService extends require('./BaseService') {
 
-    getSupportedRezipTypes(){
-        return  Object.keys(mapToArtifactDesignTimeEntity)
+    getSupportedRezipTypes() {
+        return Object.keys(mapToArtifactDesignTimeEntity)
     }
 
-    getDTEntity(objType){
+    getDTEntity(objType) {
         return mapToArtifactDesignTimeEntity[objType]
     }
 
-    getDeployAction(objType){
+    getDeployAction(objType) {
         return mapToArtifactDeployAction[objType]
     }
 
     async init() {
+
+        this.on('updateParam', async (req) => {
+            const { url, data } = req.data
+            const reqOptions = { method: 'PUT', url, data, headers: { 'Content-Type': 'application/json' } }
+            await this.prepareAxiosRequest(reqOptions, '/api/v1')
+            return this.runAxiosRequest(reqOptions).then(r => r.data)
+        })
 
         this.on('deploy', async (req) => {
             const { bundleId, version, objType } = req.data
@@ -38,7 +45,7 @@ module.exports = class ApiService extends require('./BaseService') {
                 params: { Id: "'" + bundleId + "'", Version: "'" + version + "'" }
             }
             await this.prepareAxiosRequest(reqOptions, '/api/v1')
-            return this.runAxiosRequest(reqOptions).then( r => r.data )
+            return this.runAxiosRequest(reqOptions).then(r => r.data)
         })
 
         this.on('download', async (req) => {
@@ -51,7 +58,7 @@ module.exports = class ApiService extends require('./BaseService') {
                 url: `/${entity}(Id='${bundleId}',Version='${version}')/$value`,
             }
             await this.prepareAxiosRequest(reqOptions, '/api/v1')
-            return this.runAxiosRequest(reqOptions).then( r => r.data )
+            return this.runAxiosRequest(reqOptions).then(r => r.data)
         })
 
         this.on('*', async (req) => {

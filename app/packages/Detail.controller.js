@@ -168,12 +168,6 @@ sap.ui.define([
             sap.m.URLHelper.redirect(url, true)
         },
 
-        setParams: function () {
-            // fetch props files for DEV/QA/PROD (dropdowns or smth) to display values and then "apply" it trough ui
-            //PUT /IntegrationDesigntimeArtifacts(Id='{Id}',Version='{Version}')/$links/Configurations('{ParameterKey}')
-            // {ParameterValue, DataType }
-        },
-
         gotoOperations: function (e) {
             var pkgOdataCtx = this.getView().getBindingContext()
             var ctx = e.getSource().getBindingContext("pkg")
@@ -423,8 +417,18 @@ sap.ui.define([
             return container
         },
 
-        applyMtarParams: function () {
-
+        applyMtarParams: function (e) {
+            BusyIndicator.show(50)
+            this.editFlow.invokeAction('/applyMtarParams', {
+                model: e.getSource().getModel()
+            }).then(function (res) {
+                BusyIndicator.hide()
+                MessageToast.show('OK')
+            }).catch(function (err) {
+                BusyIndicator.hide()
+                console.log(err)
+                MessageToast.show('ERROR')
+            })
         },
 
         refreshMtarParams: function (e) {
