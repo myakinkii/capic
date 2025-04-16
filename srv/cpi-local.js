@@ -155,7 +155,6 @@ module.exports = cds.service.impl(async function () {
         const resources = await cas.getResources()
         if (!req.query.SELECT.one) return resources
         const [{ id }] = req.params
-        mtarDst.pkgId = id // a little bit dirty
         return resources.find(r => r.id == id)
     })
 
@@ -165,7 +164,12 @@ module.exports = cds.service.impl(async function () {
         return cas.getActivity(activityId)
     })
 
-    this.on('READ', 'CasPropFiles', async (req, next) => getMtarPropFiles(mtarDst.pkgId)) // here old pkg can be used (
+    this.on('getCasPropFiles', async (req, next) => {
+        const { pkgId } = req.data
+        mtarDst.pkgId = pkgId
+        return getMtarPropFiles(pkgId)
+    })
+    
     this.on('READ', 'CasMtarDestination', async (req, next) => mtarDst)
     this.on('UPDATE', 'CasMtarDestination', async (req, next) => Object.assign(mtarDst, req.data))
 

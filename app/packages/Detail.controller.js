@@ -377,20 +377,19 @@ sap.ui.define([
             this.transportPackagePromise.then(function (dlg) {
                 resolvedDlg = dlg
                 BusyIndicator.show(50)
-                // return promisedFetch(`${serviceUrl}/CasResources/${dt.Id}`)
-                return { 
-                    version: dt.Version,
-                    name: dt.Id,
-                    components: dt.DesigntimeArtifacts.map(function(a){
-                        return { name: a.Id, version: a.Version, type: a.Type }
-                    })
-                }
+                return promisedFetch(`${serviceUrl}/getCasPropFiles(pkgId='${dt.Id}')`)
             }).then(function (res) {
                 BusyIndicator.hide()
                 containerRefs = []
-                resolvedDlg.getModel("cas").setData(res)
-                resolvedDlg.getCustomHeader().getContent()[2].getBinding("items").refresh() // very ugly.. to force refresh
-                resolvedDlg.bindElement("/CasMtarDestination")
+                resolvedDlg.getModel("cas").setData({
+                    version: dt.Version,
+                    id: dt.Id,
+                    resourceID: dt.ResourceId,
+                    props: res.value,
+                    components: dt.DesigntimeArtifacts.map(function (a) {
+                        return { id: a.Id, version: a.Version, type: a.Type }
+                    })
+                })
                 resolvedDlg.open()
             }).catch(function (err) {
                 BusyIndicator.hide()
@@ -407,10 +406,8 @@ sap.ui.define([
             })
             if (isIflow) {
                 containerRefs.push(container)
-                var version = ctx.getProperty("version") == 'Draft' ? 'Active' : ctx.getProperty("version") // yeah..
-                var id = ctx.getProperty("name").replaceAll(" ","_") // yeah those were indeed names...
                 container.bindAggregation("formElements", {
-                    path: `/IntegrationDesigntimeArtifacts(Id='${id}',Version='${version}')/Configurations`,
+                    path: `/IntegrationDesigntimeArtifacts(Id='${ctx.getProperty("id")}',Version='${ctx.getProperty("version")}')/Configurations`,
                     template: new FormElement({
                         label: "{ParameterKey}",
                         fields: [

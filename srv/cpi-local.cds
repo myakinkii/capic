@@ -5,16 +5,16 @@ service CpiLocalService {
     @odata.singleton
     @cds.persistence.skip: true
     entity CasMtarDestination {
-        system       : String;
-        CasPropFiles : Association to many CasPropFiles;
+        key pkgId  : String;
+            system : String;
     }
 
-    @readonly
-    @cds.persistence.skip: true
-    entity CasPropFiles {
-        key file : String;
-            qty  : Integer;
+    type CasPropFiles {
+        file : String;
+        qty  : Integer;
     };
+
+    function getCasPropFiles(pkgId : String)                                            returns many CasPropFiles;
 
     @readonly
     @cds.persistence.skip: true
@@ -37,8 +37,8 @@ service CpiLocalService {
             state       : String;
     };
 
-    action exportPackage(pkgId : String, resourceId : UUID)                           returns UUID;
-    action downloadMtar(pkgId : String, activityId : UUID);
+    action   exportPackage(pkgId : String, resourceId : UUID)                           returns UUID;
+    action   downloadMtar(pkgId : String, activityId : UUID);
 
     @readonly
     entity IntegrationPackages                 as
@@ -72,7 +72,7 @@ service CpiLocalService {
         key Id : String;
     }
 
-    action flushTmpFile();
+    action   flushTmpFile();
 
     @readonly
     entity IntegrationDesigntimeArtifacts      as projection on external.IntegrationDesigntimeArtifacts;
@@ -109,9 +109,9 @@ service CpiLocalService {
             action deployKarafFromPackage(pckgId : String not null, tryLocal : Boolean)             returns String;
         };
 
-    action deployArtifactToCpi(bundleId : String, version : String, objType : String) returns String;
-    action getRuntimeDetails(artifactId : UUID not null)                              returns String;
-    action testIflowEndpoint(endpoint : String, text : LargeString)                   returns LargeString;
+    action   deployArtifactToCpi(bundleId : String, version : String, objType : String) returns String;
+    action   getRuntimeDetails(artifactId : UUID not null)                              returns String;
+    action   testIflowEndpoint(endpoint : String, text : LargeString)                   returns LargeString;
 
 }
 

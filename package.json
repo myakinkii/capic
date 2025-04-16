@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
+    "@sap/textbundle": "^5.4.0",
     "cds-launchpad-plugin": "^2.2.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",

@@ -4,14 +4,15 @@
             <Toolbar>
                 <ToolbarSpacer/>
                 <Button icon="sap-icon://save" press="applyMtarParams"/>
-                <Select binding="{/CasMtarDestination}" selectedKey="{system}" items="{/CasPropFiles}">
+                <Select binding="{/CasMtarDestination}"  selectedKey="{system}" items="{cas>/props}">
                     <core:Item key="{file}" text="{file} ({qty})" />
+                    <core:Item key="{cas>file}" text="{cas>file} ({cas>qty})" />
                 </Select>
                 <Button icon="sap-icon://refresh" press="refreshMtarParams"/>
                 <ToolbarSpacer/>
             </Toolbar>
         </customHeader>
-        <Panel headerText="[{cas>/version}] {cas>/name}">
+        <Panel headerText="[{cas>/version}] {cas>/id}">
             <f:Form editable="true" 
                     formContainers="{
                         path: 'cas>/components',

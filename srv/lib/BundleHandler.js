@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { execSync } = require('child_process')
 const { xml2js } = require('xml-js')
+const { PropertiesParser } = require('@sap/textbundle')
 
 const CPI_EXPORT_PATH = process.env.CPI_EXPORT_PATH
 const KARAF_PATH = process.env.KARAF_PATH
@@ -31,11 +32,11 @@ const getMtarProps = (propFiles, pkgId, bundleId) => {
     // { #, !, =, : } must be unescaped it seems (+ SPACE)
     try {
         const data = fs.readFileSync(`${CPI_EXPORT_PATH}/${pkgId}/${bundleId}/resources/${propFiles}.prop`, 'utf8')
-        return data.split("\n").filter(p => !!p && !p.startsWith("#")).reduce((prev, cur) => {
-            const [k, v] = cur.split("=")
-            prev[k] = v.replaceAll('\\:', ':') // figure out how unescape stuff properly
+        const props = new PropertiesParser(data)
+        return props.getKeys().reduce((prev, cur) => {
+            prev[cur] = props.getProperty(cur)
             return prev
-        }, {})
+        },{})
     } catch (e) {
         return {} // most likely not found if wasn't synced to git yet.
     }
@@ -47,16 +48,20 @@ const getMtarPropFiles = (pkgId) => {
     try {
         const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
         artifacts.filter(a => a.isDirectory()).forEach(dir => {
-            fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`)
-                .filter(f => !f.endsWith('.propdef'))
-                .forEach(f => {
-                    const [name] = f.split(".")
-                    if (!propFiles[name]) propFiles[name] = 0
-                    propFiles[name]++
-                })
+            try {
+                fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`)
+                    .filter(f => !f.endsWith('.propdef'))
+                    .forEach(f => {
+                        const [name] = f.split(".")
+                        if (!propFiles[name]) propFiles[name] = 0
+                        propFiles[name]++
+                    })
+            } catch (e){
+                // not an iflow
+            }
         })
     } catch (e) {
-        // not an iflow or no parent folder at all
+        // no parent folder at all
     }
     return Object.entries(propFiles).map(([file, qty]) => ({ file, qty }))
 }
