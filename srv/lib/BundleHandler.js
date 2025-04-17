@@ -23,8 +23,8 @@ const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
 }
 
 const saveMtar = (buffer, pckgId, system) => {
-    let fileName = `${system || 'export'}.mtar`
-    if (fileName == 'parameters.mtar') fileName = 'export.mtar' // dunno why
+    let fileName = 'export.mtar'
+    // if (system && system != 'defaults') fileName = `${system}.mtar` // does not make sense for now...
     fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${fileName}`, buffer)
     return fileName
 }
@@ -74,7 +74,8 @@ const getMtarPropFiles = (pkgId) => {
                 fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`)
                     .filter(f => !f.endsWith('.propdef'))
                     .forEach(f => {
-                        const [name] = f.split(".")
+                        let [name] = f.split(".")
+                        if (name == 'parameters') name = 'defaults'
                         if (!propFiles[name]) propFiles[name] = 0
                         propFiles[name]++
                     })

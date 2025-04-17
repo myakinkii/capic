@@ -136,7 +136,7 @@ module.exports = cds.service.impl(async function () {
     // CAS mtar export magic
     const mtarDst = {
         pkgId: null,
-        system: 'parameters'
+        system: 'defaults'
     }
 
     this.on('READ', 'Configurations', async (req, next) => {
