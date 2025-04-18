@@ -4,19 +4,19 @@ service CpiLocalService {
 
     @odata.singleton
     @cds.persistence.skip: true
-    entity CasMtarDestination {
+    entity CustomProps {
         key pkgId  : String;
-            system : String;
+            target : String;
     }
 
-    type CasPropFiles {
+    type CustomPropFiles {
         file : String;
         qty  : Integer;
     };
 
-    function getCasPropFiles(pkgId : String)                                            returns many CasPropFiles;
-    action   applyMtarParams()                                                          returns String;
-    action   generateMtar(pkgId : String, system : String, resourceId: UUID)                                                             returns String;
+    function getCustomPropFiles(pkgId : String)                                         returns many CustomPropFiles;
+    action   applyCustomParams()                                                        returns String;
+    action   generateMtar(pkgId : String, system : String, resourceId : UUID)           returns String;
 
     @readonly
     @cds.persistence.skip: true

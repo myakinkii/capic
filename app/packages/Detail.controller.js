@@ -52,7 +52,7 @@ sap.ui.define([
 
             this.transportPackagePromise = Fragment.load({ name: "packages.TransportPackage", controller: this }).then(function (dlg) {
                 this.getView().addDependent(dlg)
-                dlg.setModel(new JSONModel(), "cas")
+                dlg.setModel(new JSONModel(), "mtar")
                 dlg.getEndButton().attachPress(function () {
                     dlg.close()
                 })
@@ -363,7 +363,7 @@ sap.ui.define([
             })
         },
 
-        transportPackage: function (e) {
+        openPackageCustomPropsAndMtarExportDlg: function (e) {
             var ctx = e.getSource().getBindingContext("pkg")
             var dt = ctx.getObject()
             var serviceUrl = this.getView().getModel().getServiceUrl()
@@ -371,33 +371,29 @@ sap.ui.define([
             var resolvedDlg
             this.transportPackagePromise.then(function (dlg) {
                 resolvedDlg = dlg
-                BusyIndicator.show(50)
-                return promisedFetch(`${serviceUrl}/getCasPropFiles(pkgId='${dt.Id}')`)
+                return promisedFetch(`${serviceUrl}/getCustomPropFiles(pkgId='${dt.Id}')`)
             }).then(function (res) {
-                BusyIndicator.hide()
-                resolvedDlg.getModel("cas").setData({
+                resolvedDlg.getModel("mtar").setData({
                     version: dt.Version,
                     id: dt.Id,
                     resourceID: dt.ResourceId,
-                    system: null,
-                    props: res.value,
+                    customProps: res.value,
                     components: dt.DesigntimeArtifacts.map(function (a) {
                         return { id: a.Id, version: a.Version, type: a.Type }
                     })
                 })
                 resolvedDlg.open()
             }).catch(function (err) {
-                BusyIndicator.hide()
-                MessageToast.show('NO_CAS')
+                console.log(err) // most likely does not happen as getCustomPropFiles are local fs props
             })
         },
 
-        transportArtifactParamsFactory: function (sId, ctx) {
+        artifactCustomParamsFactory: function (sId, ctx) {
             var isIflow = ctx.getProperty("type") == 'INTEGRATION_FLOW'
             var container = new FormContainer({
                 expanded: true,
                 expandable: isIflow,
-                title: "[{cas>version}] {cas>id} - {cas>type}"
+                title: "[{mtar>version}] {mtar>id} - {mtar>type}"
             })
             if (isIflow) {
                 containerRefs.push(container)
@@ -418,9 +414,9 @@ sap.ui.define([
             return container
         },
 
-        applyMtarParams: function (e) {
+        applyCustomParams: function (e) {
             BusyIndicator.show(50)
-            this.editFlow.invokeAction('/applyMtarParams', {
+            this.editFlow.invokeAction('/applyCustomParams', {
                 model: e.getSource().getModel()
             }).then(function (res) {
                 BusyIndicator.hide()
@@ -432,25 +428,20 @@ sap.ui.define([
             })
         },
 
-        refreshMtarParams: function (e) {
+        refreshCustomParams: function (e) {
             containerRefs.forEach(function (fc) {
                 fc.getBinding("formElements").refresh()
             })
         },
 
-        changeMtarDst: function (e) {
-            e.getSource().getModel("cas").setProperty("/system", e.getSource().getSelectedKey())
-        },
-
         generateMtar: function (e) {
-            var pkg = e.getSource().getModel("cas").getData()
+            var pkg = e.getSource().getModel("mtar").getData()
             BusyIndicator.show(50)
             this.editFlow.invokeAction('/generateMtar', {
                 model: e.getSource().getModel(),
                 parameterValues: [
                     { name: "pkgId", value: pkg.id },
-                    { name: "resourceId", value: pkg.resourceID },
-                    { name: "system", value: pkg.system },
+                    { name: "resourceId", value: pkg.resourceID }
                 ],
                 skipParameterDialog: true
             }).then(function (res) {

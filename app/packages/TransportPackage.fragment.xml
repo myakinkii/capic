@@ -3,22 +3,21 @@
         <customHeader>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Button icon="sap-icon://save" press="applyMtarParams"/>
-                <Select binding="{/CasMtarDestination}" items="{cas>/props}"
-                     selectedKey="{system}" change="changeMtarDst">
+                <Button icon="sap-icon://save" press="applyCustomParams"/>
+                <Select binding="{/CustomProps}" selectedKey="{target}" items="{mtar>/customProps}">
                     <core:Item key="{file}" text="{file} ({qty})" />
-                    <core:Item key="{cas>file}" text="{cas>file} ({cas>qty})" />
+                    <core:Item key="{mtar>file}" text="{mtar>file} ({mtar>qty})" />
                 </Select>
-                <Button icon="sap-icon://refresh" press="refreshMtarParams"/>
+                <Button icon="sap-icon://refresh" press="refreshCustomParams"/>
                 <ToolbarSpacer/>
             </Toolbar>
         </customHeader>
-        <Panel headerText="[{cas>/version}] {cas>/id}">
+        <Panel headerText="[{mtar>/version}] {mtar>/id}">
             <f:Form editable="true" 
                     formContainers="{
-                        path: 'cas>/components',
+                        path: 'mtar>/components',
                         sorter: { path: 'type', group: true },
-                        factory: '.transportArtifactParamsFactory'
+                        factory: '.artifactCustomParamsFactory'
                     }">
                 <f:layout>
                     <!-- <f:ColumnLayout columnsM="1" columnsL="1" columnsXL="1" /> -->
@@ -27,11 +26,11 @@
                         emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
                         columnsXL="1" columnsL="1" columnsM="1" />
                 </f:layout>
-                <!-- <f:FormContainer expandable="{= ${cas>type} === 'IFlow' }" expanded="true" 
-                        title="[{cas>version}] {cas>name} - {cas>type}" 
-                        formElements="{cas>Parameters}">
-                    <f:FormElement label="{cas>Name}">
-                        <Text text="{cas>Value}"/>
+                <!-- <f:FormContainer expandable="{= ${mtar>type} === 'IFlow' }" expanded="true" 
+                        title="[{mtar>version}] {mtar>name} - {mtar>type}" 
+                        formElements="{mtar>Parameters}">
+                    <f:FormElement label="{mtar>Name}">
+                        <Text text="{mtar>Value}"/>
                     </f:FormElement>
                 </f:FormContainer> -->
             </f:Form>

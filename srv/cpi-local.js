@@ -1,7 +1,7 @@
 const {
     syncBundleToPackageRepo, getDeployedToKarafBundles, deployBundleToKaraf,
     getBundleInfos, findBundleInfo, getBundleXml, saveBundleXml, saveMtar,
-    getMtarPropFiles, getMtarProps, findPropsFor
+    getCustomPropFiles, findCustomPropsFor, getCustomPropsFrom
 } = require('./lib/BundleHandler')
 
 const CPI_TENANT_URL = process.env.CPI_TENANT_URL || ''
@@ -133,16 +133,19 @@ module.exports = cds.service.impl(async function () {
         return iflow.run({ endpoint, body, headers }).catch(e => e.message)
     })
 
-    // CAS mtar export magic
-    const mtarDst = {
+    // Magic to mass apply custom props
+    const customProps = {
         pkgId: null,
-        system: 'defaults'
+        target: 'defaults'
     }
+
+    this.on('READ', 'CustomProps', async (req, next) => customProps)
+    this.on('UPDATE', 'CustomProps', async (req, next) => Object.assign(customProps, req.data))
 
     this.on('READ', 'Configurations', async (req, next) => {
         const [{ Id }] = req.params
-        const { pkgId, system } = mtarDst
-        const props = getMtarProps(system, pkgId, Id)
+        const { pkgId, target } = customProps
+        const props = getCustomPropsFrom(target, pkgId, Id)
         return cpi.run(req.query).then(res => res.map(({ ParameterKey, ParameterValue }) => {
             return {
                 ParameterKey,
@@ -165,19 +168,16 @@ module.exports = cds.service.impl(async function () {
         return cas.getActivity(activityId)
     })
 
-    this.on('getCasPropFiles', async (req, next) => {
+    this.on('getCustomPropFiles', async (req, next) => {
         const { pkgId } = req.data
-        mtarDst.pkgId = pkgId
-        return getMtarPropFiles(pkgId)
+        customProps.pkgId = pkgId
+        return getCustomPropFiles(pkgId)
     })
 
-    this.on('READ', 'CasMtarDestination', async (req, next) => mtarDst)
-    this.on('UPDATE', 'CasMtarDestination', async (req, next) => Object.assign(mtarDst, req.data))
-
-    this.on('applyMtarParams', async (req) => {
-        const { pkgId, system } = mtarDst
-        if (!pkgId || !system) return
-        const props = findPropsFor(pkgId, system) // but some iflows could be NOT deployed
+    this.on('applyCustomParams', async (req) => {
+        const { pkgId, target } = customProps
+        if (!pkgId || !target) return
+        const props = findCustomPropsFor(pkgId, target) // but some iflows could be NOT deployed
         return Promise.all(Object.entries(props).map(async ([iflow, props]) => {
             const artifactUrl = `/IntegrationDesigntimeArtifacts(Id='${iflow}',Version='Active')`
             const actualParams = await cpi.run(`${artifactUrl}/Configurations`).catch(() => { })
@@ -196,7 +196,7 @@ module.exports = cds.service.impl(async function () {
     })
 
     this.on('generateMtar', async (req) => {
-        const { pkgId, system, resourceId } = req.data
+        const { pkgId, resourceId } = req.data
 
         const activityId = await cas.exportPackage(pkgId, resourceId)
 
@@ -216,7 +216,7 @@ module.exports = cds.service.impl(async function () {
 
         const buffer = await cas.downloadMtar(activityId)
 
-        return saveMtar(buffer, pkgId, system)
+        return saveMtar(buffer, pkgId)
     })
 
     this.on('exportPackage', async (req) => {

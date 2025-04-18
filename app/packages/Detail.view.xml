@@ -26,7 +26,7 @@
                         <MenuItem icon="sap-icon://history" press="gotoLogs" />
                     </Menu>
                 </MenuButton>
-                <Button text="Transport" press="transportPackage" />
+                <Button text="Transport" press="openPackageCustomPropsAndMtarExportDlg" />
             </Toolbar>
         </headerToolbar>
         <columns>

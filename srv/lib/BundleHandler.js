@@ -22,14 +22,17 @@ const saveBundleXml = ({ Id: bundleId, PackageId: pckgId, Content: data }) => {
     fs.writeFileSync(`${KARAF_PATH}/deploy/${bundleId}.xml`, data)
 }
 
-const saveMtar = (buffer, pckgId, system) => {
-    let fileName = 'export.mtar'
-    // if (system && system != 'defaults') fileName = `${system}.mtar` // does not make sense for now...
-    fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${fileName}`, buffer)
-    return fileName
+const saveMtar = (buffer, pckgId) => {
+    const fileName = 'export.mtar'
+    try {
+        fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${fileName}`, buffer)
+        return fileName
+    } catch (e) {
+        // dunno why
+    }
 }
 
-const getPropsFrom = (data) => {
+const getParsedPropsFrom = (data) => {
     // { #, !, =, : } must be unescaped it seems (+ SPACE)
     const props = new PropertiesParser(data)
     return props.getKeys().reduce((prev, cur) => {
@@ -38,24 +41,27 @@ const getPropsFrom = (data) => {
     }, {})
 }
 
-const getMtarProps = (propFiles, pkgId, bundleId) => {
+const mapPropFileName = (target) => (target == 'defaults' ? 'parameters' : target) + '.prop'
+const mapTargetName = (name) => name == 'parameters' ? 'defaults' : name
+
+const getCustomPropsFrom = (target, pkgId, bundleId) => {
     try {
-        const data = fs.readFileSync(`${CPI_EXPORT_PATH}/${pkgId}/${bundleId}/resources/${propFiles}.prop`, 'utf8')
-        return getPropsFrom(data)
+        const data = fs.readFileSync(`${CPI_EXPORT_PATH}/${pkgId}/${bundleId}/resources/${mapPropFileName(target)}`, 'utf8')
+        return getParsedPropsFrom(data)
     } catch (e) {
         return {} // most likely not found if wasn't synced to git yet.
     }
 }
 
-const findPropsFor = (pkgId, system) => {
+const findCustomPropsFor = (pkgId, target) => {
     const propsData = {}
     const artifacts = fs.readdirSync(`${CPI_EXPORT_PATH}/${pkgId}`, { withFileTypes: true })
     artifacts.filter(a => a.isDirectory()).forEach(dir => {
         try {
             fs.readdirSync(`${dir.parentPath}/${dir.name}/resources`, { withFileTypes: true })
-                .filter(f => f.name == `${system}.prop`)
+                .filter(f => f.name == mapPropFileName(target))
                 .forEach(f => {
-                    propsData[dir.name] = getPropsFrom(fs.readFileSync(`${f.parentPath}/${f.name}`, 'utf8'))
+                    propsData[dir.name] = getParsedPropsFrom(fs.readFileSync(`${f.parentPath}/${f.name}`, 'utf8'))
                 })
         } catch (e) {
             // not an iflow
@@ -64,7 +70,7 @@ const findPropsFor = (pkgId, system) => {
     return propsData
 }
 
-const getMtarPropFiles = (pkgId) => {
+const getCustomPropFiles = (pkgId) => {
     if (!pkgId) return []
     const propFiles = {}
     try {
@@ -75,9 +81,9 @@ const getMtarPropFiles = (pkgId) => {
                     .filter(f => !f.endsWith('.propdef'))
                     .forEach(f => {
                         let [name] = f.split(".")
-                        if (name == 'parameters') name = 'defaults'
-                        if (!propFiles[name]) propFiles[name] = 0
-                        propFiles[name]++
+                        const target = mapTargetName(name)
+                        if (!propFiles[target]) propFiles[target] = 0
+                        propFiles[target]++
                     })
             } catch (e) {
                 // not an iflow
@@ -217,9 +223,9 @@ const rezipBundle = (data, srcDir) => {
 
 module.exports = {
     rezipBundle,
-    getMtarProps,
-    findPropsFor,
-    getMtarPropFiles,
+    getCustomPropFiles,
+    findCustomPropsFor,
+    getCustomPropsFrom,
     saveMtar,
     saveBundleXml,
     getBundleInfos,
