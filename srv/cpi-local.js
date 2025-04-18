@@ -213,11 +213,14 @@ module.exports = cds.service.impl(async function () {
             })
         }
 
-        await waitForMtar()
-
-        const buffer = await cas.downloadMtar(activityId)
-
-        return saveMtar(buffer, pkgId)
+        try {
+            await waitForMtar()
+            const buffer = await cas.downloadMtar(activityId)
+            return saveMtar(buffer, pkgId)
+        } catch (e) {
+            console.log(e)
+            return 'ERROR_CHECK_FOR_DRAFTS_IN_PKG'
+        }
     })
 
     this.on('exportPackage', async (req) => {

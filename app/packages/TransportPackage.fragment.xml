@@ -16,7 +16,7 @@
             <f:Form editable="true" 
                     formContainers="{
                         path: 'mtar>/components',
-                        sorter: { path: 'type', group: true },
+                        sorter: [{ path: 'type', group: true }, {path: 'version', descending: true } ],
                         factory: '.artifactCustomParamsFactory'
                     }">
                 <f:layout>
