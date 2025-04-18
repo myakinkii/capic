@@ -293,7 +293,16 @@ sap.ui.define([
 
         showRuntimeDetails: function (e) {
             var ctx = e.getSource().getBindingContext("pkg")
-            var rt = ctx.getProperty("Runtime") || ctx.getObject()
+            var rt = ctx.getProperty("Runtime")
+            var dtVersion, rtVersion
+            if (rt) { // we are Designtime table
+                dtVersion = ctx.getProperty("Version")
+                rtVersion = rt.Version
+            } else { // we are Runtime table
+                rt = ctx.getObject()
+                dtVersion = "???"
+                rtVersion = rt.Version
+            }
 
             if (!rt.ArtifactId) {
                 MessageToast.show('NOT_DEPLOYED')
@@ -311,7 +320,12 @@ sap.ui.define([
                 })
             }.bind(this)).then(function (res) {
                 BusyIndicator.hide()
-                resolvedDlg.getModel("cpi").setData(res.value)
+                resolvedDlg.getModel("cpi").setData(Object.assign(res.value, {
+                    version: {
+                        dt: dtVersion,
+                        rt: rtVersion
+                    }
+                }))
                 resolvedDlg.open()
             }).catch(function (err) {
                 BusyIndicator.hide()

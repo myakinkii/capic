@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
-    <Dialog contentWidth="50rem" showHeader="false">
+    <Dialog contentWidth="50rem" title="Runtime: {cpi>/version/rt}, Designtime: {cpi>/version/dt}" titleAlignment="Center">
         <Panel headerText="endpointInformation" >
             <List binding="{cpi>/endpointInformation/0}" items="{cpi>endpointInstances}">
                 <!-- <StandardListItem type="Detail" detailPress="testEndpoint" 
