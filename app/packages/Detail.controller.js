@@ -393,7 +393,7 @@ sap.ui.define([
             var container = new FormContainer({
                 expanded: true,
                 expandable: isIflow,
-                title: "[{mtar>version}] {mtar>id} - {mtar>type}"
+                title: "[{mtar>version}] {mtar>type} - {mtar>id}"
             })
             if (isIflow) {
                 containerRefs.push(container)
@@ -404,8 +404,8 @@ sap.ui.define([
                         fields: [
                             new Text({ text: "{ParameterValue}" }),
                             (new ObjectStatus({
-                                text: "{ParameterValueMtar}",
-                                state: "{= ${ParameterValue} === ${ParameterValueMtar} ? 'Success' : 'Error' }"
+                                text: "{ParameterValueTarget}",
+                                state: "{= ${ParameterValue} === ${ParameterValueTarget} ? 'Success' : 'Error' }"
                             })).addStyleClass("sapMObjectStatusLongText")
                         ]
                     })

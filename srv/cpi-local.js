@@ -150,7 +150,8 @@ module.exports = cds.service.impl(async function () {
             return {
                 ParameterKey,
                 ParameterValue,
-                ParameterValueMtar: props[ParameterKey] || ''
+                ParameterValueTarget: props[ParameterKey] || '',
+                Target: target
             }
         }))
     })

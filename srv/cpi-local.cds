@@ -83,7 +83,8 @@ service CpiLocalService {
     entity Configurations                      as
         projection on external.Configurations {
             *,
-            '' as ParameterValueMtar : String
+            '' as ParameterValueTarget : String,
+            '' as Target               : String
         };
 
     @readonly
