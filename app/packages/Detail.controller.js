@@ -61,6 +61,7 @@ sap.ui.define([
         },
 
         onRouteMatched: function (e) {
+            containerRefs = []
             var pars = e.getParameter("arguments")
             var serviceUrl = this.getView().getModel().getServiceUrl()
             var packageUrl = `/IntegrationPackages(${pars.key})`
@@ -374,7 +375,6 @@ sap.ui.define([
                 return promisedFetch(`${serviceUrl}/getCasPropFiles(pkgId='${dt.Id}')`)
             }).then(function (res) {
                 BusyIndicator.hide()
-                containerRefs = []
                 resolvedDlg.getModel("cas").setData({
                     version: dt.Version,
                     id: dt.Id,
