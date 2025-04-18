@@ -28,7 +28,8 @@ const saveMtar = (buffer, pckgId) => {
         fs.writeFileSync(`${CPI_EXPORT_PATH}/${pckgId}/${fileName}`, buffer)
         return fileName
     } catch (e) {
-        // dunno why
+        // if folder does not exist for stuff we haven't synced
+        return 'PKG_NOT_SYNCED'
     }
 }
 
