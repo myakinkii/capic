@@ -16,7 +16,7 @@ service CpiLocalService {
 
     function getCustomPropFiles(pkgId : String)                                         returns many CustomPropFiles;
     action   applyCustomParams()                                                        returns String;
-    action   generateMtar(pkgId : String, system : String, resourceId : UUID)           returns String;
+    action   generateMtar(pkgId : String, resourceId : UUID)                            returns String;
 
     @readonly
     @cds.persistence.skip: true
