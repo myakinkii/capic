@@ -3,6 +3,12 @@
 
 module.exports = class OperationsService extends require('./BaseService') {
 
+    async getActivitiesHistory(){
+        const reqOptions = { method: 'GET' }
+        await this.prepareAxiosRequest(reqOptions, '/v1/activities')
+        return this.runAxiosRequest(reqOptions).then(r => r.data)
+    }
+
     async getResources() {
         const reqOptions = { method: 'GET' }
         await this.prepareAxiosRequest(reqOptions, '/v1/contentResources')

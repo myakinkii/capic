@@ -199,6 +199,12 @@ module.exports = cds.service.impl(async function () {
     this.on('generateMtar', async (req) => {
         const { pkgId, resourceId } = req.data
 
+        try {
+            await cas.getActivitiesHistory() // just to check if serice is properly configured in cdsrc
+        } catch(e){
+            return 'ERROR_CAS_SERVICE_ACCESS'
+        }
+
         const activityId = await cas.exportPackage(pkgId, resourceId)
 
         const waitForMtar = async () => {
