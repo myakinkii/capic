@@ -81,9 +81,9 @@
         </camel:globalOptions>
         <camel:streamCaching id="Basics_Exception_Subprocess_cacheConfig" spoolCipher="AES/CTR/NoPadding" spoolDirectory="${karaf.base}/camel/camel-tmp-#camelId#-#uuid#" spoolThreshold="5242880" spoolUsedHeapMemoryThreshold="50"/>
         <camel:route id="Process_1">
-            <camel:from id="MessageFlow_474_445401680947675" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/custom/HandleErrors/ExceptionSubprocess&amp;xsrfProtection=true&amp;userRole=ESBMessaging.send&amp;senderAuthType=RoleBased"/>
+            <camel:from id="MessageFlow_474_553209957000728" uri="sap-http:foo?maximumBodySize=40&amp;urlPath=/custom/HandleErrors/ExceptionSubprocess&amp;xsrfProtection=true&amp;userRole=ESBMessaging.send&amp;senderAuthType=RoleBased"/>
             <camel:to uri="sap-pp-util://sender"/>
-            <camel:onException id="MessageFlow_474_445401685231201">
+            <camel:onException id="MessageFlow_474_553209960204743">
                 <camel:exception>com.sap.esb.size.limiter.SizeLimitExceededException</camel:exception>
                 <camel:handled>
                     <camel:constant>false</camel:constant>
@@ -102,7 +102,7 @@
                     <camel:constant>true</camel:constant>
                 </camel:handled>
                 <camel:to uri="sap-util://restoreHeaders?allHeaders=true"/>
-                <camel:setHeader id="CallActivity_17_445401686746389" name="CamelHttpResponseCode">
+                <camel:setHeader id="CallActivity_17_553209960980820" name="CamelHttpResponseCode">
                     <camel:constant>202</camel:constant>
                 </camel:setHeader>
                 <camel:setProperty name="SAP_MessageProcessingLogCustomStatus">
@@ -112,19 +112,19 @@
                     <camel:simple>An error occured when fetching Product ${header.productIdentifier}
 The following error occured: ${exception.message}</camel:simple>
                 </camel:setBody>
-                <camel:setProperty id="EndEvent_494_445401690607703" name="SAP_MarkMessageAsFailed">
+                <camel:setProperty id="EndEvent_494_553209963425617" name="SAP_MarkMessageAsFailed">
                     <camel:constant>false</camel:constant>
                 </camel:setProperty>
             </camel:onException>
             <camel:removeHeaders excludePattern="(?i)CamelRedeliveryMaxCounter|productId|error|CamelHttpMethod|CamelServletContextPath|CamelAuthentication|CamelHttpQuery|CamelHttpUrl|CamelHttpPath" pattern="*"/>
-            <camel:to id="CallActivity_486_445401692688143" uri="dataformat:sap-xmljson:unmarshal?ignoreNamespaces=false&amp;jsonNamespaceSeparator=:&amp;prefixToXmlNs=#prefixToXmlNs_CallActivity_486&amp;rootName=root"/>
-            <camel:setHeader id="CallActivity_482_445401695842664" name="context">
+            <camel:to id="CallActivity_486_553209964710917" uri="dataformat:sap-xmljson:unmarshal?ignoreNamespaces=false&amp;jsonNamespaceSeparator=:&amp;prefixToXmlNs=#prefixToXmlNs_CallActivity_486&amp;rootName=root"/>
+            <camel:setHeader id="CallActivity_482_553209966852656" name="context">
                 <camel:simple>${camelId}</camel:simple>
             </camel:setHeader>
             <camel:setProperty name="productIdentifier">
                 <camel:xpath documentType="javax.xml.transform.sax.SAXSource" factoryRef="saxonEEXpathFactory" preCompile="false" resultType="java.lang.String">//productIdentifier</camel:xpath>
             </camel:setProperty>
-            <camel:to id="MessageFlow_485_445401701357639" uri="sap-util://storeHeaders?headers=CamelHttpUri,CamelHttpQuery,CamelHttpMethod"/>
+            <camel:to id="MessageFlow_485_553209970933921" uri="sap-util://storeHeaders?headers=CamelHttpUri,CamelHttpQuery,CamelHttpMethod"/>
             <camel:setHeader name="CamelHttpMethod">
                 <camel:constant>GET</camel:constant>
             </camel:setHeader>
@@ -146,6 +146,9 @@ The following error occured: ${exception.message}</camel:simple>
             <camel:setHeader name="CamelHttpUri">
                 <camel:simple>https://refapp-espm-ui-cf.cfapps.eu10.hana.ondemand.com/espm-cloud-web/espm.svc/Products('${exchangeProperty.productIdentifier}')</camel:simple>
             </camel:setHeader>
+            <camel:setHeader name="CamelHttpQuery">
+                <camel:simple>$format=json</camel:simple>
+            </camel:setHeader>
             <camel:to uri="ahc:https://AddressIsSetVia.Header?clientConfig=#clientConfig_WebShop_HTTP&amp;binding=#binding_WebShop_HTTP&amp;clientConfig.requestTimeout=60000&amp;clientConfig.pooledConnectionIdleTimeout=300000&amp;clientConfig.readTimeout=60000&amp;clientConfig.connectTimeout=10000"/>
             <camel:removeHeader name="SAPCamelAllowedHTTPRequestHeaders"/>
             <camel:removeHeader name="SAPCamelAllowedHTTPResponseHeaders"/>
@@ -155,10 +158,10 @@ The following error occured: ${exception.message}</camel:simple>
             <camel:removeHeader name="CamelHttpQuery"/>
             <camel:removeHeader name="CamelHttpMethod"/>
             <camel:to uri="sap-util://restoreHeaders?headers=CamelHttpUri,CamelHttpQuery,CamelHttpMethod"/>
-            <camel:setProperty id="EndEvent_2_445401703013359" name="SAP_MarkMessageAsFailed">
+            <camel:setProperty id="EndEvent_2_553209972125559" name="SAP_MarkMessageAsFailed">
                 <camel:constant>false</camel:constant>
             </camel:setProperty>
-            <camel:to id="MessageFlow_489_445401703409140" uri="sap-processdirect:foo?address=/custom/GenericReceiverDataStore"/>
+            <camel:to id="MessageFlow_489_553209972426456" uri="sap-processdirect:foo?address=/custom/GenericReceiverDataStore"/>
         </camel:route>
     </camel:camelContext>
     

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Basics_Exception_Subprocess
-Bundle-SymbolicName: Basics_Exception_Subprocess
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: Basics_Exception_Subprocess; singleton:=true
+Bundle-Version: 1.1.0
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
@@ -54,7 +54,7 @@ Import-Package:  org.apache.camel.processor.errorhandler, com.sap.esb.ca
 Origin-Bundle-Name: Basics_Exception_Subprocess
 Origin-Bundle-SymbolicName: Basics_Exception_Subprocess
 WorkspaceProfile: iflmap
-SAP-ArtifactId: 6687c2b9-3f75-438b-bc23-2fb08a9c546f
+SAP-ArtifactId: 25d8558b-95ec-4804-b445-46e32e6795f3
 Import-Service:  com.sap.esb.camel.security.cms.SignatureSplitter;multip
  le:=false, org.apache.cxf.ws.rm.persistence.RMStore;multiple:=false, ja
  vax.sql.DataSource;multiple:=false;filter="(dataSourceName=default)", j

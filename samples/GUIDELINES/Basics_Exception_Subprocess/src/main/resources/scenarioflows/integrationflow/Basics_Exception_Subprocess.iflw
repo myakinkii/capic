@@ -209,7 +209,7 @@
                 </ifl:property>
                 <ifl:property>
                     <key>httpAddressQuery</key>
-                    <value/>
+                    <value>$format={{format}}</value>
                 </ifl:property>
                 <ifl:property>
                     <key>httpRequestTimeout</key>
@@ -612,6 +612,9 @@ The following error occured: ${exception.message}</value>
     </bpmn2:process>
     <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="Default Collaboration Diagram">
         <bpmndi:BPMNPlane bpmnElement="Collaboration_1" id="BPMNPlane_1">
+            <bpmndi:BPMNShape bpmnElement="EndEvent_494" id="BPMNShape_EndEvent_494">
+                <dc:Bounds height="32.0" width="32.0" x="735.0" y="302.0"/>
+            </bpmndi:BPMNShape>
             <bpmndi:BPMNShape bpmnElement="SubProcess_13" id="BPMNShape_SubProcess_13">
                 <dc:Bounds height="140.0" width="450.0" x="379.0" y="256.0"/>
             </bpmndi:BPMNShape>
@@ -648,12 +651,13 @@ The following error occured: ${exception.message}</value>
             <bpmndi:BPMNShape bpmnElement="CallActivity_482" id="BPMNShape_CallActivity_482">
                 <dc:Bounds height="60.0" width="100.0" x="518.0" y="136.0"/>
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape bpmnElement="EndEvent_494" id="BPMNShape_EndEvent_494">
-                <dc:Bounds height="32.0" width="32.0" x="735.0" y="302.0"/>
-            </bpmndi:BPMNShape>
             <bpmndi:BPMNEdge bpmnElement="SequenceFlow_16" id="BPMNEdge_SequenceFlow_16" sourceElement="BPMNShape_StartEvent_14" targetElement="BPMNShape_CallActivity_17">
                 <di:waypoint x="428.0" xsi:type="dc:Point" y="318.0"/>
                 <di:waypoint x="600.0" xsi:type="dc:Point" y="318.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="SequenceFlow_495" id="BPMNEdge_SequenceFlow_495" sourceElement="BPMNShape_CallActivity_17" targetElement="BPMNShape_EndEvent_494">
+                <di:waypoint x="600.0" xsi:type="dc:Point" y="318.0"/>
+                <di:waypoint x="735.5" xsi:type="dc:Point" y="318.0"/>
             </bpmndi:BPMNEdge>
             <bpmndi:BPMNEdge bpmnElement="SequenceFlow_6" id="BPMNEdge_SequenceFlow_6" sourceElement="BPMNShape_ServiceTask_5" targetElement="BPMNShape_EndEvent_2">
                 <di:waypoint x="778.0" xsi:type="dc:Point" y="166.0"/>
@@ -682,10 +686,6 @@ The following error occured: ${exception.message}</value>
             <bpmndi:BPMNEdge bpmnElement="MessageFlow_489" id="BPMNEdge_MessageFlow_489" sourceElement="BPMNShape_EndEvent_2" targetElement="BPMNShape_Participant_488">
                 <di:waypoint x="854.0" xsi:type="dc:Point" y="166.0"/>
                 <di:waypoint x="1096.0" xsi:type="dc:Point" y="166.0"/>
-            </bpmndi:BPMNEdge>
-            <bpmndi:BPMNEdge bpmnElement="SequenceFlow_495" id="BPMNEdge_SequenceFlow_495" sourceElement="BPMNShape_CallActivity_17" targetElement="BPMNShape_EndEvent_494">
-                <di:waypoint x="600.0" xsi:type="dc:Point" y="318.0"/>
-                <di:waypoint x="735.5" xsi:type="dc:Point" y="318.0"/>
             </bpmndi:BPMNEdge>
         </bpmndi:BPMNPlane>
     </bpmndi:BPMNDiagram>
