@@ -3,10 +3,14 @@
 
 module.exports = class OperationsService extends require('./BaseService') {
 
-    async getActivitiesHistory(){
+    async getActivitiesHistory() {
         const reqOptions = { method: 'GET' }
         await this.prepareAxiosRequest(reqOptions, '/v1/activities')
-        return this.runAxiosRequest(reqOptions).then(r => r.data)
+        return this.runAxiosRequest(reqOptions).then(r => r.data).catch(e => {
+            // omg.. empty activities history return 400... smh..
+            if (e.response.status == 400) return { count: 0, activities: [] } // this is what we actually expected
+            else throw new Error() // but actually if no cas creds provided we throw earlier
+        })
     }
 
     async getResources() {
