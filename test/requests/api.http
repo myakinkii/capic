@@ -65,7 +65,6 @@ X-CSRF-Token: {{csrf_token}}
 
 
 ### get package artifacts
-@oauth_token = {{getOauthToken.response.body.access_token}}
 GET {{cloudUrl}}/api/v1/IntegrationPackages('{{PKG}}')/IntegrationDesigntimeArtifacts?$format=json
 Authorization: Bearer {{oauth_token}}
 
