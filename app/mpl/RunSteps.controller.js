@@ -15,7 +15,9 @@ sap.ui.define([
 
         onInit: function () {
             this.getOwnerComponent().getRouter().getRoute("RunStepsRoute").attachPatternMatched(this.onRouteMatched, this)
-            this.getView().setModel(new JSONModel(), "mpl")
+            var mplModel = new JSONModel()
+            mplModel.setSizeLimit(1000)
+            this.getView().setModel(mplModel, "mpl")
             this.getView().setModel(new JSONModel({}), "ui")
         },
 
