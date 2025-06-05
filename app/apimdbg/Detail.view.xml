@@ -1,0 +1,24 @@
+<mvc:View
+    height="100%"
+    controllerName="apimdbg.Detail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+    <Page>
+        <customHeader>
+            <Toolbar>
+            <Title text="Points"/>
+            <ToolbarSpacer/>
+                <OverflowToolbarButton
+                    type="Transparent"
+                    icon="sap-icon://decline"
+                    press=".handleClose"
+                    tooltip="Close column"
+                    visible="{= ${fcl>/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+            </Toolbar>
+        </customHeader>
+        <List items="{point}">
+            <StandardListItem type="Active" press="navtoPointDetails" title="{results/0/timestamp} {id}"/>
+        </List>
+    </Page>
+</mvc:View>

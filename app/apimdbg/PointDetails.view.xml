@@ -1,0 +1,31 @@
+<mvc:View
+    height="100%"
+    controllerName="apimdbg.PointDetails"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+<Page>
+    <customHeader>
+        <Toolbar>
+        <Title text="Details"/>
+        <ToolbarSpacer/>
+            <OverflowToolbarButton
+                type="Transparent"
+                icon="sap-icon://decline"
+                press=".handleClose"
+                tooltip="Close column"
+                visible="{= ${fcl>/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
+        </Toolbar>
+    </customHeader>
+    <f:Form editable="false" _formContainers="{results}" 
+        formContainers="{ path: 'results', factory:'.createFormContainer'}" >
+        <f:layout>
+            <f:ResponsiveGridLayout adjustLabelSpan="false"
+            labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12"
+            emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+            columnsXL="1" columnsL="1" columnsM="1" />
+        </f:layout>
+    </f:Form>
+</Page>
+</mvc:View>

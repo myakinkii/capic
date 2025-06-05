@@ -1,0 +1,128 @@
+{
+    "_version": "1.8.0",
+    "sap.app": {
+        "id": "apimdbg",
+        "type": "application",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "dataSources": {}
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "fullWidth": true,
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "contentDensities": {
+        "compact": true,
+        "cozy": true
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.96.0",
+            "libs": {
+                "sap.ui.core": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "apimdbg.i18n.i18n",
+                    "_bundleUrl": "i18n/i18n.properties"
+                }
+            },
+            "": {
+                "type":"sap.ui.model.json.JSONModel"
+            }
+        },
+        "rootView": {
+            "viewName": "apimdbg.App",
+            "type": "XML",
+            "async": true,
+            "id": "appRootView"
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.f.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"controlId": "flexibleColumnLayout",
+                "flexibleColumnLayout": {
+                    "defaultTwoColumnLayoutType": "TwoColumnsMidExpanded",
+                    "defaultThreeColumnLayoutType": "ThreeColumnsEndExpanded"
+                }
+            },
+            "routes": [
+                {
+                    "name": "MainRoute",
+                    "target": [
+                        "MainTarget"
+                    ],
+                    "pattern": ":?query:"
+                },
+                {
+                    "name": "DetailRoute",
+                    "target": [
+                        "MainTarget",
+                        "DetailTarget"
+                    ],
+                    "pattern": "transaction/{key}:?query:"
+                },
+                {
+                    "name": "PointDetailsRoute",
+                    "target": [
+                        "MainTarget",
+                        "DetailTarget",
+                        "PointDetailsTarget"
+                    ],
+                    "pattern": "transaction/{key}/point/{key2}:?query:"
+                }
+            ],
+            "targets": {
+                "MainTarget": {
+                    "id": "MainTarget",
+                    "name": "apimdbg.Main",
+                    "controlAggregation": "beginColumnPages",
+                    "contextPattern": "",
+                    "options": {
+                        "settings": {
+                            "viewName": "apimdbg.Main"
+                        }
+                    }
+                },
+                "DetailTarget": {
+                    "id": "DetailTarget",
+                    "name": "apimdbg.Detail",
+                    "controlAggregation": "midColumnPages",
+                    "options": {
+                        "settings": {
+                            "viewName": "apimdbg.TransactionDetails"
+                        }
+                    }
+                },
+                "PointDetailsTarget": {
+                    "id": "PointDetailsTarget",
+                    "name": "apimdbg.PointDetails",
+                    "controlAggregation": "endColumnPages",
+                    "options": {
+                        "settings": {
+                            "viewName": "apimdbg.PointDetails"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

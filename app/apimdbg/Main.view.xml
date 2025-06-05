@@ -1,0 +1,19 @@
+<mvc:View
+    height="100%"
+    controllerName="apimdbg.Main"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+    <Page>
+        <customHeader>
+            <Toolbar>
+            <Title text="Transactions"/>
+            <ToolbarSpacer/>
+                <OverflowToolbarButton type="Transparent" icon="sap-icon://paste" press=".pasteDebugSession"/>
+            </Toolbar>
+        </customHeader>
+        <List items="{/}">
+            <StandardListItem type="Active" press="navtoDetail" title="{point/2/results/0/timestamp}"/>
+        </List>
+    </Page>
+</mvc:View>
