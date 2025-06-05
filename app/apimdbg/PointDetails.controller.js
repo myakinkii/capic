@@ -51,6 +51,7 @@ sap.ui.define([
             if (actionResult == "ResponseMessage" && obj.headers.findIndex( h => h.name == "BODY") == -1 ){ // for now
                 obj.headers.unshift({
                     name: "RES",
+                    status: obj.statusCode,
                     value: obj.statusCode + " " + obj.reasonPhrase
                 },{
                     name: "BODY",
@@ -62,15 +63,23 @@ sap.ui.define([
                 path: pathMap[actionResult],
                 factory: function(sId, ctx) {
                     var obj = ctx.getObject()
+                    var label = obj.name, fields = []
                     if (actionResult != "VariableAccess") {
-                        return new FormElement({ label: obj.name, fields: [new Text({ text: obj.value })] })
+                        if (obj.name == 'REQ' || obj.name == 'RES') {
+                            var state = 'Information'
+                            if (obj.name == 'RES') state = obj.status.startsWith('2') ? 'Success' : 'Error'
+                            var objstat = new ObjectStatus({ text: obj.value, state: state, active: false })
+                            objstat.addStyleClass("sapMObjectStatusLongText");
+                            fields.push(objstat)
+                        } else {
+                            fields.push(new Text({ text: obj.value }))
+                        }
                     } else {
                         var par = obj.Get || obj.Set
-                        return new FormElement({ 
-                            label: (obj.Get ? 'Get ' : 'Set ') + par.name, 
-                            fields: [new Text({ text: par.value })]
-                        })
+                        label = (obj.Get ? 'Get ' : 'Set ') + par.name
+                        fields.push(new Text({ text: par.value }))
                     }
+                    return new FormElement({ label, fields })
                 }
             })
             return fc
