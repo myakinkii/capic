@@ -17,7 +17,7 @@
                     visible="{= ${fcl>/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
             </Toolbar>
         </customHeader>
-        <List items="{point}">
+        <List items="{path: 'point', sorter: [{ path: 'STAGE', group: true }] }">
             <StandardListItem type="Active" press="navtoPointDetails" title="{results/0/timestamp} {id}"/>
         </List>
     </Page>

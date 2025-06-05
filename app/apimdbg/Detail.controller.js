@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
         navtoPointDetails: function (e) {
             var index = this.getView().getBindingContext().getPath().split("/")[1]
             var src = e.getSource()
-            var pointIndex = src.getParent().indexOfItem(src)
+            var pointIndex = src.getBindingContext().getPath().split("/")[3]
             var nextLayout = 'ThreeColumnsEndExpanded'
             this.getOwnerComponent().getRouter().navTo("PointDetailsRoute", { 
                 key: index,
