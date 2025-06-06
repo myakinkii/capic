@@ -1,4 +1,6 @@
-sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (PageController, MessageToast) {
+sap.ui.define([
+    "sap/ui/core/mvc/Controller", "sap/m/MessageToast", "sap/ui/base/ManagedObject"
+], function (PageController, MessageToast, ManagedObject) {
     "use strict";
 
     return PageController.extend("apimdbg.Main", {
@@ -22,8 +24,30 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
                 RequestMessage: "REQ", ResponseMessage: "RES", DebugInfo: "DBG", VariableAccess: "VAR"
             }
             data.forEach(function(tx){
+                var REQ = '', RES = ''
                 var to = "REQ_START", index = 0
                 tx.point.forEach(function(p){
+
+                    var req = p.results.find(r => r.ActionResult == "RequestMessage")
+                    if (req) {
+                        REQ = req.verb + " " + req.uRI
+                        req.headers.unshift({
+                            name: "REQ", value: REQ
+                        },{
+                            name: "BODY", value: ManagedObject.escapeSettingsValue(req.content)
+                        })
+                    }
+
+                    var res = p.results.find(r => r.ActionResult == "ResponseMessage")
+                    if (res) {
+                        RES = res.statusCode + " " + res.reasonPhrase
+                        res.headers.unshift({
+                            name: "RES", value: RES, status: res.statusCode,
+                        },{
+                            name: "BODY", value: ManagedObject.escapeSettingsValue(res.content)
+                        })
+                    }
+
                     var stateChange =  p.id == "StateChange" && p.results.find(r => r.ActionResult == "DebugInfo")
                     if (stateChange) {
                         to = stateChange.properties.property[0].value
@@ -42,6 +66,8 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
                     
                     p.ACTS = p.results.map(r => shortActs[r.ActionResult]).join("|")
                 })
+                tx.REQ = REQ
+                tx.RES = RES
             })
             return data
         },

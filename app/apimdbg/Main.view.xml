@@ -13,7 +13,10 @@
             </Toolbar>
         </customHeader>
         <List items="{/}">
-            <StandardListItem type="Active" press="navtoDetail" title="{point/2/results/0/timestamp}"/>
+            <ObjectListItem type="Active" press="navtoDetail" title="{point/2/results/0/timestamp}">
+                <ObjectAttribute text="{REQ}" />
+                <ObjectAttribute text="{RES}" />
+            </ObjectListItem>
         </List>
     </Page>
 </mvc:View>

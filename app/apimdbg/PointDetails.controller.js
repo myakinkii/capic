@@ -1,9 +1,8 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/layout/form/FormContainer", "sap/ui/layout/form/FormElement",
-    "sap/m/Text", "sap/m/Link", "sap/m/ObjectStatus", 
-    "sap/ui/base/ManagedObject"
-], function (PageController, FormContainer, FormElement, Text, Link, ObjectStatus, ManagedObject) {
+    "sap/m/Text", "sap/m/Link", "sap/m/ObjectStatus"
+], function (PageController, FormContainer, FormElement, Text, Link, ObjectStatus) {
     "use strict";
 
     return PageController.extend("apimdbg.PointDetails", {
@@ -39,25 +38,6 @@ sap.ui.define([
             }
             var obj = ctx.getObject()
             var actionResult = obj.ActionResult
-            if (actionResult == "RequestMessage" && obj.headers.findIndex( h => h.name == "BODY") == -1 ){ // for now
-                obj.headers.unshift({
-                    name: "REQ",
-                    value: obj.verb + " " + obj.uRI
-                },{
-                    name: "BODY",
-                    value: ManagedObject.escapeSettingsValue(obj.content)
-                })
-            }
-            if (actionResult == "ResponseMessage" && obj.headers.findIndex( h => h.name == "BODY") == -1 ){ // for now
-                obj.headers.unshift({
-                    name: "RES",
-                    status: obj.statusCode,
-                    value: obj.statusCode + " " + obj.reasonPhrase
-                },{
-                    name: "BODY",
-                    value: ManagedObject.escapeSettingsValue(obj.content)
-                })
-            }
             var fc = new FormContainer({ expandable: true, expanded: true, title: '{ActionResult}' })
             fc.bindAggregation("formElements", {
                 path: pathMap[actionResult],
