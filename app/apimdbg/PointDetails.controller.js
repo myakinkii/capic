@@ -56,7 +56,7 @@ sap.ui.define([
                         }
                     } else {
                         var par = obj.Get || obj.Set
-                        label = (obj.Get ? 'Get ' : 'Set ') + par.name
+                        label = (obj.Get ? '[get] ' : '[set] ') + par.name
                         fields.push(new Text({ text: par.value }))
                     }
                     return new FormElement({ label, fields })
