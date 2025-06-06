@@ -18,6 +18,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
 
         transformData: function(data){
             var addZero = num => num < 10 ? '0'+num : ''+num
+            var shortActs = {
+                RequestMessage: "REQ", ResponseMessage: "RES", DebugInfo: "DBG", VariableAccess: "VAR"
+            }
             data.forEach(function(tx){
                 var to = "REQ_START", index = 0
                 tx.point.forEach(function(p){
@@ -32,8 +35,12 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
                     if (execution){
                         var exType = execution.properties.property.find( p => p.name == 'type' )
                         var exPolicy = execution.properties.property.find( p => p.name == 'stepDefinition-name' )
-                        p.id = exPolicy ? exPolicy.value : exType.value
+                        p.ID = exPolicy ? exPolicy.value : exType.value
+                    } else {
+                        p.ID = p.id
                     }
+                    
+                    p.ACTS = p.results.map(r => shortActs[r.ActionResult]).join("|")
                 })
             })
             return data

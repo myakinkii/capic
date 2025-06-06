@@ -26,6 +26,13 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Pa
 
         },
 
+        formatPointHighlight:function(val){
+            if (val == 'Error') return 'Error'
+            if (val == 'StateChange') return 'Information'
+            if (val == 'Execution' ) return 'Warning'
+            return 'None'
+        },
+
         navtoPointDetails: function (e) {
             var index = this.getView().getBindingContext().getPath().split("/")[1]
             var src = e.getSource()

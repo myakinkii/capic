@@ -18,7 +18,9 @@
             </Toolbar>
         </customHeader>
         <List items="{path: 'point', sorter: [{ path: 'STAGE', group: true }] }">
-            <StandardListItem type="Active" press="navtoPointDetails" title="{results/0/timestamp} {id}"/>
+            <StandardListItem type="Active" press="navtoPointDetails"
+                highlight="{path: 'id', formatter:'.formatPointHighlight'}"
+                title="{ID}" description="{ACTS}" info="{results/0/timestamp}"/>
         </List>
     </Page>
 </mvc:View>
