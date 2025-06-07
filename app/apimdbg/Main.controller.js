@@ -68,6 +68,8 @@ sap.ui.define([
                 })
                 tx.REQ = REQ
                 tx.RES = RES
+                tx.STATUS = RES.startsWith('2') ? 'Success' : 'Error'
+                tx.TS = tx.point.find( p => p.id == 'StateChange').results[0].timestamp // ugly as hell..
             })
             return data
         },

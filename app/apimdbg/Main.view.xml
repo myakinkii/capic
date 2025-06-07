@@ -13,9 +13,11 @@
             </Toolbar>
         </customHeader>
         <List items="{/}">
-            <ObjectListItem type="Active" press="navtoDetail" title="{point/2/results/0/timestamp}">
-                <ObjectAttribute text="{REQ}" />
-                <ObjectAttribute text="{RES}" />
+            <ObjectListItem type="Active" press="navtoDetail" intro="{REQ}" _title="{REQ}">
+                <firstStatus>
+                    <ObjectStatus text="{RES}" state="{STATUS}"/>
+                </firstStatus>
+                <ObjectAttribute text="{TS}" />
             </ObjectListItem>
         </List>
     </Page>
