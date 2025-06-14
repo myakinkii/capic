@@ -311,8 +311,8 @@
                             }
                         },
                         "browse_apidbg": {
-                            "semanticObject": "apimdbg",
-                            "action": "browse",
+                            "semanticObject": "apim",
+                            "action": "dbg",
                             "title": "APIM debug",
                             "signature": {
                                 "parameters": {},
