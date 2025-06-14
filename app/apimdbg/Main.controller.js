@@ -21,7 +21,8 @@ sap.ui.define([
         transformData: function(data){
             var addZero = num => num < 10 ? '0'+num : ''+num
             var shortActs = {
-                RequestMessage: "REQ", ResponseMessage: "RES", DebugInfo: "DBG", VariableAccess: "VAR"
+                RequestMessage: "REQ", ResponseMessage: "RES", ErrorMessage: "ERR", 
+                DebugInfo: "DBG", VariableAccess: "VAR"
             }
             data.forEach(function(tx){
                 var REQ = '', RES = ''
@@ -45,6 +46,16 @@ sap.ui.define([
                             name: "RES", value: RES, status: res.statusCode,
                         },{
                             name: "BODY", value: ManagedObject.escapeSettingsValue(res.content)
+                        })
+                    }
+
+                    var err = p.results.find(r => r.ActionResult == "ErrorMessage")
+                    if (err) {
+                        RES = err.statusCode + " " + err.reasonPhrase
+                        err.headers.unshift({
+                            name: "ERR", value: RES, status: err.statusCode,
+                        },{
+                            name: "BODY", value: ManagedObject.escapeSettingsValue(err.content)
                         })
                     }
 

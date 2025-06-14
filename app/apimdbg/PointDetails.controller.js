@@ -34,6 +34,7 @@ sap.ui.define([
                 DebugInfo: "properties/property",
                 RequestMessage: "headers",
                 ResponseMessage: "headers",
+                ErrorMessage: "headers",
                 VariableAccess: "accessList"
             }
             var obj = ctx.getObject()
@@ -45,9 +46,9 @@ sap.ui.define([
                     var obj = ctx.getObject()
                     var label = obj.name, fields = []
                     if (actionResult != "VariableAccess") {
-                        if (obj.name == 'REQ' || obj.name == 'RES') {
+                        if (obj.name == 'REQ' || obj.name == 'RES' || obj.name == 'ERR') {
                             var state = 'Information'
-                            if (obj.name == 'RES') state = obj.status.startsWith('2') ? 'Success' : 'Error'
+                            if (obj.name == 'RES' || obj.name == 'ERR') state = obj.status.startsWith('2') ? 'Success' : 'Error'
                             var objstat = new ObjectStatus({ text: obj.value, state: state, active: false })
                             objstat.addStyleClass("sapMObjectStatusLongText");
                             fields.push(objstat)
