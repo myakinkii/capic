@@ -12,7 +12,7 @@
                 <OverflowToolbarButton type="Transparent" icon="sap-icon://paste" press=".pasteDebugSession"/>
             </Toolbar>
         </customHeader>
-        <List items="{/}">
+        <List items="{path:'/', sorter: { path: 'TS' } }">
             <ObjectListItem type="Active" press="navtoDetail" intro="{REQ}" _title="{REQ}">
                 <firstStatus>
                     <ObjectStatus text="{RES}" state="{STATUS}"/>
