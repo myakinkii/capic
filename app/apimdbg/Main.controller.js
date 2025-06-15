@@ -87,7 +87,7 @@ sap.ui.define([
 
         navtoDetail: function (e) {
             var src = e.getSource()
-            var index = src.getParent().indexOfItem(src)
+            var index = src.getBindingContext().getPath().split("/")[1]
             var nextLayout = 'TwoColumnsMidExpanded'
             this.getOwnerComponent().getRouter().navTo("DetailRoute", { key: index, "?query": { layout: nextLayout } })
         }
