@@ -149,7 +149,7 @@ sap.ui.define([
 
         createFormElement: function (sId, ctx) {
             var serviceUrl = this.getView().getModel().getServiceUrl()
-            var obj = ctx.getObject()
+            var obj = ctx.getObject() || {}
             var fields = []
             if (obj.Name == 'TraceId') {
                 fields.push(
