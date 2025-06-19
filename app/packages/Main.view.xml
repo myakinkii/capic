@@ -1,0 +1,46 @@
+<mvc:View
+    height="100%"
+    controllerName="packages.Main"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+<Page title="PKGS">
+    <Table id="workspaceTable" items="{pkg>/IntegrationPackages}">
+        <headerToolbar>
+            <Toolbar>
+            <Title text="IntegrationPackages ({pkg>/_count})"/>
+            <ToolbarSpacer/>
+            <SearchField id="workspaceSearchField" liveChange="onSearch" width="25rem"/>
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column _width="30%">
+                <Label text="{i18n>pkg_NAME}"/>
+            </Column>
+            <Column width="10%">
+                <Label text="{i18n>pkg_CREATED_DATE}"/>
+            </Column>
+            <Column width="20%">
+                <Label text="{i18n>pkg_CREATED_BY}"/>
+            </Column>
+            <Column width="30%">
+                <Label text="{i18n>pkg_DESCRIPTION}"/>
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem type="Active" press=".navtoDetail" >
+                <cells>
+                    <l:HorizontalLayout class="sapUiContentPadding">
+                        <core:Icon size="32px" _class="sapUiTinyMargin" src="sap-icon://database" />
+                            <ObjectIdentifier title="{pkg>Name}" text="{pkg>Id}"/>
+                    </l:HorizontalLayout>
+                    <Text text="{pkg>CreatedAt}"/>
+                    <Text text="{pkg>CreatedBy}"/>
+                    <Text text="{pkg>ShortText}"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</Page>
+</mvc:View>

@@ -76,9 +76,11 @@
                 "IntegrationPackagesListTarget": {
                     "type": "Component",
                     "id": "PackagesList",
-                    "name": "sap.fe.templates.ListReport",
+                    "_name": "sap.fe.templates.ListReport",
+                    "name": "sap.fe.core.fpm",
                     "options": {
                         "settings": {
+                            "viewName": "packages.Main",
                             "entitySet": "IntegrationPackages",
                             "initialLoad": true,
                             "navigation": {
