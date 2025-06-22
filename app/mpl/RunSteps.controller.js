@@ -11,6 +11,30 @@ sap.ui.define([
         return fetch(url).then(res => res.ok ? res.json() : Promise.reject(res.status)).then(resolve).catch(reject)
     })
 
+    var parseActivities = (rawActs) => {
+        // rawActs is just a string looking like this "[{Activity=}, {Activity=}]"
+        // the problem is we can have COMPLEX "simple expressions" inside Activity= part (loop, choice, headers reference etc)
+        var tokens = rawActs.slice(1, -1).split(", ") // so we just try splitting this stuff into chunks
+        // and each activity then is array of 2 or 3 tokens per activity 
+        // '{Activity=' + 'StartTime=..' and 'StopTime=..}' OR just + 'StartTime=..}'
+        var acts = [], t, parts, start, stop, name
+        while (tokens.length){
+            t = tokens.pop() // we go in reverse order
+            if (t.startsWith('{')) {
+                name = stop ? `Camel Activity (${stop-start}ms)` : `MPL Activity (${start.toISOString()})`
+                acts.unshift({ Name: name, Value: t.replace('{Activity=', '')})
+                start = ''
+                stop = ''
+            } else {
+                if (t.endsWith('}')) t = t.slice(0, -1)
+                parts = t.split("=")
+                if (parts[0]=='StartTime') start = new Date(parts[1])
+                if (parts[0]=='StopTime') stop = new Date(parts[1])
+            }
+        }
+        return acts
+    }
+
     return PageController.extend("mpl.RunSteps", {
 
         onInit: function () {
@@ -54,32 +78,6 @@ sap.ui.define([
             var mplUrl = `/MessageProcessingLogs(${mplId})`
             var runUrl = `${mplUrl}/Runs(${runId})`
 
-            var startStopAct = (a) => {
-                try {
-                    var parts = /Activity=(.+), StartTime=(.+), StopTime=(.+)/g.exec(a)
-                    var start = new Date(parts[2])
-                    var stop = new Date(parts[3])
-                    return {
-                        Name: `Camel Activity (${stop-start}ms)`,
-                        Value: parts[1],
-                    }
-                } catch(e){
-                    return null
-                }
-            }
-            var startAct = (a) => {
-                try {
-                    var parts = /Activity=(.+), StartTime=(.+)/g.exec(a)
-                    var start = new Date(parts[2])
-                    return {
-                        Name: `MPL Activity (${start.toISOString()})`,
-                        Value: parts[1]
-                    }
-                } catch(e){
-                    return null
-                }
-            }
-
             return Promise.all([
                 promisedFetch(serviceUrl + mplUrl),
                 promisedFetch(serviceUrl + runUrl),
@@ -92,10 +90,7 @@ sap.ui.define([
 
                         var activities = p.Value.match(/{Activity=[^}]+}/g) // but simple expressions make it hard...
                         if (activities) {
-                            p.Value.slice(1, -1).split("}, ").forEach( a => { // remove square brackets and split
-                                var clean = a.slice(1, a.endsWith('}') ? -1 : undefined)
-                                newProps.push( startStopAct(clean) || startAct(clean) )
-                            })
+                            newProps.push( ...parseActivities(p.Value) ) // maybe I'll write tests one day...
                             return
                         }
 
