@@ -10,6 +10,7 @@ sap.ui.define([
         COMPLETED: 'Success',
         DISCARDED: 'None',
         ESCALATED: 'Warning',
+        RETRY: 'Warning',
         FAILED: 'Error'
     }
 
