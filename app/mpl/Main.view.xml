@@ -37,6 +37,7 @@
                     <core:Item key="ESCALATED" text="ESCALATED"/>
                     <core:Item key="FAILED" text="FAILED"/>
                     <core:Item key="RETRY" text="RETRY"/>
+                    <core:Item key="CANCELLED" text="CANCELLED"/>
                 </ComboBox>
                 <Switch _type="AcceptReject"
                     enabled="{= !!${ui>/statusFilter/value} }" 
