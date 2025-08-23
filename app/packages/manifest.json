@@ -124,7 +124,7 @@
                                         "CustomActionGotoLogs": {
                                             "press": "packages.CodeActions.gotoLogs",
                                             "enabled": true,
-                                            "visible": true,
+                                            "visible": false,
                                             "text": "{i18n>CustomActionGotoLogs}"
                                         }
                                     }

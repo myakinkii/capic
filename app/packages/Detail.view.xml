@@ -23,7 +23,7 @@
                 <MenuButton icon="sap-icon://chain-link" defaultAction="gotoPackage" 
                     buttonMode="Split" useDefaultActionOnly="true">
                     <Menu>
-                        <MenuItem icon="sap-icon://history" press="gotoLogs" />
+                        <MenuItem icon="sap-icon://history" press="gotoLogsPkg" />
                     </Menu>
                 </MenuButton>
                 <Button text="Transport" press="openPackageCustomPropsAndMtarExportDlg" />

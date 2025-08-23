@@ -129,11 +129,23 @@ sap.ui.define([
             sap.m.URLHelper.redirect(url, true)
         },
 
-        gotoLogs: function (e) {
-            sap.ushell.Container.getService('CrossApplicationNavigation').toExternal({
+        gotoLogsPkg: function (e) {
+            this.gotoLogs({ PackageId: e.getSource().getBindingContext().getProperty('Id') })
+        },
+
+        gotoLogsIflow: function (e) {
+            this.gotoLogs({ Id: e.getSource().getBindingContext("pkg").getProperty('Id') })
+        },
+
+        gotoLogs: function (params) {
+            var navSvc = sap.ushell.Container.getService('CrossApplicationNavigation')
+            var hash = navSvc.hrefForExternal({
                 target: { semanticObject: 'mpl', action: 'browse' },
-                params: { PackageId: e.getSource().getBindingContext().getProperty('Id') }
+                params
+                // params: { PackageId: e.getSource().getBindingContext().getProperty('Id') }
             })
+            // navSvc.toExternal({target: { shellHash: hash }})
+            sap.m.URLHelper.redirect(hash, true)
         },
 
         gotoMonitoring: function (e) {
